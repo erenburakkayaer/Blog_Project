@@ -5,44 +5,51 @@ using BlogProject.API.Interfaces;
 
 namespace BlogProject.API.Controllers
 {
-    // Ziyaretçi yorum ekleyebilir (POST anonim); listeleme/onaylama personelde
+    // Ziyaretçi yorum ekleyebilir (POST anonim) ve yayınlanmış blog'un onaylı
+    // yorumlarını okuyabilir (GET blog/{blogId} anonim); listeleme/onaylama personelde
     [ApiController]
     [Route("api/[controller]")]
     [Authorize]
     public class CommentsController : ControllerBase
     {
-        private readonly IGenericCrudService<CommentDto, CommentCreateDto, CommentUpdateDto> _service;
+        private readonly ICommentService _commentService;
 
-        public CommentsController(IGenericCrudService<CommentDto, CommentCreateDto, CommentUpdateDto> service)
+        public CommentsController(ICommentService commentService)
         {
-            _service = service;
+            _commentService = commentService;
         }
 
         [HttpGet]
         public async Task<ActionResult<PagedResultDto<CommentDto>>> GetAll([FromQuery] int page = 1, [FromQuery] int pageSize = 20, [FromQuery] string? search = null) =>
-            Ok(await _service.GetPagedAsync(page, pageSize, search));
+            Ok(await _commentService.GetPagedAsync(page, pageSize, search));
 
         [HttpGet("{id:int}")]
         public async Task<ActionResult<CommentDto>> GetById(int id)
         {
-            var item = await _service.GetByIdAsync(id);
+            var item = await _commentService.GetByIdAsync(id);
             return item is null ? NotFound() : Ok(item);
         }
+
+        // Blog detay sayfasında gösterilecek onaylı yorumlar — herkese açık
+        [HttpGet("blog/{blogId:int}")]
+        [AllowAnonymous]
+        public async Task<ActionResult<IEnumerable<CommentDto>>> GetApprovedByBlog(int blogId) =>
+            Ok(await _commentService.GetApprovedByBlogIdAsync(blogId));
 
         [HttpPost]
         [AllowAnonymous]
         public async Task<ActionResult<CommentDto>> Create(CommentCreateDto dto)
         {
-            var created = await _service.CreateAsync(dto);
+            var created = await _commentService.CreateAsync(dto);
             return CreatedAtAction(nameof(GetById), new { id = created.Id }, created);
         }
 
         [HttpPut("{id:int}")]
         public async Task<IActionResult> Update(int id, CommentUpdateDto dto) =>
-            await _service.UpdateAsync(id, dto) ? NoContent() : NotFound();
+            await _commentService.UpdateAsync(id, dto) ? NoContent() : NotFound();
 
         [HttpDelete("{id:int}")]
         public async Task<IActionResult> Delete(int id) =>
-            await _service.DeleteAsync(id) ? NoContent() : NotFound();
+            await _commentService.DeleteAsync(id) ? NoContent() : NotFound();
     }
 }

@@ -38,7 +38,14 @@ namespace BlogProject.API.Services
         public async Task<BlogDto?> GetByIdAsync(int id)
         {
             var blog = await _blogRepository.GetByIdAsync(id);
-            return blog is null ? null : _mapper.Map<BlogDto>(blog);
+            if (blog is null) return null;
+
+            // Her detay görüntülemesinde sayaç artar — okuma istatistikleri için
+            blog.ViewCount++;
+            _blogRepository.Update(blog);
+            await _blogRepository.SaveChangesAsync();
+
+            return _mapper.Map<BlogDto>(blog);
         }
 
         public async Task<BlogDto> CreateAsync(BlogCreateDto dto)

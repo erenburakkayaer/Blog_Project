@@ -29,5 +29,11 @@ namespace BlogProject.API.Data
         public DbSet<Setting> Settings { get; set; } = null!;
         public DbSet<SeoSetting> SeoSettings { get; set; } = null!;
         public DbSet<Log> Logs { get; set; } = null!;
+
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            base.OnModelCreating(modelBuilder);
+            DbSeeder.Seed(modelBuilder);
+        }
     }
 }

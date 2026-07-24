@@ -70,7 +70,7 @@ namespace BlogProject.API.Repositories
             return combined is null ? null : Expression.Lambda<Func<T, bool>>(combined, param);
         }
 
-        public async Task<T?> GetByIdAsync(int id) => await _dbSet.FindAsync(id);
+        public virtual async Task<T?> GetByIdAsync(int id) => await _dbSet.FindAsync(id);
 
         public async Task AddAsync(T entity) => await _dbSet.AddAsync(entity);
 

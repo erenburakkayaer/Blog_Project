@@ -18,6 +18,9 @@ namespace BlogProject.API.Repositories
         public override async Task<IEnumerable<Blog>> GetAllAsync() =>
             await _dbSet.Include(b => b.Author).Include(b => b.Category).ToListAsync();
 
+        public override async Task<Blog?> GetByIdAsync(int id) =>
+            await _dbSet.Include(b => b.Author).Include(b => b.Category).FirstOrDefaultAsync(b => b.Id == id);
+
         public override async Task<(IEnumerable<Blog> Items, int TotalCount)> GetPagedAsync(int page, int pageSize, string? search = null)
         {
             var query = _dbSet.Include(b => b.Author).Include(b => b.Category).AsQueryable();

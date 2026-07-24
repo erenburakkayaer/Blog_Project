@@ -96,9 +96,11 @@ builder.Services.AddScoped<IGenericCrudService<SeoSettingDto, SeoSettingDto, Seo
 builder.Services.AddScoped<IGenericCrudService<PermissionDto, PermissionDto, PermissionDto>,
     GenericCrudService<Permission, PermissionDto, PermissionDto, PermissionDto>>();
 
+// Comment: onaylı-yorum-filtreleme iş kuralı olduğu için özel repository/servisi var
+builder.Services.AddScoped<ICommentRepository, CommentRepository>();
+builder.Services.AddScoped<ICommentService, CommentService>();
+
 // Ziyaretçi formu olan modüller — Create/Update DTO'ları ayrı (hassas alanları dışarıda tutmak için)
-builder.Services.AddScoped<IGenericCrudService<CommentDto, CommentCreateDto, CommentUpdateDto>,
-    GenericCrudService<Comment, CommentDto, CommentCreateDto, CommentUpdateDto>>();
 builder.Services.AddScoped<IGenericCrudService<MessageDto, MessageCreateDto, MessageUpdateDto>,
     GenericCrudService<Message, MessageDto, MessageCreateDto, MessageUpdateDto>>();
 builder.Services.AddScoped<IGenericCrudService<OfferDto, OfferCreateDto, OfferUpdateDto>,
