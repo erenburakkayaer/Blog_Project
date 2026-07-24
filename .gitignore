@@ -1,0 +1,15 @@
+## .NET
+bin/
+obj/
+*.user
+.vs/
+
+## Serilog dosya çıktısı ve yüklenen dosyalar — kaynak kod değil
+**/Logs/
+**/wwwroot/uploads/
+
+## appsettings — geliştirme ortamı sırları (JWT key, local connection string vb.) commit edilmez
+**/appsettings.Development.json
+
+## macOS
+.DS_Store
