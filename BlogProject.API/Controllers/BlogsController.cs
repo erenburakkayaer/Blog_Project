@@ -20,8 +20,8 @@ namespace BlogProject.API.Controllers
 
         [HttpGet]
         [AllowAnonymous]
-        public async Task<ActionResult<PagedResultDto<BlogDto>>> GetAll([FromQuery] int page = 1, [FromQuery] int pageSize = 20) =>
-            Ok(await _blogService.GetPagedAsync(page, pageSize));
+        public async Task<ActionResult<PagedResultDto<BlogDto>>> GetAll([FromQuery] int page = 1, [FromQuery] int pageSize = 20, [FromQuery] string? search = null) =>
+            Ok(await _blogService.GetPagedAsync(page, pageSize, search));
 
         [HttpGet("{id:int}")]
         [AllowAnonymous]

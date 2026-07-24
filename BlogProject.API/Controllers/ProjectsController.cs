@@ -18,8 +18,8 @@ namespace BlogProject.API.Controllers
 
         [HttpGet]
         [AllowAnonymous]
-        public async Task<ActionResult<PagedResultDto<ProjectDto>>> GetAll([FromQuery] int page = 1, [FromQuery] int pageSize = 20) =>
-            Ok(await _service.GetPagedAsync(page, pageSize));
+        public async Task<ActionResult<PagedResultDto<ProjectDto>>> GetAll([FromQuery] int page = 1, [FromQuery] int pageSize = 20, [FromQuery] string? search = null) =>
+            Ok(await _service.GetPagedAsync(page, pageSize, search));
 
         [HttpGet("{id:int}")]
         [AllowAnonymous]

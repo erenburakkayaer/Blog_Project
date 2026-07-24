@@ -26,9 +26,9 @@ namespace BlogProject.API.Services
             return _mapper.Map<IEnumerable<TDto>>(entities);
         }
 
-        public async Task<PagedResultDto<TDto>> GetPagedAsync(int page, int pageSize)
+        public async Task<PagedResultDto<TDto>> GetPagedAsync(int page, int pageSize, string? search = null)
         {
-            var (entities, totalCount) = await _repository.GetPagedAsync(page, pageSize);
+            var (entities, totalCount) = await _repository.GetPagedAsync(page, pageSize, search);
             return new PagedResultDto<TDto>
             {
                 Items = _mapper.Map<IEnumerable<TDto>>(entities),

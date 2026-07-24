@@ -18,10 +18,15 @@ namespace BlogProject.API.Repositories
         public override async Task<IEnumerable<Blog>> GetAllAsync() =>
             await _dbSet.Include(b => b.Author).Include(b => b.Category).ToListAsync();
 
-        public override async Task<(IEnumerable<Blog> Items, int TotalCount)> GetPagedAsync(int page, int pageSize)
+        public override async Task<(IEnumerable<Blog> Items, int TotalCount)> GetPagedAsync(int page, int pageSize, string? search = null)
         {
-            var query = _dbSet.Include(b => b.Author).Include(b => b.Category)
-                .OrderByDescending(b => b.Id);
+            var query = _dbSet.Include(b => b.Author).Include(b => b.Category).AsQueryable();
+
+            var predicate = BuildSearchPredicate(search);
+            if (predicate is not null)
+                query = query.Where(predicate);
+
+            query = query.OrderByDescending(b => b.Id);
 
             var totalCount = await query.CountAsync();
             var items = await query.Skip((page - 1) * pageSize).Take(pageSize).ToListAsync();

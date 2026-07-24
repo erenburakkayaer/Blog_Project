@@ -4,7 +4,7 @@ namespace BlogProject.API.Interfaces
     public interface IGenericRepository<T> where T : class
     {
         Task<IEnumerable<T>> GetAllAsync();
-        Task<(IEnumerable<T> Items, int TotalCount)> GetPagedAsync(int page, int pageSize);
+        Task<(IEnumerable<T> Items, int TotalCount)> GetPagedAsync(int page, int pageSize, string? search = null);
         Task<T?> GetByIdAsync(int id);
         Task AddAsync(T entity);
         void Update(T entity);

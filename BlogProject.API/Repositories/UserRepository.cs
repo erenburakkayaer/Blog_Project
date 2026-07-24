@@ -21,9 +21,15 @@ namespace BlogProject.API.Repositories
         public async Task<IEnumerable<User>> GetAllWithRoleAsync() =>
             await _dbSet.Include(u => u.Role).ToListAsync();
 
-        public override async Task<(IEnumerable<User> Items, int TotalCount)> GetPagedAsync(int page, int pageSize)
+        public override async Task<(IEnumerable<User> Items, int TotalCount)> GetPagedAsync(int page, int pageSize, string? search = null)
         {
-            var query = _dbSet.Include(u => u.Role).OrderBy(u => u.Id);
+            var query = _dbSet.Include(u => u.Role).AsQueryable();
+
+            var predicate = BuildSearchPredicate(search);
+            if (predicate is not null)
+                query = query.Where(predicate);
+
+            query = query.OrderBy(u => u.Id);
 
             var totalCount = await query.CountAsync();
             var items = await query.Skip((page - 1) * pageSize).Take(pageSize).ToListAsync();

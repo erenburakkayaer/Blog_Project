@@ -11,7 +11,7 @@ namespace BlogProject.API.Interfaces
         where TUpdateDto : class
     {
         Task<IEnumerable<TDto>> GetAllAsync();
-        Task<PagedResultDto<TDto>> GetPagedAsync(int page, int pageSize);
+        Task<PagedResultDto<TDto>> GetPagedAsync(int page, int pageSize, string? search = null);
         Task<TDto?> GetByIdAsync(int id);
         Task<TDto> CreateAsync(TCreateDto dto);
         Task<bool> UpdateAsync(int id, TUpdateDto dto);
