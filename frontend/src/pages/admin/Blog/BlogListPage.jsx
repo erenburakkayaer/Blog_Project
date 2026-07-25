@@ -1,14 +1,25 @@
 import { useEffect, useMemo, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
 
 import BlogFilters from "../../../components/admin/blog/BlogFilters";
 import BlogTable from "../../../components/admin/blog/BlogTable";
 import DeleteModal from "../../../components/admin/blog/DeleteModal";
+
+import {
+  EmptyState,
+  LoadingState,
+  PageHeader,
+  Pagination,
+} from "../../../components/ui";
+
 import { blogService } from "../../../services/blogService";
 
 const BLOGS_PER_PAGE = 4;
 
 const BlogListPage = () => {
+  const navigate = useNavigate();
+
   const [blogs, setBlogs] = useState([]);
   const [selectedBlog, setSelectedBlog] = useState(null);
 
@@ -28,7 +39,7 @@ const BlogListPage = () => {
 
         const blogList = await blogService.getAll();
 
-        setBlogs(blogList);
+        setBlogs(Array.isArray(blogList) ? blogList : []);
       } catch (error) {
         toast.error(error.message || "Blog yazıları yüklenemedi.");
       } finally {
@@ -82,6 +93,29 @@ const BlogListPage = () => {
     return filteredBlogs.slice(startIndex, endIndex);
   }, [filteredBlogs, currentPage]);
 
+  const publishedBlogCount = useMemo(
+    () => blogs.filter((blog) => blog.status === "published").length,
+    [blogs],
+  );
+
+  const draftBlogCount = useMemo(
+    () => blogs.filter((blog) => blog.status === "draft").length,
+    [blogs],
+  );
+
+  const hasActiveFilters =
+    searchTerm.trim() !== "" ||
+    selectedCategory !== "all" ||
+    selectedStatus !== "all";
+
+  const firstVisibleItem =
+    filteredBlogs.length === 0 ? 0 : (currentPage - 1) * BLOGS_PER_PAGE + 1;
+
+  const lastVisibleItem = Math.min(
+    currentPage * BLOGS_PER_PAGE,
+    filteredBlogs.length,
+  );
+
   useEffect(() => {
     setCurrentPage(1);
   }, [searchTerm, selectedCategory, selectedStatus]);
@@ -91,6 +125,10 @@ const BlogListPage = () => {
       setCurrentPage(totalPages);
     }
   }, [currentPage, totalPages]);
+
+  const handleCreateBlog = () => {
+    navigate("/admin/blog/yeni");
+  };
 
   const handleClearFilters = () => {
     setSearchTerm("");
@@ -133,39 +171,26 @@ const BlogListPage = () => {
   };
 
   const handlePageChange = (pageNumber) => {
-    if (pageNumber < 1 || pageNumber > totalPages) {
+    if (
+      pageNumber < 1 ||
+      pageNumber > totalPages ||
+      pageNumber === currentPage
+    ) {
       return;
     }
 
     setCurrentPage(pageNumber);
   };
 
-  const publishedBlogCount = blogs.filter(
-    (blog) => blog.status === "published",
-  ).length;
-
-  const draftBlogCount = blogs.filter((blog) => blog.status === "draft").length;
-
-  const firstVisibleItem =
-    filteredBlogs.length === 0 ? 0 : (currentPage - 1) * BLOGS_PER_PAGE + 1;
-
-  const lastVisibleItem = Math.min(
-    currentPage * BLOGS_PER_PAGE,
-    filteredBlogs.length,
-  );
-
   return (
     <div>
-      <div className="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3 mb-4">
-        <div>
-          <h1 className="h3 mb-1">Blog Yönetimi</h1>
-
-          <p className="text-muted mb-0">
-            Blog yazılarını görüntüleyebilir, oluşturabilir ve
-            düzenleyebilirsiniz.
-          </p>
-        </div>
-
+      <PageHeader
+        title="Blog Yönetimi"
+        description="Blog yazılarını görüntüleyebilir, oluşturabilir ve düzenleyebilirsiniz."
+        actionLabel="Yeni Blog Ekle"
+        actionIcon="bi-plus-lg"
+        onAction={handleCreateBlog}
+      >
         <div className="d-flex flex-wrap gap-2">
           <span className="badge rounded-pill text-bg-dark px-3 py-2">
             Toplam: {blogs.length}
@@ -179,7 +204,7 @@ const BlogListPage = () => {
             Taslak: {draftBlogCount}
           </span>
         </div>
-      </div>
+      </PageHeader>
 
       <BlogFilters
         searchTerm={searchTerm}
@@ -194,23 +219,46 @@ const BlogListPage = () => {
 
       {isLoading ? (
         <div className="card border-0 shadow-sm">
-          <div className="card-body py-5 text-center">
-            <div
-              className="spinner-border text-dark"
-              role="status"
-              aria-label="Blog yazıları yükleniyor"
+          <div className="card-body p-0">
+            <LoadingState
+              text="Blog yazıları yükleniyor..."
+              minHeight="320px"
             />
-
-            <p className="text-muted mt-3 mb-0">Blog yazıları yükleniyor...</p>
+          </div>
+        </div>
+      ) : filteredBlogs.length === 0 ? (
+        <div className="card border-0 shadow-sm">
+          <div className="card-body p-0">
+            <EmptyState
+              icon={hasActiveFilters ? "bi-search" : "bi-journal-text"}
+              title={
+                hasActiveFilters
+                  ? "Arama kriterlerine uygun blog bulunamadı"
+                  : "Henüz blog yazısı bulunmuyor"
+              }
+              description={
+                hasActiveFilters
+                  ? "Arama veya filtreleme kriterlerini değiştirerek tekrar deneyebilirsiniz."
+                  : "İlk blog yazınızı oluşturarak içerik yönetimine başlayabilirsiniz."
+              }
+              actionLabel={
+                hasActiveFilters ? "Filtreleri Temizle" : "Yeni Blog Ekle"
+              }
+              actionIcon={
+                hasActiveFilters ? "bi-arrow-counterclockwise" : "bi-plus-lg"
+              }
+              onAction={
+                hasActiveFilters ? handleClearFilters : handleCreateBlog
+              }
+            />
           </div>
         </div>
       ) : (
         <>
           <div className="d-flex flex-column flex-sm-row justify-content-between align-items-sm-center gap-2 mb-3">
             <small className="text-muted">
-              {filteredBlogs.length === 0
-                ? "Blog yazısı bulunamadı."
-                : `${firstVisibleItem}-${lastVisibleItem} arası gösteriliyor. Toplam ${filteredBlogs.length} blog yazısı.`}
+              {firstVisibleItem}-{lastVisibleItem} arası gösteriliyor. Toplam{" "}
+              {filteredBlogs.length} blog yazısı.
             </small>
 
             {totalPages > 1 && (
@@ -222,63 +270,12 @@ const BlogListPage = () => {
 
           <BlogTable blogs={paginatedBlogs} onDelete={handleDeleteRequest} />
 
-          {totalPages > 1 && (
-            <nav
-              className="d-flex justify-content-end mt-4"
-              aria-label="Blog sayfalama"
-            >
-              <ul className="pagination mb-0">
-                <li
-                  className={`page-item ${currentPage === 1 ? "disabled" : ""}`}
-                >
-                  <button
-                    type="button"
-                    className="page-link"
-                    onClick={() => handlePageChange(currentPage - 1)}
-                    disabled={currentPage === 1}
-                  >
-                    Önceki
-                  </button>
-                </li>
-
-                {Array.from({ length: totalPages }, (_, index) => {
-                  const pageNumber = index + 1;
-
-                  return (
-                    <li
-                      key={pageNumber}
-                      className={`page-item ${
-                        currentPage === pageNumber ? "active" : ""
-                      }`}
-                    >
-                      <button
-                        type="button"
-                        className="page-link"
-                        onClick={() => handlePageChange(pageNumber)}
-                      >
-                        {pageNumber}
-                      </button>
-                    </li>
-                  );
-                })}
-
-                <li
-                  className={`page-item ${
-                    currentPage === totalPages ? "disabled" : ""
-                  }`}
-                >
-                  <button
-                    type="button"
-                    className="page-link"
-                    onClick={() => handlePageChange(currentPage + 1)}
-                    disabled={currentPage === totalPages}
-                  >
-                    Sonraki
-                  </button>
-                </li>
-              </ul>
-            </nav>
-          )}
+          <Pagination
+            currentPage={currentPage}
+            totalPages={totalPages}
+            onPageChange={handlePageChange}
+            ariaLabel="Blog sayfalama"
+          />
         </>
       )}
 

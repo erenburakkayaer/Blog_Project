@@ -1,9 +1,12 @@
 import { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
 import toast from "react-hot-toast";
+
+import { FormActions, FormInput, FormSelect, FormTextarea } from "../../form";
+
+import { ImageUploader } from "../../ui";
 
 const blogCategories = [
   "Yapay Zekâ",
@@ -14,6 +17,17 @@ const blogCategories = [
   "DevOps",
   "Veri Bilimi",
   "Yazılım Geliştirme",
+];
+
+const statusOptions = [
+  {
+    value: "draft",
+    label: "Taslak",
+  },
+  {
+    value: "published",
+    label: "Yayında",
+  },
 ];
 
 const isValidCoverImage = (value) => {
@@ -97,8 +111,7 @@ const BlogForm = ({
   submitButtonText = "Kaydet",
 }) => {
   const [imagePreview, setImagePreview] = useState("");
-  const [selectedFileName, setSelectedFileName] = useState("");
-  const [imageLoadError, setImageLoadError] = useState(false);
+  const [imageUploaderError, setImageUploaderError] = useState("");
 
   const {
     register,
@@ -107,6 +120,7 @@ const BlogForm = ({
     watch,
     setValue,
     clearErrors,
+    trigger,
     formState: { errors },
   } = useForm({
     resolver: yupResolver(validationSchema),
@@ -124,93 +138,90 @@ const BlogForm = ({
     });
 
     setImagePreview(initialCoverImage);
-    setSelectedFileName("");
-    setImageLoadError(false);
+    setImageUploaderError("");
   }, [initialValues, reset]);
 
   const summary = watch("summary") || "";
   const content = watch("content") || "";
+  const coverImage = watch("coverImage") || "";
 
-  const handleImageFileChange = (event) => {
-    const file = event.target.files?.[0];
-
-    if (!file) {
+  const handleImageUploadChange = ({ value, error = "" }) => {
+    if (error) {
+      setImageUploaderError(error);
+      toast.error(error);
       return;
     }
 
-    const allowedTypes = ["image/jpeg", "image/png", "image/webp"];
+    const normalizedValue = typeof value === "string" ? value : "";
 
-    if (!allowedTypes.includes(file.type)) {
-      toast.error("Yalnızca JPG, PNG veya WEBP görsel seçebilirsiniz.");
-      event.target.value = "";
-      return;
-    }
+    setImagePreview(normalizedValue);
+    setImageUploaderError("");
 
-    const maximumFileSize = 2 * 1024 * 1024;
+    setValue("coverImage", normalizedValue, {
+      shouldValidate: true,
+      shouldDirty: true,
+      shouldTouch: true,
+    });
 
-    if (file.size > maximumFileSize) {
-      toast.error("Görsel dosyası en fazla 2 MB olabilir.");
-      event.target.value = "";
-      return;
-    }
+    clearErrors("coverImage");
 
-    const reader = new FileReader();
-
-    reader.onload = () => {
-      const imageData = reader.result;
-
-      if (typeof imageData !== "string") {
-        toast.error("Görsel dosyası okunamadı.");
-        return;
-      }
-
-      setImagePreview(imageData);
-      setSelectedFileName(file.name);
-      setImageLoadError(false);
-
-      setValue("coverImage", imageData, {
-        shouldValidate: true,
-        shouldDirty: true,
-      });
-
-      clearErrors("coverImage");
+    if (normalizedValue) {
       toast.success("Kapak görseli seçildi.");
-    };
-
-    reader.onerror = () => {
-      toast.error("Görsel dosyası okunurken bir hata oluştu.");
-    };
-
-    reader.readAsDataURL(file);
+    }
   };
 
-  const handleImageUrlChange = (event) => {
+  const handleImageUrlChange = async (event) => {
     const imageUrl = event.target.value;
 
-    setSelectedFileName("");
     setImagePreview(imageUrl);
-    setImageLoadError(false);
+    setImageUploaderError("");
+
+    setValue("coverImage", imageUrl, {
+      shouldValidate: false,
+      shouldDirty: true,
+      shouldTouch: true,
+    });
+
+    if (!imageUrl.trim()) {
+      clearErrors("coverImage");
+      return;
+    }
+
+    await trigger("coverImage");
+  };
+
+  const handleImageUrlBlur = async () => {
+    await trigger("coverImage");
   };
 
   const handleRemoveImage = () => {
     setImagePreview("");
-    setSelectedFileName("");
-    setImageLoadError(false);
+    setImageUploaderError("");
 
     setValue("coverImage", "", {
       shouldValidate: true,
       shouldDirty: true,
+      shouldTouch: true,
     });
 
-    const fileInput = document.getElementById("blogCoverImageFile");
+    clearErrors("coverImage");
+  };
 
-    if (fileInput) {
-      fileInput.value = "";
-    }
+  const handleValidSubmit = (formValues) => {
+    const normalizedValues = {
+      ...formValues,
+      title: formValues.title.trim(),
+      author: formValues.author.trim(),
+      summary: formValues.summary.trim(),
+      content: formValues.content.trim(),
+      coverImage: formValues.coverImage || "",
+    };
+
+    onSubmit(normalizedValues);
   };
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)} noValidate>
+    <form onSubmit={handleSubmit(handleValidSubmit)} noValidate>
       <div className="row g-4">
         <div className="col-12 col-xl-8">
           <div className="card border-0 shadow-sm">
@@ -219,87 +230,42 @@ const BlogForm = ({
             </div>
 
             <div className="card-body">
-              <div className="mb-4">
-                <label htmlFor="blogTitle" className="form-label fw-semibold">
-                  Blog Başlığı
-                  <span className="text-danger ms-1">*</span>
-                </label>
+              <FormInput
+                id="blogTitle"
+                label="Blog Başlığı"
+                placeholder="Örneğin: Yapay Zekâ ile İş Süreçlerini Dönüştürme"
+                required
+                disabled={isSubmitting}
+                error={errors.title?.message}
+                className="mb-4"
+                register={register("title")}
+              />
 
-                <input
-                  id="blogTitle"
-                  type="text"
-                  className={`form-control ${errors.title ? "is-invalid" : ""}`}
-                  placeholder="Örneğin: Yapay Zekâ ile İş Süreçlerini Dönüştürme"
-                  {...register("title")}
-                />
+              <FormTextarea
+                id="blogSummary"
+                label="Kısa Özet"
+                placeholder="Blog yazısının kısa açıklamasını giriniz."
+                rows={4}
+                maxLength={300}
+                characterCount={summary.length}
+                required
+                disabled={isSubmitting}
+                error={errors.summary?.message}
+                className="mb-4"
+                register={register("summary")}
+              />
 
-                {errors.title && (
-                  <div className="invalid-feedback">{errors.title.message}</div>
-                )}
-              </div>
-
-              <div className="mb-4">
-                <div className="d-flex justify-content-between align-items-center">
-                  <label
-                    htmlFor="blogSummary"
-                    className="form-label fw-semibold"
-                  >
-                    Kısa Özet
-                    <span className="text-danger ms-1">*</span>
-                  </label>
-
-                  <small className="text-muted">{summary.length}/300</small>
-                </div>
-
-                <textarea
-                  id="blogSummary"
-                  rows="4"
-                  maxLength="300"
-                  className={`form-control ${
-                    errors.summary ? "is-invalid" : ""
-                  }`}
-                  placeholder="Blog yazısının kısa açıklamasını giriniz."
-                  {...register("summary")}
-                />
-
-                {errors.summary && (
-                  <div className="invalid-feedback">
-                    {errors.summary.message}
-                  </div>
-                )}
-              </div>
-
-              <div>
-                <div className="d-flex justify-content-between align-items-center">
-                  <label
-                    htmlFor="blogContent"
-                    className="form-label fw-semibold"
-                  >
-                    Blog İçeriği
-                    <span className="text-danger ms-1">*</span>
-                  </label>
-
-                  <small className="text-muted">
-                    {content.length} karakter
-                  </small>
-                </div>
-
-                <textarea
-                  id="blogContent"
-                  rows="14"
-                  className={`form-control ${
-                    errors.content ? "is-invalid" : ""
-                  }`}
-                  placeholder="Blog içeriğini buraya yazınız..."
-                  {...register("content")}
-                />
-
-                {errors.content && (
-                  <div className="invalid-feedback">
-                    {errors.content.message}
-                  </div>
-                )}
-              </div>
+              <FormTextarea
+                id="blogContent"
+                label="Blog İçeriği"
+                placeholder="Blog içeriğini buraya yazınız..."
+                rows={14}
+                characterCount={content.length}
+                required
+                disabled={isSubmitting}
+                error={errors.content?.message}
+                register={register("content")}
+              />
             </div>
           </div>
         </div>
@@ -311,82 +277,39 @@ const BlogForm = ({
             </div>
 
             <div className="card-body">
-              <div className="mb-4">
-                <label
-                  htmlFor="blogCategory"
-                  className="form-label fw-semibold"
-                >
-                  Kategori
-                  <span className="text-danger ms-1">*</span>
-                </label>
+              <FormSelect
+                id="blogCategory"
+                label="Kategori"
+                options={blogCategories}
+                placeholder="Kategori seçiniz"
+                required
+                disabled={isSubmitting}
+                error={errors.category?.message}
+                className="mb-4"
+                register={register("category")}
+              />
 
-                <select
-                  id="blogCategory"
-                  className={`form-select ${
-                    errors.category ? "is-invalid" : ""
-                  }`}
-                  {...register("category")}
-                >
-                  <option value="">Kategori seçiniz</option>
+              <FormInput
+                id="blogAuthor"
+                label="Yazar"
+                placeholder="Yazar adı"
+                required
+                disabled={isSubmitting}
+                error={errors.author?.message}
+                className="mb-4"
+                register={register("author")}
+              />
 
-                  {blogCategories.map((category) => (
-                    <option key={category} value={category}>
-                      {category}
-                    </option>
-                  ))}
-                </select>
-
-                {errors.category && (
-                  <div className="invalid-feedback">
-                    {errors.category.message}
-                  </div>
-                )}
-              </div>
-
-              <div className="mb-4">
-                <label htmlFor="blogAuthor" className="form-label fw-semibold">
-                  Yazar
-                  <span className="text-danger ms-1">*</span>
-                </label>
-
-                <input
-                  id="blogAuthor"
-                  type="text"
-                  className={`form-control ${
-                    errors.author ? "is-invalid" : ""
-                  }`}
-                  placeholder="Yazar adı"
-                  {...register("author")}
-                />
-
-                {errors.author && (
-                  <div className="invalid-feedback">
-                    {errors.author.message}
-                  </div>
-                )}
-              </div>
-
-              <div>
-                <label htmlFor="blogStatus" className="form-label fw-semibold">
-                  Yayın Durumu
-                  <span className="text-danger ms-1">*</span>
-                </label>
-
-                <select
-                  id="blogStatus"
-                  className={`form-select ${errors.status ? "is-invalid" : ""}`}
-                  {...register("status")}
-                >
-                  <option value="draft">Taslak</option>
-                  <option value="published">Yayında</option>
-                </select>
-
-                {errors.status && (
-                  <div className="invalid-feedback">
-                    {errors.status.message}
-                  </div>
-                )}
-              </div>
+              <FormSelect
+                id="blogStatus"
+                label="Yayın Durumu"
+                options={statusOptions}
+                placeholder={null}
+                required
+                disabled={isSubmitting}
+                error={errors.status?.message}
+                register={register("status")}
+              />
             </div>
           </div>
 
@@ -396,36 +319,20 @@ const BlogForm = ({
             </div>
 
             <div className="card-body">
-              <div className="mb-3">
-                <label
-                  htmlFor="blogCoverImageFile"
-                  className="form-label fw-semibold"
-                >
-                  Bilgisayardan Görsel Seç
-                </label>
+              <ImageUploader
+                id="blogCoverImageFile"
+                label="Bilgisayardan Görsel Seç"
+                value={
+                  imagePreview.startsWith("data:image/") ? imagePreview : ""
+                }
+                maxSizeMb={2}
+                previewHeight="190px"
+                helperText="JPG, PNG veya WEBP formatı. En fazla 2 MB."
+                error={imageUploaderError}
+                onChange={handleImageUploadChange}
+              />
 
-                <input
-                  id="blogCoverImageFile"
-                  type="file"
-                  accept="image/jpeg,image/png,image/webp"
-                  className="form-control"
-                  onChange={handleImageFileChange}
-                  disabled={isSubmitting}
-                />
-
-                <div className="form-text">
-                  JPG, PNG veya WEBP formatı. En fazla 2 MB.
-                </div>
-
-                {selectedFileName && (
-                  <div className="small text-success mt-2">
-                    <i className="bi bi-check-circle me-1" />
-                    {selectedFileName}
-                  </div>
-                )}
-              </div>
-
-              <div className="d-flex align-items-center gap-3 my-3">
+              <div className="d-flex align-items-center gap-3 my-4">
                 <div className="border-top flex-grow-1" />
 
                 <span className="text-muted small">veya</span>
@@ -433,109 +340,77 @@ const BlogForm = ({
                 <div className="border-top flex-grow-1" />
               </div>
 
-              <div>
-                <label
-                  htmlFor="blogCoverImage"
-                  className="form-label fw-semibold"
-                >
-                  Görsel Bağlantısı
-                </label>
+              <FormInput
+                id="blogCoverImage"
+                label="Görsel Bağlantısı"
+                placeholder="https://ornek.com/gorsel.jpg"
+                disabled={isSubmitting}
+                error={errors.coverImage?.message}
+                helpText="HTTP veya HTTPS ile başlayan geçerli bir görsel bağlantısı giriniz."
+                value={coverImage.startsWith("data:image/") ? "" : coverImage}
+                onChange={handleImageUrlChange}
+                onBlur={handleImageUrlBlur}
+              />
 
-                <input
-                  id="blogCoverImage"
-                  type="text"
-                  className={`form-control ${
-                    errors.coverImage ? "is-invalid" : ""
-                  }`}
-                  placeholder="https://ornek.com/gorsel.jpg"
-                  disabled={isSubmitting}
-                  {...register("coverImage", {
-                    onChange: handleImageUrlChange,
-                  })}
-                />
+              {imagePreview &&
+                !imagePreview.startsWith("data:image/") &&
+                !errors.coverImage && (
+                  <div className="mt-4">
+                    <div className="d-flex justify-content-between align-items-center mb-2">
+                      <p className="small fw-semibold mb-0">Görsel Ön İzleme</p>
 
-                {errors.coverImage && (
-                  <div className="invalid-feedback">
-                    {errors.coverImage.message}
-                  </div>
-                )}
-              </div>
+                      <button
+                        type="button"
+                        className="btn btn-sm btn-outline-danger"
+                        onClick={handleRemoveImage}
+                        disabled={isSubmitting}
+                      >
+                        <i className="bi bi-trash me-1" aria-hidden="true" />
+                        Kaldır
+                      </button>
+                    </div>
 
-              {imagePreview && !errors.coverImage && (
-                <div className="mt-4">
-                  <div className="d-flex justify-content-between align-items-center mb-2">
-                    <p className="small fw-semibold mb-0">Görsel Önizleme</p>
-
-                    <button
-                      type="button"
-                      className="btn btn-sm btn-outline-danger"
-                      onClick={handleRemoveImage}
-                      disabled={isSubmitting}
-                    >
-                      <i className="bi bi-trash me-1" />
-                      Kaldır
-                    </button>
-                  </div>
-
-                  {!imageLoadError ? (
                     <img
                       src={imagePreview}
-                      alt="Blog kapak önizlemesi"
+                      alt="Blog kapak ön izlemesi"
                       className="img-fluid rounded border"
                       style={{
                         width: "100%",
                         height: "190px",
                         objectFit: "cover",
                       }}
-                      onError={() => setImageLoadError(true)}
-                      onLoad={() => setImageLoadError(false)}
+                      onError={() => {
+                        setImageUploaderError(
+                          "Görsel yüklenemedi. Bağlantıyı kontrol ediniz.",
+                        );
+                      }}
+                      onLoad={() => {
+                        setImageUploaderError("");
+                      }}
                     />
-                  ) : (
-                    <div className="alert alert-warning small mb-0">
-                      <i className="bi bi-exclamation-triangle me-2" />
-                      Görsel yüklenemedi. Bağlantıyı kontrol ediniz.
-                    </div>
-                  )}
-                </div>
-              )}
+
+                    {imageUploaderError && (
+                      <div className="alert alert-warning small mt-2 mb-0">
+                        <i
+                          className="bi bi-exclamation-triangle me-2"
+                          aria-hidden="true"
+                        />
+                        {imageUploaderError}
+                      </div>
+                    )}
+                  </div>
+                )}
             </div>
           </div>
         </div>
 
         <div className="col-12">
-          <div className="d-flex flex-column-reverse flex-sm-row justify-content-end gap-2">
-            <Link
-              to="/admin/blog"
-              className={`btn btn-outline-secondary ${
-                isSubmitting ? "disabled" : ""
-              }`}
-              aria-disabled={isSubmitting}
-            >
-              <i className="bi bi-x-lg me-2" />
-              Vazgeç
-            </Link>
-
-            <button
-              type="submit"
-              className="btn btn-dark"
-              disabled={isSubmitting}
-            >
-              {isSubmitting ? (
-                <>
-                  <span
-                    className="spinner-border spinner-border-sm me-2"
-                    aria-hidden="true"
-                  />
-                  Kaydediliyor...
-                </>
-              ) : (
-                <>
-                  <i className="bi bi-check-lg me-2" />
-                  {submitButtonText}
-                </>
-              )}
-            </button>
-          </div>
+          <FormActions
+            cancelTo="/admin/blog"
+            submitLabel={submitButtonText}
+            loadingLabel="Kaydediliyor..."
+            isSubmitting={isSubmitting}
+          />
         </div>
       </div>
     </form>
