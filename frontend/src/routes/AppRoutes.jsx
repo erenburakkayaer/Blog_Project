@@ -9,7 +9,12 @@ import ProtectedRoute from "./ProtectedRoute";
 import PlaceholderPage from "../components/common/PlaceholderPage";
 
 import DashboardPage from "../pages/admin/Dashboard/DashboardPage";
+import BlogListPage from "../pages/admin/Blog/BlogListPage";
+import BlogCreatePage from "../pages/admin/Blog/BlogCreatePage";
+import BlogEditPage from "../pages/admin/Blog/BlogEditPage";
+
 import LoginPage from "../pages/auth/Login/LoginPage";
+
 import AboutPage from "../pages/site/About/AboutPage";
 import HomePage from "../pages/site/Home/HomePage";
 
@@ -36,13 +41,15 @@ const router = createBrowserRouter([
           },
           {
             path: "blog",
-            element: (
-              <PlaceholderPage
-                eyebrow="Admin"
-                title="Blog Yönetimi"
-                description="Blog içeriklerini görüntüleyin, ekleyin ve düzenleyin."
-              />
-            ),
+            element: <BlogListPage />,
+          },
+          {
+            path: "blog/yeni",
+            element: <BlogCreatePage />,
+          },
+          {
+            path: "blog/:id",
+            element: <BlogEditPage />,
           },
           {
             path: "projeler",
