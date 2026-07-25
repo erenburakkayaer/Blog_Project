@@ -86,12 +86,14 @@ const BlogListPage = () => {
     Math.ceil(filteredBlogs.length / BLOGS_PER_PAGE),
   );
 
+  const safeCurrentPage = Math.min(Math.max(currentPage, 1), totalPages);
+
   const paginatedBlogs = useMemo(() => {
-    const startIndex = (currentPage - 1) * BLOGS_PER_PAGE;
+    const startIndex = (safeCurrentPage - 1) * BLOGS_PER_PAGE;
     const endIndex = startIndex + BLOGS_PER_PAGE;
 
     return filteredBlogs.slice(startIndex, endIndex);
-  }, [filteredBlogs, currentPage]);
+  }, [filteredBlogs, safeCurrentPage]);
 
   const publishedBlogCount = useMemo(
     () => blogs.filter((blog) => blog.status === "published").length,
@@ -109,25 +111,30 @@ const BlogListPage = () => {
     selectedStatus !== "all";
 
   const firstVisibleItem =
-    filteredBlogs.length === 0 ? 0 : (currentPage - 1) * BLOGS_PER_PAGE + 1;
+    filteredBlogs.length === 0 ? 0 : (safeCurrentPage - 1) * BLOGS_PER_PAGE + 1;
 
   const lastVisibleItem = Math.min(
-    currentPage * BLOGS_PER_PAGE,
+    safeCurrentPage * BLOGS_PER_PAGE,
     filteredBlogs.length,
   );
 
-  useEffect(() => {
-    setCurrentPage(1);
-  }, [searchTerm, selectedCategory, selectedStatus]);
-
-  useEffect(() => {
-    if (currentPage > totalPages) {
-      setCurrentPage(totalPages);
-    }
-  }, [currentPage, totalPages]);
-
   const handleCreateBlog = () => {
     navigate("/admin/blog/yeni");
+  };
+
+  const handleSearchChange = (value) => {
+    setSearchTerm(value);
+    setCurrentPage(1);
+  };
+
+  const handleCategoryChange = (value) => {
+    setSelectedCategory(value);
+    setCurrentPage(1);
+  };
+
+  const handleStatusChange = (value) => {
+    setSelectedStatus(value);
+    setCurrentPage(1);
   };
 
   const handleClearFilters = () => {
@@ -174,7 +181,7 @@ const BlogListPage = () => {
     if (
       pageNumber < 1 ||
       pageNumber > totalPages ||
-      pageNumber === currentPage
+      pageNumber === safeCurrentPage
     ) {
       return;
     }
@@ -211,9 +218,9 @@ const BlogListPage = () => {
         selectedCategory={selectedCategory}
         selectedStatus={selectedStatus}
         categories={categories}
-        onSearchChange={setSearchTerm}
-        onCategoryChange={setSelectedCategory}
-        onStatusChange={setSelectedStatus}
+        onSearchChange={handleSearchChange}
+        onCategoryChange={handleCategoryChange}
+        onStatusChange={handleStatusChange}
         onClearFilters={handleClearFilters}
       />
 
@@ -263,7 +270,7 @@ const BlogListPage = () => {
 
             {totalPages > 1 && (
               <small className="text-muted">
-                Sayfa {currentPage} / {totalPages}
+                Sayfa {safeCurrentPage} / {totalPages}
               </small>
             )}
           </div>
@@ -271,7 +278,7 @@ const BlogListPage = () => {
           <BlogTable blogs={paginatedBlogs} onDelete={handleDeleteRequest} />
 
           <Pagination
-            currentPage={currentPage}
+            currentPage={safeCurrentPage}
             totalPages={totalPages}
             onPageChange={handlePageChange}
             ariaLabel="Blog sayfalama"

@@ -1,3 +1,5 @@
+import { Link } from "react-router-dom";
+
 const statistics = [
   {
     title: "Toplam Blog",
@@ -31,15 +33,16 @@ function DashboardPage() {
       <div className="d-flex flex-wrap align-items-center justify-content-between gap-3 mb-4">
         <div>
           <h2 className="h3 fw-bold mb-1">Dashboard</h2>
+
           <p className="text-secondary mb-0">
             Sistem durumunu ve son hareketleri buradan takip edin.
           </p>
         </div>
 
-        <button className="btn btn-primary" type="button">
-          <i className="bi bi-plus-lg me-2" />
+        <Link to="/admin/blog/yeni" className="btn btn-primary">
+          <i className="bi bi-plus-lg me-2" aria-hidden="true" />
           Yeni İçerik
-        </button>
+        </Link>
       </div>
 
       <div className="row g-4">
@@ -47,7 +50,7 @@ function DashboardPage() {
           <div className="col-12 col-sm-6 col-xl-3" key={item.title}>
             <article className="dashboard-card">
               <div className="dashboard-card__icon">
-                <i className={`bi ${item.icon}`} />
+                <i className={`bi ${item.icon}`} aria-hidden="true" />
               </div>
 
               <div>
@@ -66,17 +69,18 @@ function DashboardPage() {
             <div className="d-flex justify-content-between align-items-center mb-4">
               <div>
                 <h3 className="h5 fw-bold mb-1">Son İçerikler</h3>
+
                 <p className="text-secondary mb-0">
                   Yakın zamanda eklenen içerikler
                 </p>
               </div>
 
-              <button
+              <Link
+                to="/admin/blog"
                 className="btn btn-sm btn-outline-secondary"
-                type="button"
               >
                 Tümünü Gör
-              </button>
+              </Link>
             </div>
 
             <div className="table-responsive">
@@ -128,20 +132,32 @@ function DashboardPage() {
             <h3 className="h5 fw-bold mb-4">Hızlı İşlemler</h3>
 
             <div className="d-grid gap-3">
-              <button className="btn btn-outline-dark text-start" type="button">
-                <i className="bi bi-file-earmark-plus me-2" />
+              <Link
+                to="/admin/blog/yeni"
+                className="btn btn-outline-dark text-start"
+              >
+                <i
+                  className="bi bi-file-earmark-plus me-2"
+                  aria-hidden="true"
+                />
                 Yeni blog yazısı ekle
-              </button>
+              </Link>
 
-              <button className="btn btn-outline-dark text-start" type="button">
-                <i className="bi bi-folder-plus me-2" />
+              <Link
+                to="/admin/projeler"
+                className="btn btn-outline-dark text-start"
+              >
+                <i className="bi bi-folder-plus me-2" aria-hidden="true" />
                 Yeni proje ekle
-              </button>
+              </Link>
 
-              <button className="btn btn-outline-dark text-start" type="button">
-                <i className="bi bi-envelope-open me-2" />
+              <Link
+                to="/admin/mesajlar"
+                className="btn btn-outline-dark text-start"
+              >
+                <i className="bi bi-envelope-open me-2" aria-hidden="true" />
                 Mesajları görüntüle
-              </button>
+              </Link>
             </div>
           </section>
         </div>

@@ -1,11 +1,10 @@
 import { useEffect, useState } from "react";
-import { useForm } from "react-hook-form";
+import { useForm, useWatch } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
 import toast from "react-hot-toast";
 
 import { FormActions, FormInput, FormSelect, FormTextarea } from "../../form";
-
 import { ImageUploader } from "../../ui";
 
 const blogCategories = [
@@ -110,14 +109,13 @@ const BlogForm = ({
   isSubmitting = false,
   submitButtonText = "Kaydet",
 }) => {
-  const [imagePreview, setImagePreview] = useState("");
   const [imageUploaderError, setImageUploaderError] = useState("");
 
   const {
     register,
     handleSubmit,
     reset,
-    watch,
+    control,
     setValue,
     clearErrors,
     trigger,
@@ -129,21 +127,30 @@ const BlogForm = ({
   });
 
   useEffect(() => {
-    const initialCoverImage = initialValues?.coverImage || "";
-
     reset({
       ...defaultValues,
       ...initialValues,
-      coverImage: initialCoverImage,
+      coverImage: initialValues?.coverImage || "",
     });
-
-    setImagePreview(initialCoverImage);
-    setImageUploaderError("");
   }, [initialValues, reset]);
 
-  const summary = watch("summary") || "";
-  const content = watch("content") || "";
-  const coverImage = watch("coverImage") || "";
+  const summary =
+    useWatch({
+      control,
+      name: "summary",
+    }) || "";
+
+  const content =
+    useWatch({
+      control,
+      name: "content",
+    }) || "";
+
+  const coverImage =
+    useWatch({
+      control,
+      name: "coverImage",
+    }) || "";
 
   const handleImageUploadChange = ({ value, error = "" }) => {
     if (error) {
@@ -154,7 +161,6 @@ const BlogForm = ({
 
     const normalizedValue = typeof value === "string" ? value : "";
 
-    setImagePreview(normalizedValue);
     setImageUploaderError("");
 
     setValue("coverImage", normalizedValue, {
@@ -173,7 +179,6 @@ const BlogForm = ({
   const handleImageUrlChange = async (event) => {
     const imageUrl = event.target.value;
 
-    setImagePreview(imageUrl);
     setImageUploaderError("");
 
     setValue("coverImage", imageUrl, {
@@ -195,7 +200,6 @@ const BlogForm = ({
   };
 
   const handleRemoveImage = () => {
-    setImagePreview("");
     setImageUploaderError("");
 
     setValue("coverImage", "", {
@@ -322,9 +326,7 @@ const BlogForm = ({
               <ImageUploader
                 id="blogCoverImageFile"
                 label="Bilgisayardan Görsel Seç"
-                value={
-                  imagePreview.startsWith("data:image/") ? imagePreview : ""
-                }
+                value={coverImage.startsWith("data:image/") ? coverImage : ""}
                 maxSizeMb={2}
                 previewHeight="190px"
                 helperText="JPG, PNG veya WEBP formatı. En fazla 2 MB."
@@ -352,8 +354,8 @@ const BlogForm = ({
                 onBlur={handleImageUrlBlur}
               />
 
-              {imagePreview &&
-                !imagePreview.startsWith("data:image/") &&
+              {coverImage &&
+                !coverImage.startsWith("data:image/") &&
                 !errors.coverImage && (
                   <div className="mt-4">
                     <div className="d-flex justify-content-between align-items-center mb-2">
@@ -371,7 +373,7 @@ const BlogForm = ({
                     </div>
 
                     <img
-                      src={imagePreview}
+                      src={coverImage}
                       alt="Blog kapak ön izlemesi"
                       className="img-fluid rounded border"
                       style={{

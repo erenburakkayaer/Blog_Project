@@ -4,7 +4,7 @@ import { useForm } from "react-hook-form";
 import toast from "react-hot-toast";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import * as yup from "yup";
-import { useAuth } from "../../../context/AuthContext";
+import useAuth from "../../../hooks/useAuth";
 
 const loginSchema = yup.object({
   email: yup
