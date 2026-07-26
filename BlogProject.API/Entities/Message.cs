@@ -11,6 +11,8 @@ namespace BlogProject.API.Entities
         public string Content { get; set; } = string.Empty;
 
         public bool IsRead { get; set; }
+        public bool IsImportant { get; set; }
+        public bool IsArchived { get; set; }
         public DateTime CreatedAt { get; set; }
     }
 }
