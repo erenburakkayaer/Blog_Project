@@ -1,0 +1,71 @@
+{
+  "Version": 1,
+  "WorkspaceRootPath": "C:\\Users\\mehdi\\OneDrive\\Desktop\\\u00FCni dersler\\staj\\Blog_Project\\Staj_proje\\",
+  "Documents": [
+    {
+      "AbsoluteMoniker": "D:0:0:{697DB718-9FBF-DEE0-6899-FB9EE54E992D}|Staj_proje\\Staj_proje.csproj|c:\\users\\mehdi\\onedrive\\desktop\\\u00FCni dersler\\staj\\blog_project\\staj_proje\\staj_proje\\entities\\page.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{697DB718-9FBF-DEE0-6899-FB9EE54E992D}|Staj_proje\\Staj_proje.csproj|solutionrelative:staj_proje\\entities\\page.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{697DB718-9FBF-DEE0-6899-FB9EE54E992D}|Staj_proje\\Staj_proje.csproj|c:\\users\\mehdi\\onedrive\\desktop\\\u00FCni dersler\\staj\\blog_project\\staj_proje\\staj_proje\\entities\\offer.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{697DB718-9FBF-DEE0-6899-FB9EE54E992D}|Staj_proje\\Staj_proje.csproj|solutionrelative:staj_proje\\entities\\offer.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{697DB718-9FBF-DEE0-6899-FB9EE54E992D}|Staj_proje\\Staj_proje.csproj|c:\\users\\mehdi\\onedrive\\desktop\\\u00FCni dersler\\staj\\blog_project\\staj_proje\\staj_proje\\entities\\company.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{697DB718-9FBF-DEE0-6899-FB9EE54E992D}|Staj_proje\\Staj_proje.csproj|solutionrelative:staj_proje\\entities\\company.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    }
+  ],
+  "DocumentGroupContainers": [
+    {
+      "Orientation": 0,
+      "VerticalTabListWidth": 256,
+      "DocumentGroups": [
+        {
+          "DockedWidth": 200,
+          "SelectedChildIndex": 0,
+          "Children": [
+            {
+              "$type": "Document",
+              "DocumentIndex": 0,
+              "Title": "Page.cs",
+              "DocumentMoniker": "C:\\Users\\mehdi\\OneDrive\\Desktop\\\u00FCni dersler\\staj\\Blog_Project\\Staj_proje\\Staj_proje\\Entities\\Page.cs",
+              "RelativeDocumentMoniker": "Staj_proje\\Entities\\Page.cs",
+              "ToolTip": "C:\\Users\\mehdi\\OneDrive\\Desktop\\\u00FCni dersler\\staj\\Blog_Project\\Staj_proje\\Staj_proje\\Entities\\Page.cs",
+              "RelativeToolTip": "Staj_proje\\Entities\\Page.cs",
+              "ViewState": "AgIAABkAAAAAAAAAAAAywAsAAAAiAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-07-25T22:22:47.16Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 2,
+              "Title": "Company.cs",
+              "DocumentMoniker": "C:\\Users\\mehdi\\OneDrive\\Desktop\\\u00FCni dersler\\staj\\Blog_Project\\Staj_proje\\Staj_proje\\Entities\\Company.cs",
+              "RelativeDocumentMoniker": "Staj_proje\\Entities\\Company.cs",
+              "ToolTip": "C:\\Users\\mehdi\\OneDrive\\Desktop\\\u00FCni dersler\\staj\\Blog_Project\\Staj_proje\\Staj_proje\\Entities\\Company.cs",
+              "RelativeToolTip": "Staj_proje\\Entities\\Company.cs",
+              "ViewState": "AgIAAAsAAAAAAAAAAAAiwBQAAABSAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-07-25T22:22:10.715Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 1,
+              "Title": "Offer.cs",
+              "DocumentMoniker": "C:\\Users\\mehdi\\OneDrive\\Desktop\\\u00FCni dersler\\staj\\Blog_Project\\Staj_proje\\Staj_proje\\Entities\\Offer.cs",
+              "RelativeDocumentMoniker": "Staj_proje\\Entities\\Offer.cs",
+              "ToolTip": "C:\\Users\\mehdi\\OneDrive\\Desktop\\\u00FCni dersler\\staj\\Blog_Project\\Staj_proje\\Staj_proje\\Entities\\Offer.cs",
+              "RelativeToolTip": "Staj_proje\\Entities\\Offer.cs",
+              "ViewState": "AgIAAAIAAAAAAAAAAAA1wDkAAAAFAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-07-25T22:19:26.946Z",
+              "EditorCaption": ""
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
