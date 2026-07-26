@@ -1,0 +1,116 @@
+FRONTEND DURUM RAPORU (Backend Ekibi İçin)
+
+Proje Bilgisi
+
+-   Frontend: React + Vite
+-   React Router
+-   Bootstrap
+-   Bootstrap Icons
+-   Recharts
+-   React Hot Toast
+
+Branch: frontend/samet Son Commit: 7b4a7e4
+
+Tamamlanan Modüller
+
+Admin Layout
+
+-   Responsive Sidebar
+-   Header
+-   İçerik Alanı
+
+Blog Yönetimi
+
+-   Listeleme
+-   Yeni Blog
+-   Düzenleme
+-   blogService.js
+
+Proje Yönetimi
+
+-   Listeleme
+-   Yeni Proje
+-   Düzenleme
+-   projectService.js
+
+Premium Dashboard
+
+-   Welcome Hero
+-   İstatistik Kartları
+-   Blog / Proje Grafikleri
+-   Yayın Durumu Grafiği
+-   Son İçerikler
+-   Son Aktiviteler
+-   Hızlı İşlemler
+-   Responsive
+-   Skeleton Loading
+
+Dashboard Bileşenleri - DashboardActivity.jsx - DashboardCharts.jsx -
+DashboardSkeleton.jsx - DashboardStatCard.jsx - DashboardWelcome.jsx
+
+Dashboard Sayfası src/pages/admin/Dashboard/DashboardPage.jsx
+
+CSS src/assets/styles/global.css
+
+Dashboard Şu Anda Nasıl Çalışıyor?
+
+Kullanılan servisler:
+
+-   blogService.getAll()
+-   projectService.getAll()
+
+Frontend bu verileri kullanarak bütün istatistikleri ve grafikleri
+oluşturuyor.
+
+Backend Tarafında Hazırlanacak API’ler
+
+Blog GET /api/admin/blogs GET /api/admin/blogs/{id} POST
+/api/admin/blogs PUT /api/admin/blogs/{id} DELETE /api/admin/blogs/{id}
+
+Project GET /api/admin/projects GET /api/admin/projects/{id} POST
+/api/admin/projects PUT /api/admin/projects/{id} DELETE
+/api/admin/projects/{id}
+
+Dashboard GET /api/admin/dashboard/summary GET
+/api/admin/dashboard/recent-contents GET /api/admin/dashboard/activities
+
+Model Alanları
+
+Blog - id - title - status - createdAt - updatedAt
+
+Project - id - title - status - featured - createdAt - updatedAt
+
+Status: published draft archived active completed
+
+Tarih: ISO 8601 UTC Örnek: 2026-07-26T18:30:00Z
+
+Backend’in Değiştirmemesi Gereken Dosyalar
+
+frontend/src/pages/admin/Dashboard/DashboardPage.jsx
+frontend/src/components/admin/dashboard/
+frontend/src/assets/styles/global.css
+
+Backend Hazır Olduğunda
+
+Frontend sadece şu servisleri API’ye bağlayacak:
+
+-   src/services/blogService.js
+-   src/services/projectService.js
+
+Gerekirse:
+
+-   src/services/dashboardService.js
+
+Sonraki Frontend Modülü
+
+Mesaj Yönetim Sistemi
+
+-   Listeleme
+-   Detay
+-   Okundu/Okunmadı
+-   Önemli
+-   Arşiv
+-   Silme
+-   Arama
+-   Filtreleme
+-   Dashboard entegrasyonu
