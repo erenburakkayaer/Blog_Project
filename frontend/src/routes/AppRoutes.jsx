@@ -9,9 +9,14 @@ import ProtectedRoute from "./ProtectedRoute";
 import PlaceholderPage from "../components/common/PlaceholderPage";
 
 import DashboardPage from "../pages/admin/Dashboard/DashboardPage";
+
 import BlogListPage from "../pages/admin/Blog/BlogListPage";
 import BlogCreatePage from "../pages/admin/Blog/BlogCreatePage";
 import BlogEditPage from "../pages/admin/Blog/BlogEditPage";
+
+import ProjectListPage from "../pages/admin/Projects/ProjectListPage";
+import ProjectCreatePage from "../pages/admin/Projects/ProjectCreatePage";
+import ProjectEditPage from "../pages/admin/Projects/ProjectEditPage";
 
 import LoginPage from "../pages/auth/Login/LoginPage";
 
@@ -53,13 +58,15 @@ const router = createBrowserRouter([
           },
           {
             path: "projeler",
-            element: (
-              <PlaceholderPage
-                eyebrow="Admin"
-                title="Proje Yönetimi"
-                description="Proje içeriklerini görüntüleyin, ekleyin ve düzenleyin."
-              />
-            ),
+            element: <ProjectListPage />,
+          },
+          {
+            path: "projeler/yeni",
+            element: <ProjectCreatePage />,
+          },
+          {
+            path: "projeler/:projectId/duzenle",
+            element: <ProjectEditPage />,
           },
           {
             path: "hizmetler",

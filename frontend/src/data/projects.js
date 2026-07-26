@@ -1,0 +1,88 @@
+const projects = [
+  {
+    id: "project-1",
+    title: "Kurumsal Web Platformu",
+    slug: "kurumsal-web-platformu",
+    category: "Web",
+    client: "Nova Teknoloji",
+    status: "published",
+    featured: true,
+    coverImage: "https://images.unsplash.com/photo-1460925895917-afdab827c52f",
+    summary:
+      "Kurumsal ihtiyaçlara özel, hızlı ve ölçeklenebilir web platformu.",
+    description:
+      "Modern kullanıcı deneyimi, içerik yönetimi ve performans odaklı geliştirilen kurumsal web projesi.",
+    technologies: ["React", "ASP.NET Core", "PostgreSQL"],
+    projectUrl: "https://example.com",
+    repositoryUrl: "",
+    startDate: "2026-01-10",
+    endDate: "2026-04-22",
+    createdAt: "2026-04-22T10:30:00.000Z",
+    updatedAt: "2026-04-22T10:30:00.000Z",
+  },
+  {
+    id: "project-2",
+    title: "Yapay Zekâ Destekli Müşteri Asistanı",
+    slug: "yapay-zeka-destekli-musteri-asistani",
+    category: "Yapay Zekâ",
+    client: "TechNova",
+    status: "published",
+    featured: true,
+    coverImage: "https://images.unsplash.com/photo-1677442136019-21780ecad995",
+    summary:
+      "Müşteri taleplerini otomatik yanıtlayan yapay zekâ destekli asistan.",
+    description:
+      "Doğal dil işleme tabanlı, müşteri taleplerini sınıflandıran ve uygun yanıtlar oluşturan yapay zekâ çözümü.",
+    technologies: ["Python", "FastAPI", "React"],
+    projectUrl: "",
+    repositoryUrl: "",
+    startDate: "2026-02-01",
+    endDate: "",
+    createdAt: "2026-05-08T12:15:00.000Z",
+    updatedAt: "2026-05-08T12:15:00.000Z",
+  },
+  {
+    id: "project-3",
+    title: "Mobil Saha Yönetim Uygulaması",
+    slug: "mobil-saha-yonetim-uygulamasi",
+    category: "Mobil",
+    client: "Atlas Lojistik",
+    status: "draft",
+    featured: false,
+    coverImage: "https://images.unsplash.com/photo-1512941937669-90a1b58e7e9c",
+    summary:
+      "Saha ekiplerinin görevlerini mobil cihazlardan yönetmesini sağlayan uygulama.",
+    description:
+      "Görev atama, konum takibi, bildirim ve raporlama özellikleri sunan mobil saha yönetim sistemi.",
+    technologies: ["React Native", "Node.js", "MongoDB"],
+    projectUrl: "",
+    repositoryUrl: "",
+    startDate: "2026-03-15",
+    endDate: "",
+    createdAt: "2026-06-14T09:45:00.000Z",
+    updatedAt: "2026-06-14T09:45:00.000Z",
+  },
+  {
+    id: "project-4",
+    title: "Siber Güvenlik İzleme Paneli",
+    slug: "siber-guvenlik-izleme-paneli",
+    category: "Siber Güvenlik",
+    client: "SecureWorks",
+    status: "published",
+    featured: false,
+    coverImage: "https://images.unsplash.com/photo-1563013544-824ae1b704d3",
+    summary:
+      "Güvenlik olaylarını gerçek zamanlı takip eden merkezi izleme paneli.",
+    description:
+      "Log analizi, tehdit tespiti ve olay raporlama özelliklerine sahip güvenlik operasyon paneli.",
+    technologies: ["React", "FastAPI", "Elasticsearch"],
+    projectUrl: "",
+    repositoryUrl: "",
+    startDate: "2025-11-20",
+    endDate: "2026-03-30",
+    createdAt: "2026-03-30T16:20:00.000Z",
+    updatedAt: "2026-03-30T16:20:00.000Z",
+  },
+];
+
+export default projects;
