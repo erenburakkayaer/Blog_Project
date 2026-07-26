@@ -5,8 +5,9 @@ namespace BlogProject.API.Entities
         public int Id { get; set; }
         public string Title { get; set; } = string.Empty;
         public string Slug { get; set; } = string.Empty;
+        public string Summary { get; set; } = string.Empty;
         public string Content { get; set; } = string.Empty;
-        public string? CoverImageUrl { get; set; }
+        public string? CoverImage { get; set; }
 
         public int AuthorId { get; set; }
         public User? Author { get; set; }
@@ -14,7 +15,7 @@ namespace BlogProject.API.Entities
         public int? CategoryId { get; set; }
         public Category? Category { get; set; }
 
-        public bool IsPublished { get; set; }
+        public string Status { get; set; } = "draft"; // "draft" | "published"
         public int ViewCount { get; set; }
 
         public DateTime CreatedAt { get; set; }

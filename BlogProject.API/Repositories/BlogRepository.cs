@@ -13,7 +13,7 @@ namespace BlogProject.API.Repositories
             await _dbSet.FirstOrDefaultAsync(b => b.Slug == slug);
 
         public async Task<IEnumerable<Blog>> GetPublishedAsync() =>
-            await _dbSet.Where(b => b.IsPublished).ToListAsync();
+            await _dbSet.Where(b => b.Status == "published").ToListAsync();
 
         public override async Task<IEnumerable<Blog>> GetAllAsync() =>
             await _dbSet.Include(b => b.Author).Include(b => b.Category).ToListAsync();

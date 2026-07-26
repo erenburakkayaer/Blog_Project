@@ -9,9 +9,17 @@ namespace BlogProject.API.Helpers
         public MappingProfile()
         {
             CreateMap<Blog, BlogDto>()
-                .ForMember(dest => dest.CategoryName, opt => opt.MapFrom(src => src.Category != null ? src.Category.Name : null));
-            CreateMap<BlogCreateDto, Blog>();
-            CreateMap<BlogUpdateDto, Blog>();
+                .ForMember(dest => dest.Author, opt => opt.MapFrom(src => src.Author != null ? src.Author.Username : string.Empty))
+                .ForMember(dest => dest.Category, opt => opt.MapFrom(src => src.Category != null ? src.Category.Name : null));
+            // AuthorId/CategoryId servis tarafında (BlogService) elle atanıyor — AutoMapper burada karışmasın.
+            // dest.Category (navigation) ile dto.Category (string) isim çakışması olduğu için o da yok sayılıyor.
+            CreateMap<BlogCreateDto, Blog>()
+                .ForMember(dest => dest.AuthorId, opt => opt.Ignore())
+                .ForMember(dest => dest.CategoryId, opt => opt.Ignore())
+                .ForMember(dest => dest.Category, opt => opt.Ignore());
+            CreateMap<BlogUpdateDto, Blog>()
+                .ForMember(dest => dest.CategoryId, opt => opt.Ignore())
+                .ForMember(dest => dest.Category, opt => opt.Ignore());
 
             CreateMap<User, UserDto>()
                 .ForMember(dest => dest.RoleName, opt => opt.MapFrom(src => src.Role != null ? src.Role.Name : null));
@@ -21,12 +29,20 @@ namespace BlogProject.API.Helpers
             CreateMap<Role, RoleDto>();
             CreateMap<RoleCreateDto, Role>();
 
+            CreateMap<Project, ProjectDto>()
+                .ForMember(dest => dest.Category, opt => opt.MapFrom(src => src.Category != null ? src.Category.Name : null));
+            CreateMap<ProjectCreateDto, Project>()
+                .ForMember(dest => dest.CategoryId, opt => opt.Ignore())
+                .ForMember(dest => dest.Category, opt => opt.Ignore());
+            CreateMap<ProjectUpdateDto, Project>()
+                .ForMember(dest => dest.CategoryId, opt => opt.Ignore())
+                .ForMember(dest => dest.Category, opt => opt.Ignore());
+
             // Tek DTO'nun hem giriş hem çıkış için kullanıldığı basit içerik modülleri
             CreateMap<Category, CategoryDto>().ReverseMap();
             CreateMap<Page, PageDto>().ReverseMap();
             CreateMap<Slider, SliderDto>().ReverseMap();
             CreateMap<CompanyService, CompanyServiceDto>().ReverseMap();
-            CreateMap<Project, ProjectDto>().ReverseMap();
             CreateMap<ProjectImage, ProjectImageDto>().ReverseMap();
             CreateMap<Reference, ReferenceDto>().ReverseMap();
             CreateMap<Career, CareerDto>().ReverseMap();

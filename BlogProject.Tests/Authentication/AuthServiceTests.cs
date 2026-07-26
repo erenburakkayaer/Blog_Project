@@ -51,7 +51,7 @@ namespace BlogProject.Tests.Authentication
             var result = await authService.LoginAsync(new LoginDto { Username = "admin", Password = "Admin123!" });
 
             Assert.NotNull(result);
-            Assert.False(string.IsNullOrWhiteSpace(result!.Token));
+            Assert.False(string.IsNullOrWhiteSpace(result!.AccessToken));
             Assert.False(string.IsNullOrWhiteSpace(result.RefreshToken));
         }
 

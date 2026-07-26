@@ -75,7 +75,7 @@ namespace BlogProject.API.Authentication
 
             return new LoginResponseDto
             {
-                Token = accessToken,
+                AccessToken = accessToken,
                 ExpiresAt = expiresAt,
                 RefreshToken = refreshTokenValue,
                 User = _mapper.Map<UserDto>(user)

@@ -60,6 +60,9 @@ builder.Services.AddDbContext<AppDbContext>(options =>
 builder.Services.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepository<>));
 builder.Services.AddScoped<IBlogRepository, BlogRepository>();
 builder.Services.AddScoped<IBlogService, BlogService>();
+// ProjectRepository, Category Include'lı sorgular için IGenericRepository<Project>'i override eder
+builder.Services.AddScoped<IGenericRepository<Project>, ProjectRepository>();
+builder.Services.AddScoped<IProjectService, ProjectService>();
 builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IRoleService, RoleService>();
@@ -79,8 +82,6 @@ builder.Services.AddScoped<IGenericCrudService<SliderDto, SliderDto, SliderDto>,
     GenericCrudService<Slider, SliderDto, SliderDto, SliderDto>>();
 builder.Services.AddScoped<IGenericCrudService<CompanyServiceDto, CompanyServiceDto, CompanyServiceDto>,
     GenericCrudService<CompanyService, CompanyServiceDto, CompanyServiceDto, CompanyServiceDto>>();
-builder.Services.AddScoped<IGenericCrudService<ProjectDto, ProjectDto, ProjectDto>,
-    GenericCrudService<Project, ProjectDto, ProjectDto, ProjectDto>>();
 builder.Services.AddScoped<IGenericCrudService<ProjectImageDto, ProjectImageDto, ProjectImageDto>,
     GenericCrudService<ProjectImage, ProjectImageDto, ProjectImageDto, ProjectImageDto>>();
 builder.Services.AddScoped<IGenericCrudService<ReferenceDto, ReferenceDto, ReferenceDto>,

@@ -1,19 +1,22 @@
 using AutoMapper;
 using BlogProject.API.DTO;
 using BlogProject.API.Entities;
+using BlogProject.API.Helpers;
 using BlogProject.API.Interfaces;
 
 namespace BlogProject.API.Services
 {
-    // İş kuralları burada: slug üretimi, yayın tarihi ataması vb.
+    // İş kuralları burada: slug üretimi, kategori adını çözümleme/oluşturma, yayın tarihi ataması vb.
     public class BlogService : IBlogService
     {
         private readonly IBlogRepository _blogRepository;
+        private readonly IGenericRepository<Category> _categoryRepository;
         private readonly IMapper _mapper;
 
-        public BlogService(IBlogRepository blogRepository, IMapper mapper)
+        public BlogService(IBlogRepository blogRepository, IGenericRepository<Category> categoryRepository, IMapper mapper)
         {
             _blogRepository = blogRepository;
+            _categoryRepository = categoryRepository;
             _mapper = mapper;
         }
 
@@ -48,17 +51,22 @@ namespace BlogProject.API.Services
             return _mapper.Map<BlogDto>(blog);
         }
 
-        public async Task<BlogDto> CreateAsync(BlogCreateDto dto)
+        public async Task<BlogDto> CreateAsync(BlogCreateDto dto, int authorId)
         {
             var blog = _mapper.Map<Blog>(dto);
-            blog.Slug = GenerateSlug(dto.Title);
+            blog.AuthorId = authorId;
+            blog.CategoryId = await ResolveCategoryIdAsync(dto.Category);
+            blog.Slug = SlugGenerator.Generate(dto.Title);
             blog.CreatedAt = DateTime.UtcNow;
-            blog.IsPublished = false;
+
+            if (blog.Status == "published")
+                blog.PublishedAt = DateTime.UtcNow;
 
             await _blogRepository.AddAsync(blog);
             await _blogRepository.SaveChangesAsync();
 
-            return _mapper.Map<BlogDto>(blog);
+            var saved = await _blogRepository.GetByIdAsync(blog.Id);
+            return _mapper.Map<BlogDto>(saved);
         }
 
         public async Task<bool> UpdateAsync(int id, BlogUpdateDto dto)
@@ -66,10 +74,16 @@ namespace BlogProject.API.Services
             var blog = await _blogRepository.GetByIdAsync(id);
             if (blog is null) return false;
 
-            var wasPublished = blog.IsPublished;
-            _mapper.Map(dto, blog);
+            var wasPublished = blog.Status == "published";
 
-            if (dto.IsPublished && !wasPublished)
+            blog.Title = dto.Title;
+            blog.Summary = dto.Summary;
+            blog.Content = dto.Content;
+            blog.CoverImage = dto.CoverImage;
+            blog.Status = dto.Status;
+            blog.CategoryId = await ResolveCategoryIdAsync(dto.Category);
+
+            if (dto.Status == "published" && !wasPublished)
                 blog.PublishedAt = DateTime.UtcNow;
 
             blog.UpdatedAt = DateTime.UtcNow;
@@ -87,7 +101,21 @@ namespace BlogProject.API.Services
             return await _blogRepository.SaveChangesAsync();
         }
 
-        private static string GenerateSlug(string title) =>
-            title.Trim().ToLowerInvariant().Replace(" ", "-");
+        // Frontend'in (Samet) sabit kategori listesi serbest metin geliyor — DB'de eşleşen
+        // Category yoksa otomatik oluşturulur, varsa mevcut Id kullanılır
+        private async Task<int> ResolveCategoryIdAsync(string categoryName)
+        {
+            var categories = await _categoryRepository.GetAllAsync();
+            var existing = categories.FirstOrDefault(c =>
+                c.Type == "Blog" && c.Name.Equals(categoryName, StringComparison.OrdinalIgnoreCase));
+
+            if (existing is not null) return existing.Id;
+
+            var category = new Category { Name = categoryName, Slug = SlugGenerator.Generate(categoryName), Type = "Blog" };
+            await _categoryRepository.AddAsync(category);
+            await _categoryRepository.SaveChangesAsync();
+
+            return category.Id;
+        }
     }
 }

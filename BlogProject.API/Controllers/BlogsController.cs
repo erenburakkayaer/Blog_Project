@@ -1,3 +1,4 @@
+using System.Security.Claims;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using BlogProject.API.DTO;
@@ -35,7 +36,9 @@ namespace BlogProject.API.Controllers
         [Authorize]
         public async Task<ActionResult<BlogDto>> Create(BlogCreateDto dto)
         {
-            var created = await _blogService.CreateAsync(dto);
+            // Yazar her zaman giriş yapan kullanıcıdan alınır — client AuthorId set edemez
+            var authorId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
+            var created = await _blogService.CreateAsync(dto, authorId);
             return CreatedAtAction(nameof(GetById), new { id = created.Id }, created);
         }
 

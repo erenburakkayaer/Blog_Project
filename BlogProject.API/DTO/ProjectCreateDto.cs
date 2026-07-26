@@ -1,18 +1,26 @@
-namespace BlogProject.API.Entities
+using System.ComponentModel.DataAnnotations;
+
+namespace BlogProject.API.DTO
 {
-    public class Project
+    public class ProjectCreateDto
     {
-        public int Id { get; set; }
+        [Required, MaxLength(120)]
         public string Title { get; set; } = string.Empty;
-        public string Slug { get; set; } = string.Empty;
+
+        [Required, MaxLength(250)]
         public string Summary { get; set; } = string.Empty;
+
+        [Required]
         public string Description { get; set; } = string.Empty;
+
+        [Required, MaxLength(100)]
         public string Client { get; set; } = string.Empty;
 
-        public int? CategoryId { get; set; }
-        public Category? Category { get; set; }
+        [Required]
+        public string Category { get; set; } = string.Empty;
 
         public List<string> Technologies { get; set; } = new();
+
         public string? CoverImage { get; set; }
         public string? ProjectUrl { get; set; }
         public string? RepositoryUrl { get; set; }
@@ -20,12 +28,7 @@ namespace BlogProject.API.Entities
         public DateTime? StartDate { get; set; }
         public DateTime? EndDate { get; set; }
 
-        public string Status { get; set; } = "draft"; // "draft" | "published"
+        public string Status { get; set; } = "draft";
         public bool Featured { get; set; }
-
-        public DateTime CreatedAt { get; set; }
-        public DateTime? UpdatedAt { get; set; }
-
-        public ICollection<ProjectImage> Images { get; set; } = new List<ProjectImage>();
     }
 }
