@@ -103,8 +103,9 @@ builder.Services.AddScoped<ICommentRepository, CommentRepository>();
 builder.Services.AddScoped<ICommentService, CommentService>();
 
 // Ziyaretçi formu olan modüller — Create/Update DTO'ları ayrı (hassas alanları dışarıda tutmak için)
-builder.Services.AddScoped<IGenericCrudService<MessageDto, MessageCreateDto, MessageUpdateDto>,
-    GenericCrudService<Message, MessageDto, MessageCreateDto, MessageUpdateDto>>();
+// Message: okundu/önemli/arşiv filtreleme iş kuralı olduğu için özel repository/servisi var
+builder.Services.AddScoped<IMessageRepository, MessageRepository>();
+builder.Services.AddScoped<IMessageService, MessageService>();
 builder.Services.AddScoped<IGenericCrudService<OfferDto, OfferCreateDto, OfferUpdateDto>,
     GenericCrudService<Offer, OfferDto, OfferCreateDto, OfferUpdateDto>>();
 builder.Services.AddScoped<IGenericCrudService<ApplicationDto, ApplicationCreateDto, ApplicationUpdateDto>,

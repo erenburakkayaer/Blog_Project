@@ -5,27 +5,33 @@ using BlogProject.API.Interfaces;
 
 namespace BlogProject.API.Controllers
 {
-    // İletişim formu — ziyaretçi mesaj gönderebilir (POST anonim); okuma personelde
+    // İletişim formu — ziyaretçi mesaj gönderebilir (POST anonim); okuma/filtreleme personelde
     [ApiController]
     [Route("api/[controller]")]
     [Authorize]
     public class MessagesController : ControllerBase
     {
-        private readonly IGenericCrudService<MessageDto, MessageCreateDto, MessageUpdateDto> _service;
+        private readonly IMessageService _messageService;
 
-        public MessagesController(IGenericCrudService<MessageDto, MessageCreateDto, MessageUpdateDto> service)
+        public MessagesController(IMessageService messageService)
         {
-            _service = service;
+            _messageService = messageService;
         }
 
         [HttpGet]
-        public async Task<ActionResult<PagedResultDto<MessageDto>>> GetAll([FromQuery] int page = 1, [FromQuery] int pageSize = 20, [FromQuery] string? search = null) =>
-            Ok(await _service.GetPagedAsync(page, pageSize, search));
+        public async Task<ActionResult<PagedResultDto<MessageDto>>> GetAll(
+            [FromQuery] int page = 1,
+            [FromQuery] int pageSize = 20,
+            [FromQuery] string? search = null,
+            [FromQuery] bool? isRead = null,
+            [FromQuery] bool? isImportant = null,
+            [FromQuery] bool? isArchived = null) =>
+            Ok(await _messageService.GetFilteredPagedAsync(page, pageSize, search, isRead, isImportant, isArchived));
 
         [HttpGet("{id:int}")]
         public async Task<ActionResult<MessageDto>> GetById(int id)
         {
-            var item = await _service.GetByIdAsync(id);
+            var item = await _messageService.GetByIdAsync(id);
             return item is null ? NotFound() : Ok(item);
         }
 
@@ -33,16 +39,16 @@ namespace BlogProject.API.Controllers
         [AllowAnonymous]
         public async Task<ActionResult<MessageDto>> Create(MessageCreateDto dto)
         {
-            var created = await _service.CreateAsync(dto);
+            var created = await _messageService.CreateAsync(dto);
             return CreatedAtAction(nameof(GetById), new { id = created.Id }, created);
         }
 
         [HttpPut("{id:int}")]
         public async Task<IActionResult> Update(int id, MessageUpdateDto dto) =>
-            await _service.UpdateAsync(id, dto) ? NoContent() : NotFound();
+            await _messageService.UpdateAsync(id, dto) ? NoContent() : NotFound();
 
         [HttpDelete("{id:int}")]
         public async Task<IActionResult> Delete(int id) =>
-            await _service.DeleteAsync(id) ? NoContent() : NotFound();
+            await _messageService.DeleteAsync(id) ? NoContent() : NotFound();
     }
 }
