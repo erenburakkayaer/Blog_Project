@@ -1,5 +1,7 @@
 # Blog_Project — Backend (BlogProject.API)
 
+*[Read in English](README.en.md)*
+
 Kurumsal Web Sitesi & İçerik Yönetim Sistemi (CMS) — backend tarafı.
 ASP.NET Core Web API, .NET 10, SQL Server (Code-First / EF Core), N-Tier (katmanlı) mimari.
 
