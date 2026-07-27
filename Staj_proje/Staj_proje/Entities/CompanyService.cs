@@ -2,6 +2,7 @@
 {
     public class CompanyService
     {
+        public int Id { get; set; }
         public int CompanyId { get; set; }
         public Company Company { get; set; } = null!;
 
@@ -15,5 +16,8 @@
         // Durum ve Öne Çıkarma
         public bool IsActive { get; set; } = true;
         public bool IsFeatured { get; set; } = false;
+        public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
+
+        public bool IsDeleted { get; set; } = false;
     }
 }

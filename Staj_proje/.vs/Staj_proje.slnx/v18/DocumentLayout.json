@@ -3,16 +3,100 @@
   "WorkspaceRootPath": "C:\\Users\\mehdi\\OneDrive\\Desktop\\\u00FCni dersler\\staj\\Blog_Project\\Staj_proje\\",
   "Documents": [
     {
-      "AbsoluteMoniker": "D:0:0:{697DB718-9FBF-DEE0-6899-FB9EE54E992D}|Staj_proje\\Staj_proje.csproj|c:\\users\\mehdi\\onedrive\\desktop\\\u00FCni dersler\\staj\\blog_project\\staj_proje\\staj_proje\\entities\\page.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{697DB718-9FBF-DEE0-6899-FB9EE54E992D}|Staj_proje\\Staj_proje.csproj|solutionrelative:staj_proje\\entities\\page.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+      "AbsoluteMoniker": "D:0:0:{697DB718-9FBF-DEE0-6899-FB9EE54E992D}|Staj_proje\\Staj_proje.csproj|c:\\users\\mehdi\\onedrive\\desktop\\\u00FCni dersler\\staj\\blog_project\\staj_proje\\staj_proje\\entities\\user.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{697DB718-9FBF-DEE0-6899-FB9EE54E992D}|Staj_proje\\Staj_proje.csproj|solutionrelative:staj_proje\\entities\\user.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{697DB718-9FBF-DEE0-6899-FB9EE54E992D}|Staj_proje\\Staj_proje.csproj|c:\\users\\mehdi\\onedrive\\desktop\\\u00FCni dersler\\staj\\blog_project\\staj_proje\\staj_proje\\entities\\permission.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{697DB718-9FBF-DEE0-6899-FB9EE54E992D}|Staj_proje\\Staj_proje.csproj|solutionrelative:staj_proje\\entities\\permission.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{697DB718-9FBF-DEE0-6899-FB9EE54E992D}|Staj_proje\\Staj_proje.csproj|c:\\users\\mehdi\\onedrive\\desktop\\\u00FCni dersler\\staj\\blog_project\\staj_proje\\staj_proje\\entities\\project.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{697DB718-9FBF-DEE0-6899-FB9EE54E992D}|Staj_proje\\Staj_proje.csproj|solutionrelative:staj_proje\\entities\\project.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{697DB718-9FBF-DEE0-6899-FB9EE54E992D}|Staj_proje\\Staj_proje.csproj|c:\\users\\mehdi\\onedrive\\desktop\\\u00FCni dersler\\staj\\blog_project\\staj_proje\\staj_proje\\entities\\projectimage.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{697DB718-9FBF-DEE0-6899-FB9EE54E992D}|Staj_proje\\Staj_proje.csproj|solutionrelative:staj_proje\\entities\\projectimage.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{697DB718-9FBF-DEE0-6899-FB9EE54E992D}|Staj_proje\\Staj_proje.csproj|c:\\users\\mehdi\\onedrive\\desktop\\\u00FCni dersler\\staj\\blog_project\\staj_proje\\staj_proje\\entities\\reference.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{697DB718-9FBF-DEE0-6899-FB9EE54E992D}|Staj_proje\\Staj_proje.csproj|solutionrelative:staj_proje\\entities\\reference.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{697DB718-9FBF-DEE0-6899-FB9EE54E992D}|Staj_proje\\Staj_proje.csproj|c:\\users\\mehdi\\onedrive\\desktop\\\u00FCni dersler\\staj\\blog_project\\staj_proje\\staj_proje\\entities\\offer.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{697DB718-9FBF-DEE0-6899-FB9EE54E992D}|Staj_proje\\Staj_proje.csproj|solutionrelative:staj_proje\\entities\\offer.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
+      "AbsoluteMoniker": "D:0:0:{697DB718-9FBF-DEE0-6899-FB9EE54E992D}|Staj_proje\\Staj_proje.csproj|c:\\users\\mehdi\\onedrive\\desktop\\\u00FCni dersler\\staj\\blog_project\\staj_proje\\staj_proje\\entities\\seosetting.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{697DB718-9FBF-DEE0-6899-FB9EE54E992D}|Staj_proje\\Staj_proje.csproj|solutionrelative:staj_proje\\entities\\seosetting.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{697DB718-9FBF-DEE0-6899-FB9EE54E992D}|Staj_proje\\Staj_proje.csproj|c:\\users\\mehdi\\onedrive\\desktop\\\u00FCni dersler\\staj\\blog_project\\staj_proje\\staj_proje\\entities\\rolepermission.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{697DB718-9FBF-DEE0-6899-FB9EE54E992D}|Staj_proje\\Staj_proje.csproj|solutionrelative:staj_proje\\entities\\rolepermission.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{697DB718-9FBF-DEE0-6899-FB9EE54E992D}|Staj_proje\\Staj_proje.csproj|c:\\users\\mehdi\\onedrive\\desktop\\\u00FCni dersler\\staj\\blog_project\\staj_proje\\staj_proje\\entities\\role.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{697DB718-9FBF-DEE0-6899-FB9EE54E992D}|Staj_proje\\Staj_proje.csproj|solutionrelative:staj_proje\\entities\\role.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{697DB718-9FBF-DEE0-6899-FB9EE54E992D}|Staj_proje\\Staj_proje.csproj|c:\\users\\mehdi\\onedrive\\desktop\\\u00FCni dersler\\staj\\blog_project\\staj_proje\\staj_proje\\entities\\refreshtoken.cs .cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{697DB718-9FBF-DEE0-6899-FB9EE54E992D}|Staj_proje\\Staj_proje.csproj|solutionrelative:staj_proje\\entities\\refreshtoken.cs .cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{697DB718-9FBF-DEE0-6899-FB9EE54E992D}|Staj_proje\\Staj_proje.csproj|c:\\users\\mehdi\\onedrive\\desktop\\\u00FCni dersler\\staj\\blog_project\\staj_proje\\staj_proje\\entities\\page.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{697DB718-9FBF-DEE0-6899-FB9EE54E992D}|Staj_proje\\Staj_proje.csproj|solutionrelative:staj_proje\\entities\\page.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{697DB718-9FBF-DEE0-6899-FB9EE54E992D}|Staj_proje\\Staj_proje.csproj|c:\\users\\mehdi\\onedrive\\desktop\\\u00FCni dersler\\staj\\blog_project\\staj_proje\\staj_proje\\entities\\message.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{697DB718-9FBF-DEE0-6899-FB9EE54E992D}|Staj_proje\\Staj_proje.csproj|solutionrelative:staj_proje\\entities\\message.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{697DB718-9FBF-DEE0-6899-FB9EE54E992D}|Staj_proje\\Staj_proje.csproj|c:\\users\\mehdi\\onedrive\\desktop\\\u00FCni dersler\\staj\\blog_project\\staj_proje\\staj_proje\\entities\\log.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{697DB718-9FBF-DEE0-6899-FB9EE54E992D}|Staj_proje\\Staj_proje.csproj|solutionrelative:staj_proje\\entities\\log.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{697DB718-9FBF-DEE0-6899-FB9EE54E992D}|Staj_proje\\Staj_proje.csproj|c:\\users\\mehdi\\onedrive\\desktop\\\u00FCni dersler\\staj\\blog_project\\staj_proje\\staj_proje\\entities\\galleryitem.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{697DB718-9FBF-DEE0-6899-FB9EE54E992D}|Staj_proje\\Staj_proje.csproj|solutionrelative:staj_proje\\entities\\galleryitem.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{697DB718-9FBF-DEE0-6899-FB9EE54E992D}|Staj_proje\\Staj_proje.csproj|c:\\users\\mehdi\\onedrive\\desktop\\\u00FCni dersler\\staj\\blog_project\\staj_proje\\staj_proje\\entities\\fileasset.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{697DB718-9FBF-DEE0-6899-FB9EE54E992D}|Staj_proje\\Staj_proje.csproj|solutionrelative:staj_proje\\entities\\fileasset.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{697DB718-9FBF-DEE0-6899-FB9EE54E992D}|Staj_proje\\Staj_proje.csproj|c:\\users\\mehdi\\onedrive\\desktop\\\u00FCni dersler\\staj\\blog_project\\staj_proje\\staj_proje\\entities\\companyservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{697DB718-9FBF-DEE0-6899-FB9EE54E992D}|Staj_proje\\Staj_proje.csproj|solutionrelative:staj_proje\\entities\\companyservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
       "AbsoluteMoniker": "D:0:0:{697DB718-9FBF-DEE0-6899-FB9EE54E992D}|Staj_proje\\Staj_proje.csproj|c:\\users\\mehdi\\onedrive\\desktop\\\u00FCni dersler\\staj\\blog_project\\staj_proje\\staj_proje\\entities\\company.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{697DB718-9FBF-DEE0-6899-FB9EE54E992D}|Staj_proje\\Staj_proje.csproj|solutionrelative:staj_proje\\entities\\company.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{697DB718-9FBF-DEE0-6899-FB9EE54E992D}|Staj_proje\\Staj_proje.csproj|c:\\users\\mehdi\\onedrive\\desktop\\\u00FCni dersler\\staj\\blog_project\\staj_proje\\staj_proje\\entities\\category.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{697DB718-9FBF-DEE0-6899-FB9EE54E992D}|Staj_proje\\Staj_proje.csproj|solutionrelative:staj_proje\\entities\\category.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{697DB718-9FBF-DEE0-6899-FB9EE54E992D}|Staj_proje\\Staj_proje.csproj|c:\\users\\mehdi\\onedrive\\desktop\\\u00FCni dersler\\staj\\blog_project\\staj_proje\\staj_proje\\entities\\career.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{697DB718-9FBF-DEE0-6899-FB9EE54E992D}|Staj_proje\\Staj_proje.csproj|solutionrelative:staj_proje\\entities\\career.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{697DB718-9FBF-DEE0-6899-FB9EE54E992D}|Staj_proje\\Staj_proje.csproj|c:\\users\\mehdi\\onedrive\\desktop\\\u00FCni dersler\\staj\\blog_project\\staj_proje\\staj_proje\\entities\\blogcomment.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{697DB718-9FBF-DEE0-6899-FB9EE54E992D}|Staj_proje\\Staj_proje.csproj|solutionrelative:staj_proje\\entities\\blogcomment.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{697DB718-9FBF-DEE0-6899-FB9EE54E992D}|Staj_proje\\Staj_proje.csproj|c:\\users\\mehdi\\onedrive\\desktop\\\u00FCni dersler\\staj\\blog_project\\staj_proje\\staj_proje\\entities\\blog.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{697DB718-9FBF-DEE0-6899-FB9EE54E992D}|Staj_proje\\Staj_proje.csproj|solutionrelative:staj_proje\\entities\\blog.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{697DB718-9FBF-DEE0-6899-FB9EE54E992D}|Staj_proje\\Staj_proje.csproj|c:\\users\\mehdi\\onedrive\\desktop\\\u00FCni dersler\\staj\\blog_project\\staj_proje\\staj_proje\\entities\\slider.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{697DB718-9FBF-DEE0-6899-FB9EE54E992D}|Staj_proje\\Staj_proje.csproj|solutionrelative:staj_proje\\entities\\slider.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{697DB718-9FBF-DEE0-6899-FB9EE54E992D}|Staj_proje\\Staj_proje.csproj|c:\\users\\mehdi\\onedrive\\desktop\\\u00FCni dersler\\staj\\blog_project\\staj_proje\\staj_proje\\entities\\setting.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{697DB718-9FBF-DEE0-6899-FB9EE54E992D}|Staj_proje\\Staj_proje.csproj|solutionrelative:staj_proje\\entities\\setting.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{697DB718-9FBF-DEE0-6899-FB9EE54E992D}|Staj_proje\\Staj_proje.csproj|c:\\users\\mehdi\\onedrive\\desktop\\\u00FCni dersler\\staj\\blog_project\\staj_proje\\staj_proje\\entities\\application.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{697DB718-9FBF-DEE0-6899-FB9EE54E992D}|Staj_proje\\Staj_proje.csproj|solutionrelative:staj_proje\\entities\\application.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     }
   ],
   "DocumentGroupContainers": [
@@ -22,44 +106,319 @@
       "DocumentGroups": [
         {
           "DockedWidth": 200,
-          "SelectedChildIndex": 0,
+          "SelectedChildIndex": 8,
           "Children": [
             {
               "$type": "Document",
+              "DocumentIndex": 2,
+              "Title": "Project.cs",
+              "DocumentMoniker": "C:\\Users\\mehdi\\OneDrive\\Desktop\\\u00FCni dersler\\staj\\Blog_Project\\Staj_proje\\Staj_proje\\Entities\\Project.cs",
+              "RelativeDocumentMoniker": "Staj_proje\\Entities\\Project.cs",
+              "ToolTip": "C:\\Users\\mehdi\\OneDrive\\Desktop\\\u00FCni dersler\\staj\\Blog_Project\\Staj_proje\\Staj_proje\\Entities\\Project.cs",
+              "RelativeToolTip": "Staj_proje\\Entities\\Project.cs",
+              "ViewState": "AgIAABUAAAAAAAAAAAAiwCEAAABRAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-07-27T19:04:34.288Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 3,
+              "Title": "ProjectImage.cs",
+              "DocumentMoniker": "C:\\Users\\mehdi\\OneDrive\\Desktop\\\u00FCni dersler\\staj\\Blog_Project\\Staj_proje\\Staj_proje\\Entities\\ProjectImage.cs",
+              "RelativeDocumentMoniker": "Staj_proje\\Entities\\ProjectImage.cs",
+              "ToolTip": "C:\\Users\\mehdi\\OneDrive\\Desktop\\\u00FCni dersler\\staj\\Blog_Project\\Staj_proje\\Staj_proje\\Entities\\ProjectImage.cs",
+              "RelativeToolTip": "Staj_proje\\Entities\\ProjectImage.cs",
+              "ViewState": "AgIAAAsAAAAAAAAAAAA4wA0AAABNAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-07-27T19:07:33.529Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 4,
+              "Title": "Reference.cs",
+              "DocumentMoniker": "C:\\Users\\mehdi\\OneDrive\\Desktop\\\u00FCni dersler\\staj\\Blog_Project\\Staj_proje\\Staj_proje\\Entities\\Reference.cs",
+              "RelativeDocumentMoniker": "Staj_proje\\Entities\\Reference.cs",
+              "ToolTip": "C:\\Users\\mehdi\\OneDrive\\Desktop\\\u00FCni dersler\\staj\\Blog_Project\\Staj_proje\\Staj_proje\\Entities\\Reference.cs",
+              "RelativeToolTip": "Staj_proje\\Entities\\Reference.cs",
+              "ViewState": "AgIAABMAAAAAAAAAAAAywA8AAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-07-27T19:09:40.706Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 8,
+              "Title": "Role.cs",
+              "DocumentMoniker": "C:\\Users\\mehdi\\OneDrive\\Desktop\\\u00FCni dersler\\staj\\Blog_Project\\Staj_proje\\Staj_proje\\Entities\\Role.cs",
+              "RelativeDocumentMoniker": "Staj_proje\\Entities\\Role.cs",
+              "ToolTip": "C:\\Users\\mehdi\\OneDrive\\Desktop\\\u00FCni dersler\\staj\\Blog_Project\\Staj_proje\\Staj_proje\\Entities\\Role.cs",
+              "RelativeToolTip": "Staj_proje\\Entities\\Role.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAgAAABpAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-07-27T22:03:42.483Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 7,
+              "Title": "RolePermission.cs",
+              "DocumentMoniker": "C:\\Users\\mehdi\\OneDrive\\Desktop\\\u00FCni dersler\\staj\\Blog_Project\\Staj_proje\\Staj_proje\\Entities\\RolePermission.cs",
+              "RelativeDocumentMoniker": "Staj_proje\\Entities\\RolePermission.cs",
+              "ToolTip": "C:\\Users\\mehdi\\OneDrive\\Desktop\\\u00FCni dersler\\staj\\Blog_Project\\Staj_proje\\Staj_proje\\Entities\\RolePermission.cs",
+              "RelativeToolTip": "Staj_proje\\Entities\\RolePermission.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAgAAAAbAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-07-27T17:52:37.505Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 6,
+              "Title": "SeoSetting.cs",
+              "DocumentMoniker": "C:\\Users\\mehdi\\OneDrive\\Desktop\\\u00FCni dersler\\staj\\Blog_Project\\Staj_proje\\Staj_proje\\Entities\\SeoSetting.cs",
+              "RelativeDocumentMoniker": "Staj_proje\\Entities\\SeoSetting.cs",
+              "ToolTip": "C:\\Users\\mehdi\\OneDrive\\Desktop\\\u00FCni dersler\\staj\\Blog_Project\\Staj_proje\\Staj_proje\\Entities\\SeoSetting.cs",
+              "RelativeToolTip": "Staj_proje\\Entities\\SeoSetting.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAABYAAABUAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-07-27T19:20:47.621Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 5,
+              "Title": "Offer.cs",
+              "DocumentMoniker": "C:\\Users\\mehdi\\OneDrive\\Desktop\\\u00FCni dersler\\staj\\Blog_Project\\Staj_proje\\Staj_proje\\Entities\\Offer.cs",
+              "RelativeDocumentMoniker": "Staj_proje\\Entities\\Offer.cs",
+              "ToolTip": "C:\\Users\\mehdi\\OneDrive\\Desktop\\\u00FCni dersler\\staj\\Blog_Project\\Staj_proje\\Staj_proje\\Entities\\Offer.cs",
+              "RelativeToolTip": "Staj_proje\\Entities\\Offer.cs",
+              "ViewState": "AgIAAC0AAAAAAAAAAIBAwC4AAAA0AAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-07-25T22:19:26.946Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 1,
+              "Title": "Permission.cs",
+              "DocumentMoniker": "C:\\Users\\mehdi\\OneDrive\\Desktop\\\u00FCni dersler\\staj\\Blog_Project\\Staj_proje\\Staj_proje\\Entities\\Permission.cs",
+              "RelativeDocumentMoniker": "Staj_proje\\Entities\\Permission.cs",
+              "ToolTip": "C:\\Users\\mehdi\\OneDrive\\Desktop\\\u00FCni dersler\\staj\\Blog_Project\\Staj_proje\\Staj_proje\\Entities\\Permission.cs",
+              "RelativeToolTip": "Staj_proje\\Entities\\Permission.cs",
+              "ViewState": "AgIAABEAAAAAAAAAAAAiwAkAAABpAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-07-27T17:53:34.431Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
               "DocumentIndex": 0,
+              "Title": "User.cs",
+              "DocumentMoniker": "C:\\Users\\mehdi\\OneDrive\\Desktop\\\u00FCni dersler\\staj\\Blog_Project\\Staj_proje\\Staj_proje\\Entities\\User.cs",
+              "RelativeDocumentMoniker": "Staj_proje\\Entities\\User.cs",
+              "ToolTip": "C:\\Users\\mehdi\\OneDrive\\Desktop\\\u00FCni dersler\\staj\\Blog_Project\\Staj_proje\\Staj_proje\\Entities\\User.cs",
+              "RelativeToolTip": "Staj_proje\\Entities\\User.cs",
+              "ViewState": "AgIAAAMAAAAAAAAAAAAAABAAAABjAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-07-27T22:26:58.984Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 9,
+              "Title": "RefreshToken.cs .cs",
+              "DocumentMoniker": "C:\\Users\\mehdi\\OneDrive\\Desktop\\\u00FCni dersler\\staj\\Blog_Project\\Staj_proje\\Staj_proje\\Entities\\RefreshToken.cs .cs",
+              "RelativeDocumentMoniker": "Staj_proje\\Entities\\RefreshToken.cs .cs",
+              "ToolTip": "C:\\Users\\mehdi\\OneDrive\\Desktop\\\u00FCni dersler\\staj\\Blog_Project\\Staj_proje\\Staj_proje\\Entities\\RefreshToken.cs .cs",
+              "RelativeToolTip": "Staj_proje\\Entities\\RefreshToken.cs .cs",
+              "ViewState": "AgIAAA4AAAAAAAAAAAAiwAwAAAA4AAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-07-27T19:11:28.671Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 10,
               "Title": "Page.cs",
               "DocumentMoniker": "C:\\Users\\mehdi\\OneDrive\\Desktop\\\u00FCni dersler\\staj\\Blog_Project\\Staj_proje\\Staj_proje\\Entities\\Page.cs",
               "RelativeDocumentMoniker": "Staj_proje\\Entities\\Page.cs",
               "ToolTip": "C:\\Users\\mehdi\\OneDrive\\Desktop\\\u00FCni dersler\\staj\\Blog_Project\\Staj_proje\\Staj_proje\\Entities\\Page.cs",
               "RelativeToolTip": "Staj_proje\\Entities\\Page.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAsAAAAiAAAAAAAAAA==",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAACcAAAA0AAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2026-07-25T22:22:47.16Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 2,
+              "DocumentIndex": 11,
+              "Title": "Message.cs",
+              "DocumentMoniker": "C:\\Users\\mehdi\\OneDrive\\Desktop\\\u00FCni dersler\\staj\\Blog_Project\\Staj_proje\\Staj_proje\\Entities\\Message.cs",
+              "RelativeDocumentMoniker": "Staj_proje\\Entities\\Message.cs",
+              "ToolTip": "C:\\Users\\mehdi\\OneDrive\\Desktop\\\u00FCni dersler\\staj\\Blog_Project\\Staj_proje\\Staj_proje\\Entities\\Message.cs",
+              "RelativeToolTip": "Staj_proje\\Entities\\Message.cs",
+              "ViewState": "AgIAABIAAAAAAAAAAAAYwCkAAAA0AAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-07-27T21:55:27.61Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 12,
+              "Title": "Log.cs",
+              "DocumentMoniker": "C:\\Users\\mehdi\\OneDrive\\Desktop\\\u00FCni dersler\\staj\\Blog_Project\\Staj_proje\\Staj_proje\\Entities\\Log.cs",
+              "RelativeDocumentMoniker": "Staj_proje\\Entities\\Log.cs",
+              "ToolTip": "C:\\Users\\mehdi\\OneDrive\\Desktop\\\u00FCni dersler\\staj\\Blog_Project\\Staj_proje\\Staj_proje\\Entities\\Log.cs",
+              "RelativeToolTip": "Staj_proje\\Entities\\Log.cs",
+              "ViewState": "AgIAABAAAAAAAAAAAAAAAB4AAAATAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-07-27T19:56:07.326Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 13,
+              "Title": "GalleryItem.cs",
+              "DocumentMoniker": "C:\\Users\\mehdi\\OneDrive\\Desktop\\\u00FCni dersler\\staj\\Blog_Project\\Staj_proje\\Staj_proje\\Entities\\GalleryItem.cs",
+              "RelativeDocumentMoniker": "Staj_proje\\Entities\\GalleryItem.cs",
+              "ToolTip": "C:\\Users\\mehdi\\OneDrive\\Desktop\\\u00FCni dersler\\staj\\Blog_Project\\Staj_proje\\Staj_proje\\Entities\\GalleryItem.cs",
+              "RelativeToolTip": "Staj_proje\\Entities\\GalleryItem.cs",
+              "ViewState": "AgIAAAQAAAAAAAAAAAAQwBgAAAA0AAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-07-27T19:54:09.554Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 14,
+              "Title": "FileAsset.cs",
+              "DocumentMoniker": "C:\\Users\\mehdi\\OneDrive\\Desktop\\\u00FCni dersler\\staj\\Blog_Project\\Staj_proje\\Staj_proje\\Entities\\FileAsset.cs",
+              "RelativeDocumentMoniker": "Staj_proje\\Entities\\FileAsset.cs",
+              "ToolTip": "C:\\Users\\mehdi\\OneDrive\\Desktop\\\u00FCni dersler\\staj\\Blog_Project\\Staj_proje\\Staj_proje\\Entities\\FileAsset.cs",
+              "RelativeToolTip": "Staj_proje\\Entities\\FileAsset.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAABgAAAA0AAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-07-27T19:52:56.739Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 15,
+              "Title": "CompanyService.cs",
+              "DocumentMoniker": "C:\\Users\\mehdi\\OneDrive\\Desktop\\\u00FCni dersler\\staj\\Blog_Project\\Staj_proje\\Staj_proje\\Entities\\CompanyService.cs",
+              "RelativeDocumentMoniker": "Staj_proje\\Entities\\CompanyService.cs",
+              "ToolTip": "C:\\Users\\mehdi\\OneDrive\\Desktop\\\u00FCni dersler\\staj\\Blog_Project\\Staj_proje\\Staj_proje\\Entities\\CompanyService.cs",
+              "RelativeToolTip": "Staj_proje\\Entities\\CompanyService.cs",
+              "ViewState": "AgIAAAYAAAAAAAAAAAAywAoAAABIAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-07-27T19:48:32.877Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 16,
               "Title": "Company.cs",
               "DocumentMoniker": "C:\\Users\\mehdi\\OneDrive\\Desktop\\\u00FCni dersler\\staj\\Blog_Project\\Staj_proje\\Staj_proje\\Entities\\Company.cs",
               "RelativeDocumentMoniker": "Staj_proje\\Entities\\Company.cs",
               "ToolTip": "C:\\Users\\mehdi\\OneDrive\\Desktop\\\u00FCni dersler\\staj\\Blog_Project\\Staj_proje\\Staj_proje\\Entities\\Company.cs",
               "RelativeToolTip": "Staj_proje\\Entities\\Company.cs",
-              "ViewState": "AgIAAAsAAAAAAAAAAAAiwBQAAABSAAAAAAAAAA==",
+              "ViewState": "AgIAAAsAAAAAAAAAAAAiwBcAAABKAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-07-25T22:22:10.715Z"
+              "WhenOpened": "2026-07-25T22:22:10.715Z",
+              "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 1,
-              "Title": "Offer.cs",
-              "DocumentMoniker": "C:\\Users\\mehdi\\OneDrive\\Desktop\\\u00FCni dersler\\staj\\Blog_Project\\Staj_proje\\Staj_proje\\Entities\\Offer.cs",
-              "RelativeDocumentMoniker": "Staj_proje\\Entities\\Offer.cs",
-              "ToolTip": "C:\\Users\\mehdi\\OneDrive\\Desktop\\\u00FCni dersler\\staj\\Blog_Project\\Staj_proje\\Staj_proje\\Entities\\Offer.cs",
-              "RelativeToolTip": "Staj_proje\\Entities\\Offer.cs",
-              "ViewState": "AgIAAAIAAAAAAAAAAAA1wDkAAAAFAAAAAAAAAA==",
+              "DocumentIndex": 17,
+              "Title": "Category.cs",
+              "DocumentMoniker": "C:\\Users\\mehdi\\OneDrive\\Desktop\\\u00FCni dersler\\staj\\Blog_Project\\Staj_proje\\Staj_proje\\Entities\\Category.cs",
+              "RelativeDocumentMoniker": "Staj_proje\\Entities\\Category.cs",
+              "ToolTip": "C:\\Users\\mehdi\\OneDrive\\Desktop\\\u00FCni dersler\\staj\\Blog_Project\\Staj_proje\\Staj_proje\\Entities\\Category.cs",
+              "RelativeToolTip": "Staj_proje\\Entities\\Category.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAA0AAABGAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-07-25T22:19:26.946Z"
+              "WhenOpened": "2026-07-27T19:44:37.554Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 18,
+              "Title": "Career.cs",
+              "DocumentMoniker": "C:\\Users\\mehdi\\OneDrive\\Desktop\\\u00FCni dersler\\staj\\Blog_Project\\Staj_proje\\Staj_proje\\Entities\\Career.cs",
+              "RelativeDocumentMoniker": "Staj_proje\\Entities\\Career.cs",
+              "ToolTip": "C:\\Users\\mehdi\\OneDrive\\Desktop\\\u00FCni dersler\\staj\\Blog_Project\\Staj_proje\\Staj_proje\\Entities\\Career.cs",
+              "RelativeToolTip": "Staj_proje\\Entities\\Career.cs",
+              "ViewState": "AgIAAAsAAAAAAAAAAAA7wAkAAAArAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-07-27T19:35:08.984Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 19,
+              "Title": "BlogComment.cs",
+              "DocumentMoniker": "C:\\Users\\mehdi\\OneDrive\\Desktop\\\u00FCni dersler\\staj\\Blog_Project\\Staj_proje\\Staj_proje\\Entities\\BlogComment.cs",
+              "RelativeDocumentMoniker": "Staj_proje\\Entities\\BlogComment.cs",
+              "ToolTip": "C:\\Users\\mehdi\\OneDrive\\Desktop\\\u00FCni dersler\\staj\\Blog_Project\\Staj_proje\\Staj_proje\\Entities\\BlogComment.cs",
+              "RelativeToolTip": "Staj_proje\\Entities\\BlogComment.cs",
+              "ViewState": "AgIAAAcAAAAAAAAAAAAiwBYAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-07-27T19:36:25.325Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 20,
+              "Title": "Blog.cs",
+              "DocumentMoniker": "C:\\Users\\mehdi\\OneDrive\\Desktop\\\u00FCni dersler\\staj\\Blog_Project\\Staj_proje\\Staj_proje\\Entities\\Blog.cs",
+              "RelativeDocumentMoniker": "Staj_proje\\Entities\\Blog.cs",
+              "ToolTip": "C:\\Users\\mehdi\\OneDrive\\Desktop\\\u00FCni dersler\\staj\\Blog_Project\\Staj_proje\\Staj_proje\\Entities\\Blog.cs",
+              "RelativeToolTip": "Staj_proje\\Entities\\Blog.cs",
+              "ViewState": "AgIAAAQAAAAAAAAAAAA7wAoAAAA3AAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-07-27T19:33:17.848Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 21,
+              "Title": "Slider.cs",
+              "DocumentMoniker": "C:\\Users\\mehdi\\OneDrive\\Desktop\\\u00FCni dersler\\staj\\Blog_Project\\Staj_proje\\Staj_proje\\Entities\\Slider.cs",
+              "RelativeDocumentMoniker": "Staj_proje\\Entities\\Slider.cs",
+              "ToolTip": "C:\\Users\\mehdi\\OneDrive\\Desktop\\\u00FCni dersler\\staj\\Blog_Project\\Staj_proje\\Staj_proje\\Entities\\Slider.cs",
+              "RelativeToolTip": "Staj_proje\\Entities\\Slider.cs",
+              "ViewState": "AgIAAAsAAAAAAAAAAAAAABAAAAA2AAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-07-27T19:25:14.801Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 22,
+              "Title": "Setting.cs",
+              "DocumentMoniker": "C:\\Users\\mehdi\\OneDrive\\Desktop\\\u00FCni dersler\\staj\\Blog_Project\\Staj_proje\\Staj_proje\\Entities\\Setting.cs",
+              "RelativeDocumentMoniker": "Staj_proje\\Entities\\Setting.cs",
+              "ToolTip": "C:\\Users\\mehdi\\OneDrive\\Desktop\\\u00FCni dersler\\staj\\Blog_Project\\Staj_proje\\Staj_proje\\Entities\\Setting.cs",
+              "RelativeToolTip": "Staj_proje\\Entities\\Setting.cs",
+              "ViewState": "AgIAABoAAAAAAAAAAAAuwCQAAABBAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-07-27T19:18:50.134Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 23,
+              "Title": "Application.cs",
+              "DocumentMoniker": "C:\\Users\\mehdi\\OneDrive\\Desktop\\\u00FCni dersler\\staj\\Blog_Project\\Staj_proje\\Staj_proje\\Entities\\Application.cs",
+              "RelativeDocumentMoniker": "Staj_proje\\Entities\\Application.cs",
+              "ToolTip": "C:\\Users\\mehdi\\OneDrive\\Desktop\\\u00FCni dersler\\staj\\Blog_Project\\Staj_proje\\Staj_proje\\Entities\\Application.cs",
+              "RelativeToolTip": "Staj_proje\\Entities\\Application.cs",
+              "ViewState": "AgIAAAcAAAAAAAAAAAAowA4AAAAUAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-07-27T17:44:50.988Z",
+              "EditorCaption": ""
             }
           ]
         }

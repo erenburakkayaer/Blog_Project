@@ -14,7 +14,8 @@
         public bool IsApproved { get; set; } = true;
         public int? ParentCommentId { get; set; }
         public BlogComment? ParentComment { get; set; }
-        public ICollection<BlogComment> Replies { get; set; } = new List<BlogComment>();
+        public ICollection<BlogComment> Replies { get; set; } = new HashSet<BlogComment>();
+        public bool IsDeleted { get; set; } = false;
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
         public DateTime? UpdatedAt { get; set; }
     }

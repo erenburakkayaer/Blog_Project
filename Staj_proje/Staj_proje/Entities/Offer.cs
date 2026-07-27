@@ -44,6 +44,7 @@
         // 7. Zaman Damgaları
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
         public DateTime? RespondedAt { get; set; }
+        public bool IsDeleted { get; set; } = false;
     }
 
     public enum OfferStatus

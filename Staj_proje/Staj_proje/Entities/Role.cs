@@ -1,5 +1,4 @@
-﻿using Microsoft.AspNetCore.Components.Forms;
-using Microsoft.AspNetCore.Identity;
+﻿using Microsoft.AspNetCore.Identity;
 
 namespace Staj_proje.Entities
 {
@@ -7,5 +6,6 @@ namespace Staj_proje.Entities
     {
 
         public string? Description { get; set; }
+        public ICollection<RolePermission> RolePermissions { get; set; } = new HashSet<RolePermission>();
     }
 }

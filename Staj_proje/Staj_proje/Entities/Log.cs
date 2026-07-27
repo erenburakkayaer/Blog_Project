@@ -23,6 +23,8 @@
 
         // 5. Zaman Damgası
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
+        public string? HttpMethod { get; set; } // Örn: "GET", "POST", "PUT", "DELETE"
+        public int? StatusCode { get; set; } // Örn: 200, 400, 500 // Örn: "200", "400", "500"
     }
     public enum AuditAction
     {

@@ -1,0 +1,9 @@
+C:\Users\mehdi\OneDrive\Desktop\üni dersler\staj\Blog_Project\Staj_proje\Staj_proje\obj\Debug\net10.0\Staj_proje.csproj.AssemblyReference.cache
+C:\Users\mehdi\OneDrive\Desktop\üni dersler\staj\Blog_Project\Staj_proje\Staj_proje\obj\Debug\net10.0\rpswa.dswa.cache.json
+C:\Users\mehdi\OneDrive\Desktop\üni dersler\staj\Blog_Project\Staj_proje\Staj_proje\obj\Debug\net10.0\Staj_proje.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\mehdi\OneDrive\Desktop\üni dersler\staj\Blog_Project\Staj_proje\Staj_proje\obj\Debug\net10.0\Staj_proje.AssemblyInfoInputs.cache
+C:\Users\mehdi\OneDrive\Desktop\üni dersler\staj\Blog_Project\Staj_proje\Staj_proje\obj\Debug\net10.0\Staj_proje.AssemblyInfo.cs
+C:\Users\mehdi\OneDrive\Desktop\üni dersler\staj\Blog_Project\Staj_proje\Staj_proje\obj\Debug\net10.0\Staj_proje.csproj.CoreCompileInputs.cache
+C:\Users\mehdi\OneDrive\Desktop\üni dersler\staj\Blog_Project\Staj_proje\Staj_proje\obj\Debug\net10.0\Staj_proje.MvcApplicationPartsAssemblyInfo.cs
+C:\Users\mehdi\OneDrive\Desktop\üni dersler\staj\Blog_Project\Staj_proje\Staj_proje\obj\Debug\net10.0\Staj_proje.MvcApplicationPartsAssemblyInfo.cache
+C:\Users\mehdi\OneDrive\Desktop\üni dersler\staj\Blog_Project\Staj_proje\Staj_proje\obj\Debug\net10.0\Staj_proje.sourcelink.json

@@ -13,7 +13,7 @@
         public FileAsset FileAsset { get; set; } = null!;
 
         // 3. İçerik ve Açıklama Bilgileri
-        public string Title { get; set; } = string.Empty; // Örn: "Yeni Ofis Alanımız" veya "YZ Projesi Ekran Görüntüsü"
+        public string? Title { get; set; } // Örn: "Yeni Ofis Alanımız" veya "YZ Projesi Ekran Görüntüsü"
         public string? Description { get; set; }          // Detaylı alt yazı / açıklama
         // 6. Sıralama ve Görünürlük Kontrolleri
         public int DisplayOrder { get; set; } = 0; // Fotoğrafların galeri slider/grid içindeki sıralaması
@@ -22,5 +22,6 @@
 
         // 7. Zaman Damgaları
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
+        public bool IsDeleted { get; set; } = false;
     }
 }

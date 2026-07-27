@@ -37,6 +37,7 @@ namespace Staj_proje.Entities
         // Öne Çıkan Görsel / Banner (Görselinizdeki FileAsset.cs ile)
         public int? BannerImageAssetId { get; set; }
         public FileAsset? BannerImageAsset { get; set; }
+        public bool IsDeleted { get; set; } = false;
 
     }
 

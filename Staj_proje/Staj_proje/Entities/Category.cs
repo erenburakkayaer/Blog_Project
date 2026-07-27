@@ -9,7 +9,8 @@
         public string? Description { get; set; }
 
         public bool IsActive { get; set; } = true;
+        public bool IsDeleted { get; set; } = false;
 
-        public ICollection<Career> Careers { get; set; } = new List<Career>();
+        public ICollection<Career> Careers { get; set; } = new HashSet<Career>();
     }
 }

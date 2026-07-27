@@ -13,7 +13,7 @@
         public string ContentType { get; set; } = string.Empty;      // Örn: "application/pdf", "image/png"
         public long FileSizeBytes { get; set; }                      // Örn: 2048576 (Byte cinsinden boyut)
 
-        // 3. Dosyanın Amacı / Türü (Enum)
+        // 3. Dosyanın Amacı / Türü
         public string FileCategory { get; set; }=string.Empty;
 
         // 4. Mülkiyet (Dosyayı Yükleyen Kullanıcı)
@@ -22,5 +22,6 @@
 
         // 5. Zaman Damgası
         public DateTime UploadedAt { get; set; } = DateTime.UtcNow;
+        public bool IsDeleted { get; set; } = false;
     }
 }
