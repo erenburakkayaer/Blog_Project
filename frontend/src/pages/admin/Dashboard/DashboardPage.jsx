@@ -1,3 +1,4 @@
+// src/pages/admin/Dashboard/DashboardPage.jsx
 import { useEffect, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
 import toast from "react-hot-toast";
@@ -9,6 +10,7 @@ import DashboardStatCard from "../../../components/admin/dashboard/DashboardStat
 import DashboardWelcome from "../../../components/admin/dashboard/DashboardWelcome";
 import { blogService } from "../../../services/blogService";
 import projectService from "../../../services/projectService";
+import { serviceService } from "../../../services/serviceService"; // <-- YENİ EKLENDİ
 
 const RECENT_CONTENT_LIMIT = 6;
 const ACTIVITY_LIMIT = 6;
@@ -19,6 +21,7 @@ const statusLabels = {
   archived: "Arşivlendi",
   completed: "Tamamlandı",
   active: "Aktif",
+  passive: "Pasif",
 };
 
 const statusBadgeClasses = {
@@ -26,30 +29,19 @@ const statusBadgeClasses = {
   draft: "text-bg-warning",
   archived: "text-bg-secondary",
   completed: "text-bg-primary",
-  active: "text-bg-info",
+  active: "text-bg-success",
+  passive: "text-bg-secondary",
 };
 
 const getValidDate = (dateValue) => {
-  if (!dateValue) {
-    return null;
-  }
-
+  if (!dateValue) return null;
   const date = new Date(dateValue);
-
-  if (Number.isNaN(date.getTime())) {
-    return null;
-  }
-
-  return date;
+  return Number.isNaN(date.getTime()) ? null : date;
 };
 
 const formatDate = (dateValue) => {
   const date = getValidDate(dateValue);
-
-  if (!date) {
-    return "-";
-  }
-
+  if (!date) return "-";
   return new Intl.DateTimeFormat("tr-TR", {
     day: "2-digit",
     month: "long",
@@ -59,11 +51,7 @@ const formatDate = (dateValue) => {
 
 const formatShortDate = (dateValue) => {
   const date = getValidDate(dateValue);
-
-  if (!date) {
-    return "-";
-  }
-
+  if (!date) return "-";
   return new Intl.DateTimeFormat("tr-TR", {
     day: "2-digit",
     month: "short",
@@ -72,11 +60,7 @@ const formatShortDate = (dateValue) => {
 
 const formatTime = (dateValue) => {
   const date = getValidDate(dateValue);
-
-  if (!date) {
-    return "Kayıt bulunmuyor";
-  }
-
+  if (!date) return "Kayıt bulunmuyor";
   return new Intl.DateTimeFormat("tr-TR", {
     hour: "2-digit",
     minute: "2-digit",
@@ -85,7 +69,6 @@ const formatTime = (dateValue) => {
 
 const calculateTrend = (items) => {
   const now = new Date();
-
   const currentPeriodStart = new Date(now);
   currentPeriodStart.setDate(now.getDate() - 7);
 
@@ -94,13 +77,11 @@ const calculateTrend = (items) => {
 
   const currentPeriodCount = items.filter((item) => {
     const itemDate = getValidDate(item.createdAt);
-
     return itemDate && itemDate >= currentPeriodStart && itemDate <= now;
   }).length;
 
   const previousPeriodCount = items.filter((item) => {
     const itemDate = getValidDate(item.createdAt);
-
     return (
       itemDate &&
       itemDate >= previousPeriodStart &&
@@ -120,6 +101,7 @@ const calculateTrend = (items) => {
 function DashboardPage() {
   const [blogs, setBlogs] = useState([]);
   const [projects, setProjects] = useState([]);
+  const [services, setServices] = useState([]); // <-- YENİ EKLENDİ
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
@@ -129,17 +111,17 @@ function DashboardPage() {
       try {
         setIsLoading(true);
 
-        const [blogData, projectData] = await Promise.all([
+        const [blogData, projectData, serviceData] = await Promise.all([
           blogService.getAll(),
           Promise.resolve(projectService.getAll()),
+          serviceService.getAll(), // <-- YENİ EKLENDİ
         ]);
 
-        if (!isMounted) {
-          return;
-        }
+        if (!isMounted) return;
 
         setBlogs(Array.isArray(blogData) ? blogData : []);
         setProjects(Array.isArray(projectData) ? projectData : []);
+        setServices(Array.isArray(serviceData?.data) ? serviceData.data : []); // <-- YENİ EKLENDİ
       } catch {
         if (isMounted) {
           toast.error("Dashboard verileri yüklenirken bir hata oluştu.");
@@ -162,22 +144,22 @@ function DashboardPage() {
     const publishedBlogs = blogs.filter(
       (blog) => blog.status === "published",
     ).length;
-
     const publishedProjects = projects.filter(
       (project) => project.status === "published",
     ).length;
+    const activeServices = services.filter(
+      (service) => service.status === "active",
+    ).length; // <-- YENİ
 
     const draftBlogs = blogs.filter((blog) => blog.status === "draft").length;
-
     const draftProjects = projects.filter(
       (project) => project.status === "draft",
     ).length;
-
     const featuredProjects = projects.filter(
       (project) => project.featured === true,
     ).length;
 
-    const contentDates = [...blogs, ...projects]
+    const contentDates = [...blogs, ...projects, ...services]
       .map((item) => item.updatedAt || item.createdAt)
       .map(getValidDate)
       .filter(Boolean);
@@ -187,9 +169,9 @@ function DashboardPage() {
         ? new Date(Math.max(...contentDates.map((date) => date.getTime())))
         : null;
 
-    const publishedCount = publishedBlogs + publishedProjects;
+    const publishedCount = publishedBlogs + publishedProjects + activeServices;
     const draftCount = draftBlogs + draftProjects;
-    const totalContent = blogs.length + projects.length;
+    const totalContent = blogs.length + projects.length + services.length;
 
     return {
       totalContent,
@@ -215,6 +197,15 @@ function DashboardPage() {
           trendLabel: "Son 7 gün",
         },
         {
+          title: "Toplam Hizmet", // <-- YENİ EKLENDİ
+          value: services.length,
+          icon: "bi-gear-wide-connected",
+          description: `${activeServices} hizmet aktif`,
+          descriptionClass: "text-info",
+          trend: calculateTrend(services),
+          trendLabel: "Hizmet altyapısı",
+        },
+        {
           title: "Yayındaki İçerik",
           value: publishedCount,
           icon: "bi-check-circle",
@@ -231,14 +222,6 @@ function DashboardPage() {
           trendLabel: "İnceleme gerekli",
         },
         {
-          title: "Öne Çıkan Proje",
-          value: featuredProjects,
-          icon: "bi-star",
-          description: "Vitrinde gösterilenler",
-          descriptionClass: "text-primary",
-          trendLabel: "Ana sayfa vitrini",
-        },
-        {
           title: "Son Güncelleme",
           value: formatShortDate(lastUpdatedAt),
           icon: "bi-clock-history",
@@ -248,7 +231,7 @@ function DashboardPage() {
         },
       ],
     };
-  }, [blogs, projects]);
+  }, [blogs, projects, services]);
 
   const recentContents = useMemo(() => {
     const blogContents = blogs.map((blog) => ({
@@ -269,16 +252,23 @@ function DashboardPage() {
       editPath: `/admin/projeler/${project.id}/duzenle`,
     }));
 
-    return [...blogContents, ...projectContents]
+    const serviceContents = services.map((service) => ({
+      id: `service-${service.id}`,
+      title: service.title || "Başlıksız hizmet",
+      type: "Hizmet",
+      status: service.status,
+      date: service.createdAt,
+      editPath: `/admin/hizmetler`,
+    }));
+
+    return [...blogContents, ...projectContents, ...serviceContents]
       .sort((firstItem, secondItem) => {
         const firstDate = getValidDate(firstItem.date)?.getTime() ?? 0;
-
         const secondDate = getValidDate(secondItem.date)?.getTime() ?? 0;
-
         return secondDate - firstDate;
       })
       .slice(0, RECENT_CONTENT_LIMIT);
-  }, [blogs, projects]);
+  }, [blogs, projects, services]);
 
   const activities = useMemo(() => {
     const blogActivities = blogs.map((blog) => ({
@@ -305,28 +295,33 @@ function DashboardPage() {
       path: `/admin/projeler/${project.id}/duzenle`,
     }));
 
-    return [...blogActivities, ...projectActivities]
+    const serviceActivities = services.map((service) => ({
+      id: `activity-service-${service.id}`,
+      type: "system",
+      title: "Hizmet kaydı",
+      description: service.title || "Başlıksız hizmet",
+      date: service.createdAt,
+      path: `/admin/hizmetler`,
+    }));
+
+    return [...blogActivities, ...projectActivities, ...serviceActivities]
       .sort((firstActivity, secondActivity) => {
         const firstDate = getValidDate(firstActivity.date)?.getTime() ?? 0;
-
         const secondDate = getValidDate(secondActivity.date)?.getTime() ?? 0;
-
         return secondDate - firstDate;
       })
       .slice(0, ACTIVITY_LIMIT);
-  }, [blogs, projects]);
+  }, [blogs, projects, services]);
 
   if (isLoading) {
     return (
       <section>
         <div className="mb-4">
           <h1 className="h3 fw-bold mb-1">Dashboard</h1>
-
           <p className="text-secondary mb-0">
             Dashboard verileri hazırlanıyor.
           </p>
         </div>
-
         <DashboardSkeleton />
       </section>
     );
@@ -374,9 +369,7 @@ function DashboardPage() {
                 <span className="dashboard-panel__eyebrow">
                   İçerik Yönetimi
                 </span>
-
                 <h2 className="h5 fw-bold mb-1">Son İçerikler</h2>
-
                 <p className="text-secondary mb-0">
                   Yakın zamanda eklenen veya güncellenen içerikler
                 </p>
@@ -389,12 +382,17 @@ function DashboardPage() {
                 >
                   Bloglar
                 </Link>
-
                 <Link
                   to="/admin/projeler"
                   className="btn btn-sm btn-outline-secondary"
                 >
                   Projeler
+                </Link>
+                <Link
+                  to="/admin/hizmetler"
+                  className="btn btn-sm btn-outline-secondary"
+                >
+                  Hizmetler
                 </Link>
               </div>
             </div>
@@ -404,9 +402,7 @@ function DashboardPage() {
                 <div className="dashboard-empty-state__icon">
                   <i className="bi bi-inbox" aria-hidden="true" />
                 </div>
-
                 <h3 className="h6">Henüz içerik bulunmuyor</h3>
-
                 <p className="text-secondary mb-0">
                   Yeni bir blog yazısı veya proje ekleyerek başlayabilirsiniz.
                 </p>
@@ -423,7 +419,6 @@ function DashboardPage() {
                       <th className="text-end">İşlem</th>
                     </tr>
                   </thead>
-
                   <tbody>
                     {recentContents.map((content) => (
                       <tr key={content.id}>
@@ -436,36 +431,25 @@ function DashboardPage() {
                             {content.title}
                           </div>
                         </td>
-
                         <td>
                           <span
-                            className={`badge ${
-                              content.type === "Blog"
-                                ? "text-bg-dark"
-                                : "text-bg-primary"
-                            }`}
+                            className={`badge ${content.type === "Blog" ? "text-bg-dark" : content.type === "Proje" ? "text-bg-primary" : "text-bg-info"}`}
                           >
                             {content.type}
                           </span>
                         </td>
-
                         <td>
                           <span
-                            className={`badge ${
-                              statusBadgeClasses[content.status] ||
-                              "text-bg-secondary"
-                            }`}
+                            className={`badge ${statusBadgeClasses[content.status] || "text-bg-secondary"}`}
                           >
                             {statusLabels[content.status] ||
                               content.status ||
                               "Belirsiz"}
                           </span>
                         </td>
-
                         <td className="text-nowrap">
                           {formatDate(content.date)}
                         </td>
-
                         <td className="text-end">
                           <Link
                             to={content.editPath}
@@ -498,9 +482,7 @@ function DashboardPage() {
             <div className="dashboard-panel__header">
               <div>
                 <span className="dashboard-panel__eyebrow">Kısayollar</span>
-
                 <h2 className="h5 fw-bold mb-1">Hızlı İşlemler</h2>
-
                 <p className="text-secondary mb-0">
                   Sık kullanılan yönetim sayfalarına erişin
                 </p>
@@ -512,12 +494,10 @@ function DashboardPage() {
                 <span className="dashboard-quick-action__icon">
                   <i className="bi bi-file-earmark-plus" aria-hidden="true" />
                 </span>
-
                 <span>
                   <strong>Yeni Blog</strong>
                   <small>Yeni bir blog yazısı oluştur</small>
                 </span>
-
                 <i
                   className="bi bi-arrow-right dashboard-quick-action__arrow"
                   aria-hidden="true"
@@ -531,44 +511,24 @@ function DashboardPage() {
                 <span className="dashboard-quick-action__icon">
                   <i className="bi bi-folder-plus" aria-hidden="true" />
                 </span>
-
                 <span>
                   <strong>Yeni Proje</strong>
                   <small>Portföye yeni proje ekle</small>
                 </span>
-
                 <i
                   className="bi bi-arrow-right dashboard-quick-action__arrow"
                   aria-hidden="true"
                 />
               </Link>
 
-              <Link to="/admin/blog" className="dashboard-quick-action">
+              <Link to="/admin/hizmetler" className="dashboard-quick-action">
                 <span className="dashboard-quick-action__icon">
-                  <i className="bi bi-journal-text" aria-hidden="true" />
+                  <i className="bi bi-gear" aria-hidden="true" />
                 </span>
-
                 <span>
-                  <strong>Blog Yönetimi</strong>
-                  <small>Blog içeriklerini düzenle</small>
+                  <strong>Hizmet Yönetimi</strong>
+                  <small>Hizmet içeriklerini düzenle ve ekle</small>
                 </span>
-
-                <i
-                  className="bi bi-arrow-right dashboard-quick-action__arrow"
-                  aria-hidden="true"
-                />
-              </Link>
-
-              <Link to="/admin/projeler" className="dashboard-quick-action">
-                <span className="dashboard-quick-action__icon">
-                  <i className="bi bi-kanban" aria-hidden="true" />
-                </span>
-
-                <span>
-                  <strong>Proje Yönetimi</strong>
-                  <small>Projeleri görüntüle ve düzenle</small>
-                </span>
-
                 <i
                   className="bi bi-arrow-right dashboard-quick-action__arrow"
                   aria-hidden="true"
@@ -579,12 +539,10 @@ function DashboardPage() {
                 <span className="dashboard-quick-action__icon">
                   <i className="bi bi-envelope-open" aria-hidden="true" />
                 </span>
-
                 <span>
                   <strong>Mesajlar</strong>
                   <small>İletişim mesajlarını görüntüle</small>
                 </span>
-
                 <i
                   className="bi bi-arrow-right dashboard-quick-action__arrow"
                   aria-hidden="true"

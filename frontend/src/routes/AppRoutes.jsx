@@ -19,7 +19,8 @@ import ProjectListPage from "../pages/admin/Projects/ProjectListPage";
 import ProjectCreatePage from "../pages/admin/Projects/ProjectCreatePage";
 import ProjectEditPage from "../pages/admin/Projects/ProjectEditPage";
 
-import MessageListPage from "../pages/admin/Messages/MessageListPage"; // <-- YENİ EKLENDİ
+import MessageListPage from "../pages/admin/Messages/MessageListPage";
+import ServiceListPage from "../pages/admin/Services/ServiceListPage"; // <-- YENİ EKLENDİ
 
 import LoginPage from "../pages/auth/Login/LoginPage";
 
@@ -73,13 +74,7 @@ const router = createBrowserRouter([
           },
           {
             path: "hizmetler",
-            element: (
-              <PlaceholderPage
-                eyebrow="Admin"
-                title="Hizmet Yönetimi"
-                description="Hizmet içeriklerini görüntüleyin, ekleyin ve düzenleyin."
-              />
-            ),
+            element: <ServiceListPage />, // <-- GERÇEK SAYFAYA BAĞLANDI
           },
           {
             path: "kullanicilar",
@@ -93,7 +88,7 @@ const router = createBrowserRouter([
           },
           {
             path: "mesajlar",
-            element: <MessageListPage />, // <-- GERÇEK SAYFAYA BAĞLANDI
+            element: <MessageListPage />,
           },
           {
             path: "ayarlar",

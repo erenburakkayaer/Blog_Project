@@ -1,3 +1,4 @@
+// src/pages/admin/Projects/ProjectListPage.jsx
 import { useMemo, useState } from "react";
 import { Link } from "react-router-dom";
 import toast from "react-hot-toast";
@@ -161,10 +162,23 @@ const ProjectListPage = () => {
           </p>
         </div>
 
-        <Link to="/admin/projeler/yeni" className="btn btn-dark">
-          <i className="bi bi-plus-lg me-2" />
-          Yeni Proje
-        </Link>
+        <div className="d-flex align-items-center gap-2">
+          <Link
+            to="/admin"
+            className="btn btn-outline-secondary btn-sm d-flex align-items-center gap-1"
+          >
+            <i className="bi bi-speedometer2" />
+            <span>Dashboard'a Dön</span>
+          </Link>
+
+          <Link
+            to="/admin/projeler/yeni"
+            className="btn btn-dark btn-sm d-flex align-items-center gap-1"
+          >
+            <i className="bi bi-plus-lg" />
+            <span>Yeni Proje</span>
+          </Link>
+        </div>
       </div>
 
       <div className="row g-3 mb-4">
