@@ -8,7 +8,7 @@ import ProjectFilters from "../../../components/admin/project/ProjectFilters";
 import ProjectTable from "../../../components/admin/project/ProjectTable";
 import projectService from "../../../services/projectService";
 
-const ITEMS_PER_PAGE = 5;
+const ITEMS_PER_PAGE = 4; // Blog sayfandaki gibi sayfa başına 4 öğe
 
 const ProjectListPage = () => {
   const [projects, setProjects] = useState(() => projectService.getAll());
@@ -128,35 +128,11 @@ const ProjectListPage = () => {
     }
   };
 
-  const renderPaginationItems = () => {
-    return Array.from({ length: totalPages }, (_, index) => {
-      const pageNumber = index + 1;
-
-      return (
-        <li
-          key={pageNumber}
-          className={`page-item ${
-            safeCurrentPage === pageNumber ? "active" : ""
-          }`}
-        >
-          <button
-            type="button"
-            className="page-link"
-            onClick={() => setCurrentPage(pageNumber)}
-          >
-            {pageNumber}
-          </button>
-        </li>
-      );
-    });
-  };
-
   return (
     <div>
       <div className="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3 mb-4">
         <div>
           <h1 className="h3 mb-1">Proje Yönetimi</h1>
-
           <p className="text-secondary mb-0">
             Portföy projelerini görüntüleyin, düzenleyin ve yönetin.
           </p>
@@ -190,7 +166,6 @@ const ProjectListPage = () => {
                   <p className="text-secondary mb-1">Toplam Proje</p>
                   <h2 className="h4 mb-0">{projects.length}</h2>
                 </div>
-
                 <div className="fs-2 text-secondary">
                   <i className="bi bi-folder2-open" />
                 </div>
@@ -213,7 +188,6 @@ const ProjectListPage = () => {
                     }
                   </h2>
                 </div>
-
                 <div className="fs-2 text-success">
                   <i className="bi bi-check-circle" />
                 </div>
@@ -235,7 +209,6 @@ const ProjectListPage = () => {
                     }
                   </h2>
                 </div>
-
                 <div className="fs-2 text-secondary">
                   <i className="bi bi-file-earmark-text" />
                 </div>
@@ -257,7 +230,6 @@ const ProjectListPage = () => {
                     }
                   </h2>
                 </div>
-
                 <div className="fs-2 text-warning">
                   <i className="bi bi-star-fill" />
                 </div>
@@ -279,14 +251,9 @@ const ProjectListPage = () => {
 
       <div className="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-2 mb-3">
         <p className="text-secondary mb-0">
-          {filteredProjects.length} proje bulundu
+          {firstVisibleItem}-{lastVisibleItem} arası gösteriliyor. Toplam{" "}
+          {filteredProjects.length} proje.
         </p>
-
-        {filteredProjects.length > 0 && (
-          <small className="text-secondary">
-            {firstVisibleItem}-{lastVisibleItem} arası gösteriliyor
-          </small>
-        )}
       </div>
 
       <ProjectTable
@@ -294,12 +261,14 @@ const ProjectListPage = () => {
         onDelete={handleDeleteRequest}
       />
 
-      {totalPages > 1 && (
-        <nav
-          className="d-flex justify-content-center mt-4"
-          aria-label="Proje sayfalama"
-        >
-          <ul className="pagination mb-0">
+      {/* Blog sayfasındaki ile birebir aynı Önceki / Sonraki Pagination Yapısı */}
+      <div className="d-flex justify-content-between align-items-center mt-4 pt-3 border-top">
+        <span className="text-secondary small">
+          Sayfa {safeCurrentPage} / {totalPages}
+        </span>
+
+        <nav aria-label="Proje sayfalama">
+          <ul className="pagination pagination-sm mb-0">
             <li
               className={`page-item ${safeCurrentPage === 1 ? "disabled" : ""}`}
             >
@@ -307,31 +276,38 @@ const ProjectListPage = () => {
                 type="button"
                 className="page-link"
                 disabled={safeCurrentPage === 1}
-                onClick={() =>
-                  setCurrentPage((previousPage) =>
-                    Math.max(previousPage - 1, 1),
-                  )
-                }
+                onClick={() => setCurrentPage((p) => Math.max(p - 1, 1))}
               >
                 Önceki
               </button>
             </li>
 
-            {renderPaginationItems()}
+            {Array.from({ length: totalPages }, (_, i) => i + 1).map(
+              (pageNumber) => (
+                <li
+                  key={pageNumber}
+                  className={`page-item ${safeCurrentPage === pageNumber ? "active" : ""}`}
+                >
+                  <button
+                    type="button"
+                    className="page-link"
+                    onClick={() => setCurrentPage(pageNumber)}
+                  >
+                    {pageNumber}
+                  </button>
+                </li>
+              ),
+            )}
 
             <li
-              className={`page-item ${
-                safeCurrentPage === totalPages ? "disabled" : ""
-              }`}
+              className={`page-item ${safeCurrentPage === totalPages ? "disabled" : ""}`}
             >
               <button
                 type="button"
                 className="page-link"
                 disabled={safeCurrentPage === totalPages}
                 onClick={() =>
-                  setCurrentPage((previousPage) =>
-                    Math.min(previousPage + 1, totalPages),
-                  )
+                  setCurrentPage((p) => Math.min(p + 1, totalPages))
                 }
               >
                 Sonraki
@@ -339,7 +315,7 @@ const ProjectListPage = () => {
             </li>
           </ul>
         </nav>
-      )}
+      </div>
 
       <DeleteModal
         project={selectedProject}

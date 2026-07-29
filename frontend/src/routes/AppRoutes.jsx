@@ -20,7 +20,10 @@ import ProjectCreatePage from "../pages/admin/Projects/ProjectCreatePage";
 import ProjectEditPage from "../pages/admin/Projects/ProjectEditPage";
 
 import MessageListPage from "../pages/admin/Messages/MessageListPage";
-import ServiceListPage from "../pages/admin/Services/ServiceListPage"; // <-- YENİ EKLENDİ
+import ServiceListPage from "../pages/admin/Services/ServiceListPage";
+import ServiceEditPage from "../pages/admin/Services/ServiceEditPage";
+import UserListPage from "../pages/admin/Users/UserListPage";
+import SettingsPage from "../pages/admin/Settings/SettingsPage";
 
 import LoginPage from "../pages/auth/Login/LoginPage";
 
@@ -74,31 +77,28 @@ const router = createBrowserRouter([
           },
           {
             path: "hizmetler",
-            element: <ServiceListPage />, // <-- GERÇEK SAYFAYA BAĞLANDI
+            element: <ServiceListPage />,
+          },
+          {
+            path: "hizmetler/:id",
+            element: <ServiceEditPage />,
           },
           {
             path: "kullanicilar",
-            element: (
-              <PlaceholderPage
-                eyebrow="Admin"
-                title="Kullanıcı Yönetimi"
-                description="Sistem kullanıcılarını ve yetkilerini yönetin."
-              />
-            ),
+            element: <UserListPage />,
           },
           {
             path: "mesajlar",
             element: <MessageListPage />,
           },
           {
-            path: "ayarlar",
-            element: (
-              <PlaceholderPage
-                eyebrow="Admin"
-                title="Sistem Ayarları"
-                description="Yönetim paneli ve site ayarlarını düzenleyin."
-              />
-            ),
+            element: <ProtectedRoute allowedRoles={["admin"]} />,
+            children: [
+              {
+                path: "ayarlar",
+                element: <SettingsPage />,
+              },
+            ],
           },
           {
             path: "*",

@@ -1,3 +1,4 @@
+// src/components/admin/project/ProjectTable.jsx
 import PropTypes from "prop-types";
 import { Link } from "react-router-dom";
 
@@ -72,7 +73,12 @@ const ProjectTable = ({ projects, onDelete }) => {
 
                     <div>
                       <div className="d-flex align-items-center gap-2">
-                        <strong>{project.title}</strong>
+                        <Link
+                          to={`/admin/projeler/${project.id}/duzenle`}
+                          className="fw-semibold text-dark text-decoration-none"
+                        >
+                          {project.title}
+                        </Link>
 
                         {project.featured && (
                           <span
@@ -84,7 +90,10 @@ const ProjectTable = ({ projects, onDelete }) => {
                         )}
                       </div>
 
-                      <small className="text-secondary">
+                      <small
+                        className="text-secondary text-truncate d-block"
+                        style={{ maxWidth: "280px" }}
+                      >
                         {project.summary || "Açıklama bulunmuyor."}
                       </small>
                     </div>

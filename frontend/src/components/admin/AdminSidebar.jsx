@@ -1,4 +1,6 @@
+// src/components/admin/AdminSidebar.jsx
 import { NavLink } from "react-router-dom";
+import useSite from "../../hooks/useSite";
 
 const menuItems = [
   { to: "/admin", icon: "bi-speedometer2", label: "Dashboard", end: true },
@@ -11,11 +13,13 @@ const menuItems = [
 ];
 
 function AdminSidebar() {
+  const { settings } = useSite();
+
   return (
     <aside className="admin-sidebar">
       <div className="admin-sidebar__brand">
         <i className="bi bi-code-slash" />
-        <span>TechNova</span>
+        <span>{settings.siteName}</span>
       </div>
 
       <nav className="admin-sidebar__nav">
