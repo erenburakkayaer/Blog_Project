@@ -1,3 +1,5 @@
+// src/utils/storage.js
+
 const STORAGE_KEYS = {
   ACCESS_TOKEN: "technova_access_token",
   USER: "technova_user",
@@ -46,6 +48,26 @@ export const storage = {
       sessionStorage.removeItem(key);
     });
   },
+};
+
+// --- Message Service ve diğer modüller için eklenen fonksiyonlar ---
+
+export const getStoredData = (key, initialValue) => {
+  const item = localStorage.getItem(key);
+  if (!item) {
+    localStorage.setItem(key, JSON.stringify(initialValue));
+    return initialValue;
+  }
+  try {
+    return JSON.parse(item);
+  } catch (error) {
+    console.error("Storage parse error:", error);
+    return initialValue;
+  }
+};
+
+export const setStoredData = (key, value) => {
+  localStorage.setItem(key, JSON.stringify(value));
 };
 
 export { STORAGE_KEYS };

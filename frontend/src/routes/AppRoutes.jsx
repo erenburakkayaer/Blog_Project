@@ -1,3 +1,4 @@
+// src/routes/AppRoutes.jsx
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 
 import AdminLayout from "../layouts/AdminLayout";
@@ -17,6 +18,8 @@ import BlogEditPage from "../pages/admin/Blog/BlogEditPage";
 import ProjectListPage from "../pages/admin/Projects/ProjectListPage";
 import ProjectCreatePage from "../pages/admin/Projects/ProjectCreatePage";
 import ProjectEditPage from "../pages/admin/Projects/ProjectEditPage";
+
+import MessageListPage from "../pages/admin/Messages/MessageListPage"; // <-- YENİ EKLENDİ
 
 import LoginPage from "../pages/auth/Login/LoginPage";
 
@@ -90,13 +93,7 @@ const router = createBrowserRouter([
           },
           {
             path: "mesajlar",
-            element: (
-              <PlaceholderPage
-                eyebrow="Admin"
-                title="Mesaj Yönetimi"
-                description="İletişim ve teklif formlarından gelen mesajları görüntüleyin."
-              />
-            ),
+            element: <MessageListPage />, // <-- GERÇEK SAYFAYA BAĞLANDI
           },
           {
             path: "ayarlar",
