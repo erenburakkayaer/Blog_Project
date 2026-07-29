@@ -10,7 +10,5 @@
 
         public bool IsActive { get; set; } = true;
         public bool IsDeleted { get; set; } = false;
-
-        public ICollection<Career> Careers { get; set; } = new HashSet<Career>();
     }
 }

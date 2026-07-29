@@ -12,8 +12,8 @@
         public string? ClientName { get; set; } // Örn: "X Holding"
         public string? UsedTechnologies { get; set; } // Örn: ".NET 8, React, PostgreSQL, Docker"
         public DateTime? CompletionDate { get; set; } // Proje bitiş tarihi
-        public int? CategoryId { get; set; }
-        public Category? Category { get; set; }
+        public int CategoryId { get; set; }
+        public Category Category { get; set; } = null!;
 
         // Bağlantılar
         public string? ProjectUrl { get; set; } // Canlı demo linki

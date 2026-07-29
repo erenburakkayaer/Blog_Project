@@ -7,6 +7,8 @@
         public string Content { get; set; } = string.Empty;
         public int AuthorId { get; set; }
         public User Author { get; set; } = null!;
+        public int CategoryId { get; set; }
+        public Category Category { get; set; } = null!;
         public int? CoverImageAssetId { get; set; }
         public FileAsset? CoverImageAsset { get; set; } // Kapak görseli isteğe bağlı (nullable) olabilir
         public bool IsPublished { get; set; } = false; // Taslak olarak başlasın, onaylanınca true yapılsın

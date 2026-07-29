@@ -9,10 +9,10 @@ namespace Staj_proje.Entities
         // Foreign Key & Navigation Property (Career / İlan İlişkisi)
         // Adayın başvurduğu açık pozisyon (null ise genel başvuru kabul edilebilir)
         public int? CareerId { get; set; }
-        public Career Career { get; set; }
+        public Career Career { get; set; } = null!;
         //Başvuran
         public int? UserId { get; set; }
-        public User User { get; set; }
+        public User User { get; set; } = null!;
 
         // B) Başvuruyu İnceleyen / İşlem Yapan Yönetici veya İK Personeli
         public int? ReviewedByUserId { get; set; }
@@ -25,8 +25,6 @@ namespace Staj_proje.Entities
         // Başvuru Detayları
         public string CoverLetter { get; set; } = string.Empty; // Ön yazı / Mesaj
         
-        [Column(TypeName = "decimal(18,2)")]
-        public decimal? ExpectedSalary { get; set; } // Maaş beklentisi
         public string ResumeFilePath { get; set; } = string.Empty; // Yüklenen CV dosya yolu (PDF vb.)
 
         public ApplicationStatus Status { get; set; } = ApplicationStatus.Pending;

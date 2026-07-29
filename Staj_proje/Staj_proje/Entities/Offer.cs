@@ -12,9 +12,9 @@
         public int? CompanyServiceId { get; set; }
         public CompanyService? CompanyService { get; set; }
 
-        // Teklifi İsteyen Kullanıcı (Nullable: Üye olmadan da teklif isteyebilir)
-        public int? RequesterUserId { get; set; }
-        public User? RequesterUser { get; set; }
+        // Teklifi İsteyen Kullanıcı 
+        public int RequesterUserId { get; set; }
+        public User RequesterUser { get; set; } = null!;
 
         // 2. İletişim Bilgileri (Anonim talepler veya hızlı iletişim için)
         public string ContactName { get; set; } = string.Empty;
@@ -27,7 +27,7 @@
 
         // 4. Fiyatlandırma ve Şartlar (Şirket tarafından doldurulur)
         public decimal? OfferedPrice { get; set; }
-        public string Currency { get; set; } = "TRY";           // USD, EUR, TRY
+        public string Currency { get; set; } = "TL";           // USD, EUR, TRY
         public string? ProposalNotes { get; set; }             // Şirketin cevabı/açıklaması
 
         // 5. Dosya Eklentileri (Şartname veya Hazırlanan PDF Teklifi)

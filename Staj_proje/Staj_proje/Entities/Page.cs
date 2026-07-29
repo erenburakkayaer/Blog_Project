@@ -6,10 +6,8 @@ namespace Staj_proje.Entities
     {
         public int Id { get; set; }
 
-        [Required, MaxLength(200)]
         public string Title { get; set; } = string.Empty; // Sayfa Başlığı
 
-        [Required, MaxLength(200)]
         public string Slug { get; set; } = string.Empty; // URL yolu (örn: "hakkimizda", "siber-guvenlik-danismanligi")
 
         public string? Summary { get; set; } // Kısa özet/spot metin
