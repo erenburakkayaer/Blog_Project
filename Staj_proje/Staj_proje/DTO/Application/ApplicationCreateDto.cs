@@ -4,7 +4,7 @@ namespace Staj_proje.DTO.Application
 {
     public class ApplicationCreateDto
     {
-        public int? CareerId { get; set; }
+        public int CareerId { get; set; }
 
         // Adayın profillerine ait sosyal medya/portföy linkleri (Opsiyonel)
         [Url(ErrorMessage = "Geçerli bir LinkedIn adresi giriniz.")]

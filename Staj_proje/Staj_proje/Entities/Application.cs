@@ -7,8 +7,7 @@ namespace Staj_proje.Entities
         public int Id { get; set; }
 
         // Foreign Key & Navigation Property (Career / İlan İlişkisi)
-        // Adayın başvurduğu açık pozisyon (null ise genel başvuru kabul edilebilir)
-        public int? CareerId { get; set; }
+        public int CareerId { get; set; }
         public Career Career { get; set; } = null!;
         //Başvuran
         public int? UserId { get; set; }

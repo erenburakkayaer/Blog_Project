@@ -5,8 +5,8 @@
         public int Id { get; set; }
 
         // İlan Bilgileri
-        public int? CareerId { get; set; }
-        public string? CareerTitle { get; set; } // İlanın Adı (Örn: "Junior Backend Developer")
+        public int CareerId { get; set; }
+        public string CareerTitle { get; set; } // İlanın Adı (Örn: "Junior Backend Developer")
 
         // Başvuran Kullanıcı Bilgisi 
         public int? UserId { get; set; }
