@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("Staj_proje")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+98df3d94503ffbdfdf145c12d4e0564770caedfd")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+ae5e0871c7fa3afb57d53fdc0f80b10bc2234688")]
 [assembly: System.Reflection.AssemblyProductAttribute("Staj_proje")]
 [assembly: System.Reflection.AssemblyTitleAttribute("Staj_proje")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
