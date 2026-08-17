@@ -1,4 +1,4 @@
-﻿namespace Staj_proje.DTO.Galleyİtem
+﻿namespace Staj_proje.DTO.GalleyItem
 {
     public class GalleryItemResponseDto
     {

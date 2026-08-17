@@ -1,11 +1,14 @@
 {
   "version": 2,
-  "dgSpecHash": "HmbcErkOORA=",
+  "dgSpecHash": "1hVckgUDwUI=",
   "success": true,
   "projectFilePath": "C:\\Users\\mehdi\\OneDrive\\Desktop\\üni dersler\\staj\\Blog_Project\\Staj_proje\\Staj_proje\\Staj_proje.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\mehdi\\.nuget\\packages\\azure.core\\1.47.1\\azure.core.1.47.1.nupkg.sha512",
     "C:\\Users\\mehdi\\.nuget\\packages\\azure.identity\\1.14.2\\azure.identity.1.14.2.nupkg.sha512",
+    "C:\\Users\\mehdi\\.nuget\\packages\\mapster\\10.0.11\\mapster.10.0.11.nupkg.sha512",
+    "C:\\Users\\mehdi\\.nuget\\packages\\mapster.core\\10.0.11\\mapster.core.10.0.11.nupkg.sha512",
+    "C:\\Users\\mehdi\\.nuget\\packages\\mapster.dependencyinjection\\10.0.11\\mapster.dependencyinjection.10.0.11.nupkg.sha512",
     "C:\\Users\\mehdi\\.nuget\\packages\\microsoft.aspnetcore.identity.entityframeworkcore\\10.0.10\\microsoft.aspnetcore.identity.entityframeworkcore.10.0.10.nupkg.sha512",
     "C:\\Users\\mehdi\\.nuget\\packages\\microsoft.aspnetcore.openapi\\10.0.10\\microsoft.aspnetcore.openapi.10.0.10.nupkg.sha512",
     "C:\\Users\\mehdi\\.nuget\\packages\\microsoft.bcl.asyncinterfaces\\8.0.0\\microsoft.bcl.asyncinterfaces.8.0.0.nupkg.sha512",

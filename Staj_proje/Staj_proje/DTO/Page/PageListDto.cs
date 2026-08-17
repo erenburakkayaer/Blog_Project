@@ -19,4 +19,3 @@ namespace Staj_proje.DTO.Page
         public DateTime CreatedAt { get; set; }
     }
 }
-}

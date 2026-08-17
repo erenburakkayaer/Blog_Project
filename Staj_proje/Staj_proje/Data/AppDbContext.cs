@@ -37,7 +37,7 @@ namespace Staj_proje.Data
         protected override void OnModelCreating(ModelBuilder builder)
         {
             base.OnModelCreating(builder); // Identity varsayılan ayarları için şarttır
-                                           // ISoftDelete uygulayan tüm Entity'leri bul ve filtreyi otomatik uygula
+            // ISoftDelete uygulayan tüm Entity'leri bul ve filtreyi otomatik uygula
             foreach (var entityType in builder.Model.GetEntityTypes())
             {
                 // Entity null değilse ve ISoftDelete arayüzünü uyguluyorsa

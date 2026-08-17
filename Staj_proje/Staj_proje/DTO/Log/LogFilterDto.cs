@@ -1,6 +1,4 @@
 ﻿using Staj_proje.Entities;
-using static System.Net.WebRequestMethods;
-
 namespace Staj_proje.DTO.Log
 {
     public class LogFilterDto
