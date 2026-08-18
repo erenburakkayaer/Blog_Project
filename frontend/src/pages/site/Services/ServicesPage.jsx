@@ -48,16 +48,20 @@ function ServicesPage() {
                 <div className="col-md-6 col-lg-3" key={service.id}>
                   <div className="card h-100 border-0 shadow-sm">
                     <div className="card-body p-4">
-                      <div
-                        className="d-inline-flex align-items-center justify-content-center rounded-3 bg-primary bg-opacity-10 mb-3"
-                        style={{ width: 52, height: 52 }}
-                      >
-                        <i
-                          className={`bi ${service.icon || icons[i % icons.length]} text-primary`}
-                          style={{ fontSize: 24 }}
-                        />
-                      </div>
-                      <h2 className="h5 fw-bold">{service.title}</h2>
+                      <Link to={`/hizmetler/${service.id}`}>
+                        <div
+                          className="d-inline-flex align-items-center justify-content-center rounded-3 bg-primary bg-opacity-10 mb-3"
+                          style={{ width: 52, height: 52 }}
+                        >
+                          <i
+                            className={`bi ${service.icon || icons[i % icons.length]} text-primary`}
+                            style={{ fontSize: 24 }}
+                          />
+                        </div>
+                      </Link>
+                      <Link to={`/hizmetler/${service.id}`} className="text-decoration-none text-dark">
+                        <h2 className="h5 fw-bold">{service.title}</h2>
+                      </Link>
                       <p className="text-secondary small mb-0">{service.description}</p>
                     </div>
                   </div>

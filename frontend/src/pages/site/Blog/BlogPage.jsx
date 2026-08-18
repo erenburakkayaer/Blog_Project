@@ -47,12 +47,14 @@ function BlogPage() {
                 <div className="col-md-6 col-lg-4" key={blog.id}>
                   <div className="card h-100 border-0 shadow-sm overflow-hidden">
                     {blog.coverImage && (
-                      <img
-                        src={blog.coverImage}
-                        alt={blog.title}
-                        className="card-img-top"
-                        style={{ height: 200, objectFit: "cover" }}
-                      />
+                      <Link to={`/blog/${blog.id}`}>
+                        <img
+                          src={blog.coverImage}
+                          alt={blog.title}
+                          className="card-img-top"
+                          style={{ height: 200, objectFit: "cover" }}
+                        />
+                      </Link>
                     )}
                     <div className="card-body p-4 d-flex flex-column">
                       <div className="d-flex justify-content-between align-items-center mb-3">
@@ -63,7 +65,9 @@ function BlogPage() {
                           {new Date(blog.createdAt).toLocaleDateString("tr-TR")}
                         </small>
                       </div>
-                      <h2 className="h5 fw-bold">{blog.title}</h2>
+                      <Link to={`/blog/${blog.id}`} className="text-decoration-none text-dark">
+                        <h2 className="h5 fw-bold">{blog.title}</h2>
+                      </Link>
                       <p className="text-secondary small mb-3 flex-grow-1">
                         {blog.summary}
                       </p>

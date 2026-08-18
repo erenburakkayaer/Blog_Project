@@ -43,12 +43,14 @@ function ProjectsPage() {
                 <div className="col-md-6 col-lg-4" key={project.id}>
                   <div className="card h-100 border-0 shadow-sm overflow-hidden">
                     {project.coverImage && (
-                      <img
-                        src={project.coverImage}
-                        alt={project.title}
-                        className="card-img-top"
-                        style={{ height: 200, objectFit: "cover" }}
-                      />
+                      <Link to={`/projeler/${project.id}`}>
+                        <img
+                          src={project.coverImage}
+                          alt={project.title}
+                          className="card-img-top"
+                          style={{ height: 200, objectFit: "cover" }}
+                        />
+                      </Link>
                     )}
                     <div className="card-body p-4">
                       {project.category && (
@@ -56,7 +58,9 @@ function ProjectsPage() {
                           {project.category}
                         </span>
                       )}
-                      <h2 className="h5 fw-bold">{project.title}</h2>
+                      <Link to={`/projeler/${project.id}`} className="text-decoration-none text-dark">
+                        <h2 className="h5 fw-bold">{project.title}</h2>
+                      </Link>
                       <p className="text-secondary small mb-3">{project.summary}</p>
                       {project.projectUrl && (
                         <a

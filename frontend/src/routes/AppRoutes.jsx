@@ -31,8 +31,11 @@ import UnauthorizedPage from "../pages/auth/UnauthorizedPage";
 import AboutPage from "../pages/site/About/AboutPage";
 import HomePage from "../pages/site/Home/HomePage";
 import ServicesPage from "../pages/site/Services/ServicesPage";
+import ServiceDetailPage from "../pages/site/Services/ServiceDetailPage";
 import ProjectsPage from "../pages/site/Projects/ProjectsPage";
+import ProjectDetailPage from "../pages/site/Projects/ProjectDetailPage";
 import BlogPage from "../pages/site/Blog/BlogPage";
+import BlogDetailPage from "../pages/site/Blog/BlogDetailPage";
 import CareerPage from "../pages/site/Career/CareerPage";
 import ContactPage from "../pages/site/Contact/ContactPage";
 import OfferPage from "../pages/site/Offer/OfferPage";
@@ -144,8 +147,16 @@ const router = createBrowserRouter([
         element: <ServicesPage />,
       },
       {
+        path: "hizmetler/:id",
+        element: <ServiceDetailPage />,
+      },
+      {
         path: "projeler",
         element: <ProjectsPage />,
+      },
+      {
+        path: "projeler/:id",
+        element: <ProjectDetailPage />,
       },
       {
         path: "referanslar",
@@ -154,6 +165,10 @@ const router = createBrowserRouter([
       {
         path: "blog",
         element: <BlogPage />,
+      },
+      {
+        path: "blog/:id",
+        element: <BlogDetailPage />,
       },
       {
         path: "kariyer",
