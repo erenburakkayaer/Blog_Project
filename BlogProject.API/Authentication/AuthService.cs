@@ -59,6 +59,22 @@ namespace BlogProject.API.Authentication
             return await IssueTokensAsync(existing.User);
         }
 
+        public async Task<bool> LogoutAsync(string refreshToken)
+        {
+            var existing = await _refreshTokenRepository.GetActiveByTokenAsync(refreshToken);
+            if (existing is null) return false;
+
+            existing.RevokedAt = DateTime.UtcNow;
+            _refreshTokenRepository.Update(existing);
+            return await _refreshTokenRepository.SaveChangesAsync();
+        }
+
+        public async Task<UserDto?> GetCurrentUserAsync(int userId)
+        {
+            var user = await _userRepository.GetByIdWithRoleAsync(userId);
+            return user is null ? null : _mapper.Map<UserDto>(user);
+        }
+
         private async Task<LoginResponseDto> IssueTokensAsync(User user)
         {
             var accessToken = _tokenService.GenerateToken(user, out var expiresAt);

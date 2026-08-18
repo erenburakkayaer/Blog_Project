@@ -53,7 +53,26 @@ namespace BlogProject.API.Services
             var message = await _messageRepository.GetByIdAsync(id);
             if (message is null) return false;
 
-            _mapper.Map(dto, message);
+            if (dto.Status is not null)
+                message.IsRead = dto.Status == "read";
+            if (dto.IsImportant.HasValue)
+                message.IsImportant = dto.IsImportant.Value;
+            if (dto.IsArchived.HasValue)
+                message.IsArchived = dto.IsArchived.Value;
+
+            _messageRepository.Update(message);
+            return await _messageRepository.SaveChangesAsync();
+        }
+
+        public async Task<bool> ReplyAsync(int id, MessageReplyDto dto)
+        {
+            var message = await _messageRepository.GetByIdAsync(id);
+            if (message is null) return false;
+
+            message.ReplyMessage = dto.ReplyMessage;
+            message.RepliedAt = DateTime.UtcNow;
+            message.IsRead = true;
+
             _messageRepository.Update(message);
             return await _messageRepository.SaveChangesAsync();
         }

@@ -6,5 +6,7 @@ namespace BlogProject.API.Interfaces
     {
         Task<LoginResponseDto?> LoginAsync(LoginDto dto);
         Task<LoginResponseDto?> RefreshTokenAsync(string refreshToken);
+        Task<bool> LogoutAsync(string refreshToken);
+        Task<UserDto?> GetCurrentUserAsync(int userId);
     }
 }

@@ -17,7 +17,8 @@ namespace BlogProject.Tests.Services
             context.SaveChanges();
 
             var repository = new UserRepository(context);
-            return new UserService(repository, TestHelpers.CreateMapper());
+            var roleRepository = new GenericRepository<Role>(context);
+            return new UserService(repository, roleRepository, TestHelpers.CreateMapper());
         }
 
         [Fact]
@@ -30,7 +31,7 @@ namespace BlogProject.Tests.Services
                 Username = "burak",
                 Email = "burak@firmaadi.com",
                 Password = "Gizli123!",
-                RoleId = 1
+                Role = "author"
             });
 
             var fetched = await service.GetByIdAsync(created.Id);
@@ -43,18 +44,33 @@ namespace BlogProject.Tests.Services
         public async Task CreateAsync_AyniKullaniciAdiIkinciKez_HataFirlatir()
         {
             var service = CreateService();
-            await service.CreateAsync(new UserCreateDto { Username = "burak", Email = "a@a.com", Password = "Gizli123!", RoleId = 1 });
+            await service.CreateAsync(new UserCreateDto { Username = "burak", Email = "a@a.com", Password = "Gizli123!", Role = "author" });
 
             await Assert.ThrowsAsync<InvalidOperationException>(() =>
-                service.CreateAsync(new UserCreateDto { Username = "burak", Email = "b@b.com", Password = "Gizli123!", RoleId = 1 }));
+                service.CreateAsync(new UserCreateDto { Username = "burak", Email = "b@b.com", Password = "Gizli123!", Role = "author" }));
+        }
+
+        [Fact]
+        public async Task CreateAsync_SifreBosBirakilirsa_GeciciSifreUretilir()
+        {
+            var service = CreateService();
+
+            var created = await service.CreateAsync(new UserCreateDto
+            {
+                Username = "sifresiz",
+                Email = "sifresiz@a.com",
+                Role = "author"
+            });
+
+            Assert.NotEqual(0, created.Id);
         }
 
         [Fact]
         public async Task GetPagedAsync_KullaniciAdinaGoreArama_EslesenSonucDoner()
         {
             var service = CreateService();
-            await service.CreateAsync(new UserCreateDto { Username = "burak", Email = "burak@a.com", Password = "Gizli123!", RoleId = 1 });
-            await service.CreateAsync(new UserCreateDto { Username = "mehdi", Email = "mehdi@a.com", Password = "Gizli123!", RoleId = 1 });
+            await service.CreateAsync(new UserCreateDto { Username = "burak", Email = "burak@a.com", Password = "Gizli123!", Role = "author" });
+            await service.CreateAsync(new UserCreateDto { Username = "mehdi", Email = "mehdi@a.com", Password = "Gizli123!", Role = "author" });
 
             var result = await service.GetPagedAsync(page: 1, pageSize: 10, search: "burak");
 

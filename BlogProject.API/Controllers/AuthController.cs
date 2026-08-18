@@ -36,13 +36,21 @@ namespace BlogProject.API.Controllers
                 : Ok(result);
         }
 
+        [HttpPost("logout")]
+        [Authorize]
+        public async Task<IActionResult> Logout(RefreshRequestDto dto) =>
+            await _authService.LogoutAsync(dto.RefreshToken) ? NoContent() : NotFound();
+
         [HttpGet("me")]
         [Authorize]
-        public IActionResult Me() =>
-            Ok(new
-            {
-                Username = User.Identity?.Name,
-                Role = User.FindFirst(System.Security.Claims.ClaimTypes.Role)?.Value
-            });
+        public async Task<ActionResult<UserDto>> Me()
+        {
+            var idClaim = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
+            if (!int.TryParse(idClaim, out var userId))
+                return Unauthorized();
+
+            var user = await _authService.GetCurrentUserAsync(userId);
+            return user is null ? Unauthorized() : Ok(user);
+        }
     }
 }

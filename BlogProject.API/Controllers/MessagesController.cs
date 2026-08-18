@@ -47,6 +47,11 @@ namespace BlogProject.API.Controllers
         public async Task<IActionResult> Update(int id, MessageUpdateDto dto) =>
             await _messageService.UpdateAsync(id, dto) ? NoContent() : NotFound();
 
+        // Not: e-posta gönderimi yapılmıyor (SMTP servisi yok) — yanıt sadece kayıt altına alınıyor
+        [HttpPost("{id:int}/reply")]
+        public async Task<IActionResult> Reply(int id, MessageReplyDto dto) =>
+            await _messageService.ReplyAsync(id, dto) ? NoContent() : NotFound();
+
         [HttpDelete("{id:int}")]
         public async Task<IActionResult> Delete(int id) =>
             await _messageService.DeleteAsync(id) ? NoContent() : NotFound();

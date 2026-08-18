@@ -23,8 +23,7 @@ namespace BlogProject.API.Helpers
 
             CreateMap<User, UserDto>()
                 .ForMember(dest => dest.RoleName, opt => opt.MapFrom(src => src.Role != null ? src.Role.Name : null));
-            CreateMap<UserCreateDto, User>();
-            CreateMap<UserUpdateDto, User>();
+            // UserCreateDto/UserUpdateDto artık rol slug<->RoleId çözümlemesi gerektiriyor — UserService'te elle uygulanıyor
 
             CreateMap<Role, RoleDto>();
             CreateMap<RoleCreateDto, Role>();
@@ -61,7 +60,7 @@ namespace BlogProject.API.Helpers
             CreateMap<Message, MessageDto>();
             CreateMap<MessageCreateDto, Message>()
                 .ForMember(dest => dest.CreatedAt, opt => opt.MapFrom(_ => DateTime.UtcNow));
-            CreateMap<MessageUpdateDto, Message>();
+            // MessageUpdateDto artık partial update (nullable alanlar) — MessageService'te elle uygulanıyor, AutoMapper kullanılmıyor
 
             CreateMap<Offer, OfferDto>();
             CreateMap<OfferCreateDto, Offer>()

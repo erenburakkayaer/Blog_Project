@@ -9,6 +9,7 @@ namespace BlogProject.API.Interfaces
         Task<MessageDto?> GetByIdAsync(int id);
         Task<MessageDto> CreateAsync(MessageCreateDto dto);
         Task<bool> UpdateAsync(int id, MessageUpdateDto dto);
+        Task<bool> ReplyAsync(int id, MessageReplyDto dto);
         Task<bool> DeleteAsync(int id);
     }
 }

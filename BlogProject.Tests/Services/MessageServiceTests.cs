@@ -20,7 +20,7 @@ namespace BlogProject.Tests.Services
             var important = await service.CreateAsync(new MessageCreateDto { Name = "Ali", Email = "ali@a.com", Subject = "Acil", Content = "Önemli mesaj" });
             await service.CreateAsync(new MessageCreateDto { Name = "Veli", Email = "veli@a.com", Subject = "Normal", Content = "Sıradan mesaj" });
 
-            await service.UpdateAsync(important.Id, new MessageUpdateDto { IsRead = false, IsImportant = true, IsArchived = false });
+            await service.UpdateAsync(important.Id, new MessageUpdateDto { IsImportant = true });
 
             var result = await service.GetFilteredPagedAsync(page: 1, pageSize: 10, search: null, isRead: null, isImportant: true, isArchived: null);
 

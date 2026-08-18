@@ -14,5 +14,8 @@ namespace BlogProject.API.Entities
         public bool IsImportant { get; set; }
         public bool IsArchived { get; set; }
         public DateTime CreatedAt { get; set; }
+
+        public string? ReplyMessage { get; set; }
+        public DateTime? RepliedAt { get; set; }
     }
 }

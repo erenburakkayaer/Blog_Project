@@ -6,16 +6,35 @@ using BlogProject.API.Interfaces;
 
 namespace BlogProject.API.Services
 {
-    // İş kuralları: kullanıcı adı/e-posta benzersizliği, parola hash'leme
+    // İş kuralları: kullanıcı adı/e-posta benzersizliği, parola hash'leme, rol slug<->RoleId çözümleme
     public class UserService : IUserService
     {
         private readonly IUserRepository _userRepository;
+        private readonly IGenericRepository<Role> _roleRepository;
         private readonly IMapper _mapper;
 
-        public UserService(IUserRepository userRepository, IMapper mapper)
+        public UserService(IUserRepository userRepository, IGenericRepository<Role> roleRepository, IMapper mapper)
         {
             _userRepository = userRepository;
+            _roleRepository = roleRepository;
             _mapper = mapper;
+        }
+
+        // frontend/samet "admin"/"editor"/"author" slug'ı gönderiyor, backend rolleri Türkçe (Admin/Editor/Yazar)
+        private async Task<int> ResolveRoleIdAsync(string roleSlug)
+        {
+            var roleName = roleSlug?.ToLowerInvariant() switch
+            {
+                "admin" => RoleNames.Admin,
+                "author" => RoleNames.Yazar,
+                "editor" => RoleNames.Editor,
+                _ => RoleNames.Editor
+            };
+
+            var roles = await _roleRepository.GetAllAsync();
+            var role = roles.FirstOrDefault(r => r.Name == roleName)
+                ?? throw new InvalidOperationException($"'{roleName}' rolü veritabanında bulunamadı.");
+            return role.Id;
         }
 
         public async Task<IEnumerable<UserDto>> GetAllAsync()
@@ -48,10 +67,20 @@ namespace BlogProject.API.Services
             if (existing is not null)
                 throw new InvalidOperationException($"'{dto.Username}' kullanıcı adı zaten kullanılıyor.");
 
-            var user = _mapper.Map<User>(dto);
-            user.PasswordHash = PasswordHasher.Hash(dto.Password);
-            user.CreatedAt = DateTime.UtcNow;
-            user.IsActive = true;
+            // frontend/samet UserModal.jsx şifre toplamıyor — boş geldiyse geçici şifre üret
+            var password = string.IsNullOrWhiteSpace(dto.Password)
+                ? Guid.NewGuid().ToString("N")[..12]
+                : dto.Password;
+
+            var user = new User
+            {
+                Username = dto.Username,
+                Email = dto.Email,
+                PasswordHash = PasswordHasher.Hash(password),
+                RoleId = await ResolveRoleIdAsync(dto.Role),
+                CreatedAt = DateTime.UtcNow,
+                IsActive = true
+            };
 
             await _userRepository.AddAsync(user);
             await _userRepository.SaveChangesAsync();
@@ -64,7 +93,10 @@ namespace BlogProject.API.Services
             var user = await _userRepository.GetByIdAsync(id);
             if (user is null) return false;
 
-            _mapper.Map(dto, user);
+            user.Username = dto.Username;
+            user.Email = dto.Email;
+            user.RoleId = await ResolveRoleIdAsync(dto.Role);
+            user.IsActive = dto.Status == "active";
 
             _userRepository.Update(user);
             return await _userRepository.SaveChangesAsync();
