@@ -1,94 +1,110 @@
-# TechNova — Backend & Veritabanı Entegrasyon Rehberi 🚀
+# 🔌 TechNova Frontend ↔ ASP.NET Core (.NET 10) Backend Entegrasyon Rehberi
 
-> **Hedef:** Backend ve Veritabanı geliştiren 2 arkadaşımızın Node.js/Express ve PostgreSQL altyapısını React frontend ile sıfır eforla bağlaması.
-
----
-
-## 1. ⚙️ Hızlı Kurulum & Bağlantı
-Proje kök dizininde veya `src/services/api.js` dosyasında:
-
-```javascript
-// src/services/api.js
-const API_BASE_URL = "http://localhost:5000/api";
-export const USE_MOCK_DATA = false; // Backend hazır olduğunda false yapınız!
-```
+Bu belge, **Uslukılıç Yazılım** staj ekibindeki backend geliştiricileri (**BlogProject.API — Burak & Mehdide**) ile frontend ekibi (**Samet & Arkadaşı**) arasındaki tam entegrasyonu sağlamak için hazırlanmıştır.
 
 ---
 
-## 2. 🗄️ PostgreSQL Veritabanı Tablo Şeması (Schema SQL)
+## 🏛️ 1. Backend Mimarisi ve Teknoloji Özeti
 
-```sql
--- 1. Kullanıcılar Tablosu (Users)
-CREATE TABLE users (
-    id SERIAL PRIMARY KEY,
-    full_name VARCHAR(100) NOT NULL,
-    email VARCHAR(150) UNIQUE NOT NULL,
-    password_hash VARCHAR(255) NOT NULL,
-    role VARCHAR(20) DEFAULT 'yazar', -- 'yazar', 'gelistirici', 'isveren', 'admin'
-    balance DECIMAL(10, 2) DEFAULT 0.00,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-);
-
--- 2. Projeler Tablosu (Projects)
-CREATE TABLE projects (
-    id SERIAL PRIMARY KEY,
-    title VARCHAR(200) NOT NULL,
-    description TEXT,
-    category VARCHAR(50),
-    tag VARCHAR(100),
-    visibility VARCHAR(20) DEFAULT 'Public', -- 'Public' veya 'Private (Pro)'
-    boosted BOOLEAN DEFAULT FALSE,
-    file_url VARCHAR(255),
-    user_id INT REFERENCES users(id) ON DELETE CASCADE,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-);
-
--- 3. Bloglar Tablosu (Blogs)
-CREATE TABLE blogs (
-    id SERIAL PRIMARY KEY,
-    title VARCHAR(250) NOT NULL,
-    content TEXT NOT NULL,
-    category VARCHAR(50),
-    read_time VARCHAR(20) DEFAULT '5 dk',
-    views_count INT DEFAULT 0,
-    earnings DECIMAL(10, 2) DEFAULT 0.00,
-    user_id INT REFERENCES users(id) ON DELETE CASCADE,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-);
-
--- 4. Ödeme Talepleri Tablosu (Payouts)
-CREATE TABLE payouts (
-    id SERIAL PRIMARY KEY,
-    user_id INT REFERENCES users(id) ON DELETE CASCADE,
-    iban VARCHAR(34) NOT NULL,
-    bank_name VARCHAR(100) NOT NULL,
-    amount DECIMAL(10, 2) NOT NULL,
-    status VARCHAR(20) DEFAULT 'Beklemede', -- 'Beklemede', 'Onaylandı', 'Reddedildi'
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-);
-```
+- **Framework:** ASP.NET Core Web API (.NET 10)
+- **Veritabanı:** Microsoft SQL Server (Code-First / EF Core Migration)
+- **Mimari:** N-Tier (Katmanlı) Mimari (`Entities`, `DTO`, `Interfaces`, `Repositories`, `Services`, `Controllers`)
+- **Mapping:** AutoMapper / Mapster
+- **Test:** `BlogProject.Tests` (25 Birim & Entegrasyon Testi, EF Core InMemory)
+- **Dokümantasyon:** Swagger UI (`/swagger`) & Postman Koleksiyonu (`docs/BlogProject.postman_collection.json`)
 
 ---
 
-## 🔌 3. Gerekli REST API Endpoints
+## 🗄️ 2. Veritabanı Tablo Eşleşmesi (22 Tablo)
 
-### 🔑 Auth API (`/api/auth`)
-- `POST /api/auth/register` -> `{ fullName, email, password, role }` -> Token & User Obj
-- `POST /api/auth/login` -> `{ email, password }` -> `{ token, user }`
-- `GET /api/auth/me` -> Token ile kullanıcı detaylarını ve bakiyesini döner.
+| # | Entity | Açıklama | Frontend Karşılığı |
+|---|---|---|---|
+| 1 | **User** | Kullanıcılar, kimlik ve profil verileri | `/admin/kullanicilar`, Auth |
+| 2 | **Role** | Roller (`SuperAdmin`, `Admin`, `Editor`, `Yazar`) | Role-based Authorization |
+| 3 | **Permission** | Sayfa ve işlem bazlı yetkilendirme | ProtectedRoute |
+| 4 | **RefreshToken** | 7 günlük rotasyonlu token kayıtları | `api.js` (Otomatik yenileme) |
+| 5 | **Blog** | Makaleler, okunma, kazanç, yazar bilgisi | `/blog`, `/admin/blog` |
+| 6 | **Category** | Blog & Proje kategorileri | Filtreleme ve arama |
+| 7 | **Comment** | Ziyaretçi/Kullanıcı blog yorumları | Blog Detay Yorumları |
+| 8 | **Project** | Portföy projeleri, linkler, boost durumu | `/projeler`, `/admin/projeler` |
+| 9 | **ProjectImage** | Projelere ait çoklu görsel galerisi | Proje detay & önizleme |
+| 10 | **Service** | Web, Mobil, AI, Siber Güvenlik hizmetleri | `/hizmetler`, `/admin/hizmetler` |
+| 11 | **Offer** | 3 adımlı teklif sihirbazı talepleri | `/teklif-al`, `/admin/mesajlar` |
+| 12 | **Message** | İletişim formu mesajları | `/iletisim`, `/admin/mesajlar` |
+| 13 | **Career** | Açık staj & iş ilanları | `/kariyer` |
+| 14 | **Application** | Kariyer iş/staj başvuruları ve CV'ler | `/kariyer` başvuru formu |
+| 15 | **Reference** | Müşteri yorumları ve iş ortakları | `/referanslar` |
+| 16 | **Slider** | Ana sayfa slider/banner bileşenleri | `/` Hero alanı |
+| 17 | **Page** | Dinamik sayfalar (Hakkımızda, Gizlilik vb.) | Site sayfaları |
+| 18 | **Gallery** | Medya ve görsel galerisi | Görsel yönetimi |
+| 19 | **File** | Yüklenen dosyalar (CV, .zip, .apk, .pdf) | `uploadService.js` |
+| 20 | **Setting** | Şirket iletişim, telefon, adres ayarları | `/admin/ayarlar`, Footer, Navbar |
+| 21 | **SeoSetting** | Meta tag, title, description SEO verileri | `index.html`, React Helmet |
+| 22 | **Log** | Sistem işlem ve Serilog hata kayıtları | Dashboard logları |
 
-### 🚀 Projects API (`/api/projects`)
-- `GET /api/projects` -> Tüm projeleri döner (Public ve yetkiye göre Private).
-- `POST /api/projects` -> Yeni proje ekler (Multipart dosya destekli).
-- `PUT /api/projects/:id` -> Proje günceller.
-- `DELETE /api/projects/:id` -> Proje siler.
-- `POST /api/projects/:id/boost` -> Projeyi öne çıkarır.
+---
 
-### 📝 Blogs API (`/api/blogs`)
-- `GET /api/blogs` -> Blog listesini döner.
-- `POST /api/blogs` -> Yeni blog yayınlar.
-- `PUT /api/blogs/:id` -> Blog düzenler.
-- `DELETE /api/blogs/:id` -> Blog siler.
+## 🔑 3. Kimlik Doğrulama (JWT Access + Refresh Token)
 
-### 💰 Payouts API (`/api/payouts`)
-- `POST /api/payouts/request` -> `{ iban, bankName, amount }` -> Ödeme talebi oluşturur.
+### A. Giriş (Login)
+- **Endpoint:** `POST /api/auth/login`
+- **Request Body:**
+  ```json
+  {
+    "email": "admin@technova.com",
+    "password": "Admin123!"
+  }
+  ```
+- **Response:**
+  ```json
+  {
+    "accessToken": "eyJhbGciOi...",
+    "refreshToken": "7d-refresh-token-string...",
+    "expiresIn": 3600,
+    "user": {
+      "id": 1,
+      "fullName": "Samet Başkale",
+      "email": "admin@technova.com",
+      "roles": ["SuperAdmin", "Admin"]
+    }
+  }
+  ```
+
+### B. Token Yenileme (Refresh Token Rotasyonu)
+- **Endpoint:** `POST /api/auth/refresh`
+- **Request Body:**
+  ```json
+  {
+    "refreshToken": "7d-refresh-token-string..."
+  }
+  ```
+- **Response:** Yeni `accessToken` + yeni `refreshToken` döner. Frontend'deki `api.js` interceptor'ı 401 hatası aldığında bu işlemi otomatik gerçekleştirir.
+
+---
+
+## 📡 4. Frontend Servisleri ve REST Endpoint Eşleşmesi
+
+| Frontend Servisi | Dosya | Backend (.NET 10 API) Uç Noktaları |
+|---|---|---|
+| `authService` | `src/services/authService.js` | `POST /api/auth/login`<br>`POST /api/auth/register`<br>`POST /api/auth/refresh`<br>`GET /api/auth/me` |
+| `blogService` | `src/services/blogService.js` | `GET /api/blogs` (sayfalama + arama)<br>`GET /api/blogs/{id}`<br>`POST /api/blogs`<br>`PUT /api/blogs/{id}`<br>`DELETE /api/blogs/{id}` |
+| `projectService` | `src/services/projectService.js` | `GET /api/projects`<br>`GET /api/projects/{id}`<br>`POST /api/projects`<br>`PUT /api/projects/{id}`<br>`DELETE /api/projects/{id}`<br>`POST /api/projects/{id}/boost` |
+| `uploadService` | `src/services/uploadService.js` | `POST /api/upload` (veya `/api/file`, Multipart Form Data)<br>`DELETE /api/upload/{id}` |
+| `serviceService` | `src/services/serviceService.js` | `GET/POST/PUT/DELETE /api/services` |
+| `messageService` | `src/services/messageService.js` | `GET/POST/PUT/DELETE /api/messages`<br>`POST /api/offers` |
+| `userService` | `src/services/userService.js` | `GET/POST/PUT/DELETE /api/users`<br>`GET /api/roles` |
+
+---
+
+## ⚙️ 5. Frontend'i Canlı Backend'e Bağlama
+
+1. **`.env` dosyasını güncelleyin:**
+   ```env
+   # Backend portunuza göre düzenleyin:
+   VITE_API_URL=http://localhost:5000/api
+   ```
+2. **`src/services/api.js` dosyasında mock modunu kapatın:**
+   ```javascript
+   export const USE_MOCK_DATA = false;
+   ```
+3. `npm run dev` ile frontend'i başlatın. Frontend artık tüm istekleri doğrudan **ASP.NET Core Web API**'ye iletir!
