@@ -75,16 +75,18 @@ function HomePage() {
           <div className="row g-4">
             {services.map((service) => (
               <div className="col-md-6 col-xl-3" key={service.title}>
-                <article className="surface-card p-4">
-                  <i
-                    className={`bi ${service.icon} fs-2 text-primary d-inline-block mb-3`}
-                    aria-hidden="true"
-                  />
+                <Link to="/hizmetler" className="text-decoration-none text-dark d-block h-100">
+                  <article className="surface-card p-4 h-100 hover-shadow transition-all">
+                    <i
+                      className={`bi ${service.icon} fs-2 text-primary d-inline-block mb-3`}
+                      aria-hidden="true"
+                    />
 
-                  <h3 className="h5 fw-bold">{service.title}</h3>
+                    <h3 className="h5 fw-bold">{service.title}</h3>
 
-                  <p className="text-secondary mb-0">{service.description}</p>
-                </article>
+                    <p className="text-secondary mb-0">{service.description}</p>
+                  </article>
+                </Link>
               </div>
             ))}
           </div>
