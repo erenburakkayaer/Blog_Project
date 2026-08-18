@@ -13,7 +13,7 @@ const BlogCreatePage = () => {
     try {
       setIsSubmitting(true);
 
-      await blogService.create(formData);
+      await blogService.createBlog(formData);
 
       toast.success("Blog yazısı başarıyla oluşturuldu.");
       navigate("/admin/blog");

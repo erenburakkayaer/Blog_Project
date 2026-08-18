@@ -1,4 +1,4 @@
-function PlaceholderPage({ eyebrow = "TechNova", title, description }) {
+function PlaceholderPage({ eyebrow = "Uslukılıç Yazılım", title, description }) {
   return (
     <section className="page-section">
       <div className="container">

@@ -1,147 +1,104 @@
-import projects from "../data/projects";
+import { apiRequest, USE_MOCK_DATA } from "./api";
 
-const STORAGE_KEY = "technova_projects";
+// Initial Mock Projects Data
+let mockProjects = [
+  { id: 1, title: "FinTech Dashboard", summary: "Gerçek zamanlı finansal analitik platformu.", description: "Gerçek zamanlı finansal analitik platformu. React ve Node.js ile geliştirildi.", category: "Web", tag: "React · Node.js", status: "published", color: "#6366f1", icon: "bi-bar-chart-line", visibility: "Public", boosted: true, author: "Ahmet Yılmaz", client: "FinBank A.Ş.", technologies: ["React", "Node.js", "PostgreSQL"], fileName: "fintech-v1.zip", createdAt: "2026-08-01T10:00:00Z", updatedAt: "2026-08-10T14:00:00Z" },
+  { id: 2, title: "MedApp Mobil", summary: "Hasta takip ve randevu yönetimi uygulaması.", description: "iOS ve Android uyumlu hasta takip sistemi.", category: "Mobil", tag: "React Native", status: "published", color: "#38bdf8", icon: "bi-heart-pulse", visibility: "Public", boosted: false, author: "Zeynep Kaya", client: "Sağlık Merkezi", technologies: ["React Native", "Firebase"], fileName: "medapp-release.apk", createdAt: "2026-07-20T09:00:00Z", updatedAt: "2026-08-05T11:00:00Z" },
+  { id: 3, title: "AI Chatbot Platformu", summary: "Kurumsal müşteri hizmetleri chatbot altyapısı.", description: "GPT-4 tabanlı kurumsal chatbot çözümü.", category: "Yapay Zekâ", tag: "Python · GPT-4", status: "published", color: "#34d399", icon: "bi-chat-square-dots", visibility: "Private (Pro)", boosted: true, author: "Samet Başkale", client: "TechCorp Ltd.", technologies: ["Python", "GPT-4", "FastAPI"], fileName: "ai-core.py", createdAt: "2026-07-15T08:00:00Z", updatedAt: "2026-08-12T16:00:00Z" },
+  { id: 4, title: "E-Ticaret Sistemi", summary: "Çok satıcılı marketplace platformu.", description: "Next.js ve Stripe ile geliştirilmiş e-ticaret platformu.", category: "Web", tag: "Next.js · Stripe", status: "draft", color: "#f59e0b", icon: "bi-cart3", visibility: "Public", boosted: false, author: "Caner Demir", client: "MarketTR", technologies: ["Next.js", "Stripe", "MongoDB"], fileName: "shop-bundle.zip", createdAt: "2026-08-08T12:00:00Z", updatedAt: "2026-08-08T12:00:00Z" },
+];
 
-const cloneProjects = (items) =>
-  items.map((project) => ({
-    ...project,
-    technologies: [...(project.technologies || [])],
-  }));
-
-const generateId = () => {
-  if (typeof crypto !== "undefined" && crypto.randomUUID) {
-    return crypto.randomUUID();
-  }
-
-  return `project-${Date.now()}-${Math.random().toString(36).slice(2, 9)}`;
-};
-
-const createSlug = (value) =>
-  value
-    .toLocaleLowerCase("tr-TR")
-    .trim()
-    .replace(/ğ/g, "g")
-    .replace(/ü/g, "u")
-    .replace(/ş/g, "s")
-    .replace(/ı/g, "i")
-    .replace(/ö/g, "o")
-    .replace(/ç/g, "c")
-    .replace(/[^a-z0-9\s-]/g, "")
-    .replace(/\s+/g, "-")
-    .replace(/-+/g, "-");
-
-const readProjects = () => {
-  try {
-    const storedProjects = localStorage.getItem(STORAGE_KEY);
-
-    if (!storedProjects) {
-      const initialProjects = cloneProjects(projects);
-
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(initialProjects));
-
-      return initialProjects;
+export const projectService = {
+  // GET ALL PROJECTS — admin ve site sayfalarında kullanılır
+  getAll: async () => {
+    if (USE_MOCK_DATA) {
+      await new Promise((r) => setTimeout(r, 300));
+      return [...mockProjects];
     }
+    return await apiRequest("/projects");
+  },
 
-    const parsedProjects = JSON.parse(storedProjects);
+  // Alias — DashboardPage Promise.resolve(projectService.getAll()) uyumluluğu için
+  getAllProjects: async () => {
+    if (USE_MOCK_DATA) {
+      return [...mockProjects];
+    }
+    return await apiRequest("/projects");
+  },
 
-    return Array.isArray(parsedProjects)
-      ? cloneProjects(parsedProjects)
-      : cloneProjects(projects);
-  } catch {
-    return cloneProjects(projects);
-  }
-};
+  // CREATE PROJECT (WITH FILE ATTACHMENT)
+  createProject: async (projectData) => {
+    if (USE_MOCK_DATA) {
+      const newProject = {
+        id: Date.now(),
+        color: "#6366f1",
+        icon: "bi-folder-check",
+        boosted: false,
+        author: projectData.author || "Kullanıcı",
+        ...projectData,
+      };
+      mockProjects = [newProject, ...mockProjects];
+      return newProject;
+    }
+    return await apiRequest("/projects", {
+      method: "POST",
+      body: JSON.stringify(projectData),
+    });
+  },
 
-const writeProjects = (items) => {
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(items));
-};
+  // UPDATE PROJECT
+  updateProject: async (id, updatedFields) => {
+    if (USE_MOCK_DATA) {
+      mockProjects = mockProjects.map((p) =>
+        p.id === Number(id) ? { ...p, ...updatedFields } : p
+      );
+      return mockProjects.find((p) => p.id === Number(id));
+    }
+    return await apiRequest(`/projects/${id}`, {
+      method: "PUT",
+      body: JSON.stringify(updatedFields),
+    });
+  },
 
-const getAll = () => {
-  return readProjects().sort(
-    (firstProject, secondProject) =>
-      new Date(secondProject.updatedAt) - new Date(firstProject.updatedAt),
-  );
-};
+  // DELETE PROJECT
+  deleteProject: async (id) => {
+    if (USE_MOCK_DATA) {
+      mockProjects = mockProjects.filter((p) => p.id !== Number(id));
+      return { success: true, message: "Proje başarıyla silindi." };
+    }
+    return await apiRequest(`/projects/${id}`, {
+      method: "DELETE",
+    });
+  },
 
-const getById = (id) => {
-  return readProjects().find((project) => project.id === id) || null;
-};
+  // TOGGLE BOOST STATUS
+  boostProject: async (id, days) => {
+    if (USE_MOCK_DATA) {
+      mockProjects = mockProjects.map((p) =>
+        p.id === Number(id) ? { ...p, boosted: true } : p
+      );
+      return { success: true, message: `Projeniz ${days} gün boyunca öne çıkarıldı!` };
+    }
+    return await apiRequest(`/projects/${id}/boost`, {
+      method: "POST",
+      body: JSON.stringify({ days }),
+    });
+  },
 
-const create = (projectData) => {
-  const currentProjects = readProjects();
-  const now = new Date().toISOString();
+  // GET BY ID
+  getById: async (id) => {
+    if (USE_MOCK_DATA) {
+      const found = mockProjects.find((p) => p.id === Number(id));
+      if (!found) throw new Error("Proje bulunamadı.");
+      return found;
+    }
+    return await apiRequest(`/projects/${id}`);
+  },
 
-  const newProject = {
-    ...projectData,
-    id: generateId(),
-    slug: createSlug(projectData.title),
-    technologies: projectData.technologies || [],
-    createdAt: now,
-    updatedAt: now,
-  };
-
-  const updatedProjects = [newProject, ...currentProjects];
-
-  writeProjects(updatedProjects);
-
-  return newProject;
-};
-
-const update = (id, projectData) => {
-  const currentProjects = readProjects();
-  const projectIndex = currentProjects.findIndex(
-    (project) => project.id === id,
-  );
-
-  if (projectIndex === -1) {
-    return null;
-  }
-
-  const updatedProject = {
-    ...currentProjects[projectIndex],
-    ...projectData,
-    id,
-    slug: createSlug(projectData.title),
-    technologies: projectData.technologies || [],
-    updatedAt: new Date().toISOString(),
-  };
-
-  currentProjects[projectIndex] = updatedProject;
-  writeProjects(currentProjects);
-
-  return updatedProject;
-};
-
-const remove = (id) => {
-  const currentProjects = readProjects();
-  const updatedProjects = currentProjects.filter(
-    (project) => project.id !== id,
-  );
-
-  if (updatedProjects.length === currentProjects.length) {
-    return false;
-  }
-
-  writeProjects(updatedProjects);
-
-  return true;
-};
-
-const reset = () => {
-  const initialProjects = cloneProjects(projects);
-
-  writeProjects(initialProjects);
-
-  return initialProjects;
-};
-
-const projectService = {
-  getAll,
-  getById,
-  create,
-  update,
-  remove,
-  reset,
+  // Aliases for standard CRUD naming
+  create: async (data) => projectService.createProject(data),
+  update: async (id, data) => projectService.updateProject(id, data),
+  delete: async (id) => projectService.deleteProject(id),
 };
 
 export default projectService;
