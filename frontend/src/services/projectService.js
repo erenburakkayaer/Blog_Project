@@ -299,6 +299,45 @@ export const projectService = {
   },
 
   /**
+   * Projeye Ait Galeri Görsellerini Getirir
+   * Backend: GET /api/projects/{projectId}/images
+   */
+  getProjectImages: async (projectId) => {
+    if (USE_MOCK_DATA) {
+      return [
+        { id: 1, projectId: Number(projectId), imageUrl: "https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=600", altText: "Dashboard Görünümü", isCover: true, displayOrder: 1 },
+        { id: 2, projectId: Number(projectId), imageUrl: "https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=600", altText: "Raporlama Ekranı", isCover: false, displayOrder: 2 },
+      ];
+    }
+    return await apiRequest(`/projects/${projectId}/images`);
+  },
+
+  /**
+   * Projeye Yeni Galeri Görseli Ekler
+   * Backend: POST /api/projects/{projectId}/images (ProjectImageCreateDto)
+   */
+  addProjectImage: async (projectId, imageData) => {
+    if (USE_MOCK_DATA) {
+      return { id: Date.now(), projectId: Number(projectId), ...imageData, createdAt: new Date().toISOString() };
+    }
+    return await apiRequest(`/projects/${projectId}/images`, {
+      method: "POST",
+      body: JSON.stringify(imageData),
+    });
+  },
+
+  /**
+   * Galeri Görselini Siler
+   * Backend: DELETE /api/projectimages/{id}
+   */
+  deleteProjectImage: async (imageId) => {
+    if (USE_MOCK_DATA) {
+      return { success: true, message: "Görsel silindi." };
+    }
+    return await apiRequest(`/projectimages/${imageId}`, { method: "DELETE" });
+  },
+
+  /**
    * Projeyi Siler
    * Backend: DELETE /api/projects/{id}
    */

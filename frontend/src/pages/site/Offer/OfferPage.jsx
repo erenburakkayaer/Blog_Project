@@ -1,5 +1,7 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
+import toast from "react-hot-toast";
+import { offerService } from "../../../services/offerService";
 
 const steps = [
   {
@@ -39,9 +41,21 @@ function OfferPage() {
   const select = (key, val) => setSelections((p) => ({ ...p, [key]: val }));
   const handleChange = (e) => setForm((p) => ({ ...p, [e.target.name]: e.target.value }));
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    setSent(true);
+    try {
+      await offerService.create({
+        contactName: form.name,
+        contactEmail: form.email,
+        contactPhone: form.phone,
+        title: `${selections.type?.toUpperCase() || "Yazılım"} Projesi Teklif Talebi`,
+        requirementDetails: `Bütçe Aralığı: ${selections.budget || "Belirtilmedi"} | Müşteri Notu: ${form.note || "Yok"}`,
+      });
+      setSent(true);
+      toast.success("Teklif talebiniz başarıyla iletildi!");
+    } catch {
+      toast.error("Teklif iletilirken bir sorun oluştu.");
+    }
   };
 
   return (
