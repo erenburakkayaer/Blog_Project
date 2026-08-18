@@ -253,6 +253,87 @@ function LoginPage() {
         </button>
       </form>
 
+      {/* QUICK ROLE DEMO SELECTOR (UDEMY / BTK AKADEMİ TARZI) */}
+      {mode === "login" && (
+        <div className="mt-4 p-3 rounded-4 bg-black bg-opacity-20 border border-white border-opacity-10">
+          <div className="d-flex align-items-center justify-content-between mb-2">
+            <span className="fw-bold small text-white-50" style={{ fontSize: "11px", letterSpacing: "0.05em" }}>
+              ⚡ HIZLI ROL İLE TEST GİRİŞİ:
+            </span>
+            <span className="badge bg-primary bg-opacity-20 text-primary" style={{ fontSize: "9px" }}>
+              Tek Tıkla Giriş
+            </span>
+          </div>
+
+          <div className="d-flex flex-wrap gap-2">
+            <button
+              type="button"
+              className="btn btn-sm btn-outline-danger rounded-pill px-3 py-1 text-white"
+              style={{ fontSize: "11px" }}
+              onClick={async () => {
+                await login({ email: "admin@technova.com", password: "Admin123!" });
+                toast.success("👑 Şirket Yöneticisi olarak giriş yapıldı!");
+                navigate("/admin", { replace: true });
+              }}
+            >
+              👑 Şirket Yöneticisi
+            </button>
+
+            <button
+              type="button"
+              className="btn btn-sm btn-outline-warning rounded-pill px-3 py-1 text-white"
+              style={{ fontSize: "11px" }}
+              onClick={async () => {
+                await login({ email: "ik@technova.com", password: "Ik123!" });
+                toast.success("👥 İnsan Kaynakları (İK) olarak giriş yapıldı!");
+                navigate("/admin", { replace: true });
+              }}
+            >
+              👥 İnsan Kaynakları
+            </button>
+
+            <button
+              type="button"
+              className="btn btn-sm btn-outline-primary rounded-pill px-3 py-1 text-white"
+              style={{ fontSize: "11px" }}
+              onClick={async () => {
+                await login({ email: "yazar@technova.com", password: "Yazar123!" });
+                toast.success("✍️ Yazar & İçerik Üreticisi olarak giriş yapıldı!");
+                navigate("/admin", { replace: true });
+              }}
+            >
+              ✍️ Yazar
+            </button>
+
+            <button
+              type="button"
+              className="btn btn-sm btn-outline-info rounded-pill px-3 py-1 text-white"
+              style={{ fontSize: "11px" }}
+              onClick={async () => {
+                await login({ email: "dev@technova.com", password: "Dev123!" });
+                toast.success("💻 Geliştirici olarak giriş yapıldı!");
+                navigate("/admin", { replace: true });
+              }}
+            >
+              💻 Geliştirici
+            </button>
+
+            <button
+              type="button"
+              className="btn btn-sm btn-outline-secondary rounded-pill px-3 py-1 text-white"
+              style={{ fontSize: "11px" }}
+              onClick={async () => {
+                await login({ email: "ogrenci@technova.com", password: "User123!" });
+                toast.success("👤 Normal Kullanıcı / Öğrenci olarak giriş yapıldı!");
+                navigate("/admin", { replace: true });
+              }}
+            >
+              👤 Öğrenci / Üye
+            </button>
+          </div>
+        </div>
+      )}
+
       <div className="text-center mt-4">
         <Link className="text-secondary small text-decoration-none" to="/">
           <i className="bi bi-arrow-left me-1" /> Ana Sayfaya Dön

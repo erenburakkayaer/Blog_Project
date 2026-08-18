@@ -4,17 +4,6 @@ import { useState, useEffect } from "react";
 import useSite from "../../hooks/useSite";
 import useAuth from "../../hooks/useAuth";
 
-const adminMenuItems = [
-  { to: "/admin", icon: "bi-grid-1x2-fill", label: "Dashboard", end: true },
-  { to: "/admin/blog", icon: "bi-journal-richtext", label: "Blog Yönetimi", badge: "4" },
-  { to: "/admin/projeler", icon: "bi-laptop", label: "Proje Vitrini", badge: "4" },
-  { to: "/admin/hizmetler", icon: "bi-layers-fill", label: "Hizmetler" },
-  { to: "/admin/kullanicilar", icon: "bi-people-fill", label: "Kullanıcılar", badge: "Admin" },
-  { to: "/admin/mesajlar", icon: "bi-chat-dots-fill", label: "Mesaj & Teklifler" },
-  { to: "/admin/profil", icon: "bi-person-badge-fill", label: "Profilim" },
-  { to: "/admin/ayarlar", icon: "bi-sliders", label: "Sistem Ayarları" },
-];
-
 function AdminSidebar() {
   const { settings } = useSite();
   const { user, logout } = useAuth();
@@ -25,6 +14,82 @@ function AdminSidebar() {
     avatar: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=100",
   });
 
+  const userRole = (user?.role || "admin").toLowerCase();
+
+  // Rol Bazlı Dinamik Menü Tanımları (Udemy / BTK Akademi tarzı)
+  const getMenuItems = () => {
+    // 1. ŞİRKET YÖNETİCİSİ (ADMIN & SUPERADMIN) - Tam Yetki
+    if (userRole === "admin" || userRole === "superadmin") {
+      return [
+        { to: "/admin", icon: "bi-grid-1x2-fill", label: "Dashboard", end: true },
+        { to: "/admin/blog", icon: "bi-journal-richtext", label: "Blog Yönetimi", badge: "4" },
+        { to: "/admin/projeler", icon: "bi-laptop", label: "Proje Vitrini", badge: "4" },
+        { to: "/admin/hizmetler", icon: "bi-layers-fill", label: "Hizmetler" },
+        { to: "/admin/kariyer", icon: "bi-briefcase-fill", label: "Kariyer & İlanlar", badge: "İK" },
+        { to: "/admin/kullanicilar", icon: "bi-people-fill", label: "Kullanıcı & Roller", badge: "Admin" },
+        { to: "/admin/mesajlar", icon: "bi-chat-dots-fill", label: "Mesaj & Teklifler" },
+        { to: "/admin/profil", icon: "bi-person-badge-fill", label: "Profilim & Biyografi" },
+        { to: "/admin/ayarlar", icon: "bi-sliders", label: "Sistem Ayarları" },
+      ];
+    }
+
+    // 2. İNSAN KAYNAKLARI (HR)
+    if (userRole === "hr") {
+      return [
+        { to: "/admin", icon: "bi-grid-1x2-fill", label: "İK Özeti", end: true },
+        { to: "/admin/kariyer", icon: "bi-briefcase-fill", label: "Kariyer & İlanlar", badge: "Aktif" },
+        { to: "/admin/mesajlar", icon: "bi-chat-dots-fill", label: "Gelen Başvurular" },
+        { to: "/admin/profil", icon: "bi-person-badge-fill", label: "Profilim" },
+      ];
+    }
+
+    // 3. YAZAR / İÇERİK ÜRETİCİSİ (AUTHOR)
+    if (userRole === "author") {
+      return [
+        { to: "/admin", icon: "bi-grid-1x2-fill", label: "Yazar Paneli & Bakiye", end: true },
+        { to: "/admin/blog", icon: "bi-journal-richtext", label: "Bloglarım & Yaz", badge: "₺1.450" },
+        { to: "/admin/projeler", icon: "bi-laptop", label: "Projelerim" },
+        { to: "/admin/profil", icon: "bi-person-badge-fill", label: "Profilim & Biyografi" },
+      ];
+    }
+
+    // 4. EDİTÖR & GELİŞTİRİCİ
+    if (userRole === "editor") {
+      return [
+        { to: "/admin", icon: "bi-grid-1x2-fill", label: "Geliştirici Paneli", end: true },
+        { to: "/admin/projeler", icon: "bi-laptop", label: "Proje Vitrini", badge: "Yeni" },
+        { to: "/admin/blog", icon: "bi-journal-richtext", label: "Blog Yazıları" },
+        { to: "/admin/profil", icon: "bi-person-badge-fill", label: "Profilim" },
+      ];
+    }
+
+    // 5. NORMAL KULLANICI / ÖĞRENCİ
+    return [
+      { to: "/admin", icon: "bi-grid-1x2-fill", label: "Hesabım", end: true },
+      { to: "/admin/profil", icon: "bi-person-badge-fill", label: "Profilim & Biyografi" },
+    ];
+  };
+
+  const menuItems = getMenuItems();
+
+  const getRoleTitle = () => {
+    switch (userRole) {
+      case "admin":
+      case "superadmin":
+        return { label: "👑 Şirket Yöneticisi", color: "danger" };
+      case "hr":
+        return { label: "👥 İnsan Kaynakları", color: "warning" };
+      case "author":
+        return { label: "✍️ İçerik Üreticisi", color: "primary" };
+      case "editor":
+        return { label: "💻 Geliştirici", color: "info" };
+      default:
+        return { label: "👤 Öğrenci / Üye", color: "secondary" };
+    }
+  };
+
+  const roleInfo = getRoleTitle();
+
   useEffect(() => {
     const loadProfile = () => {
       const saved = localStorage.getItem("technova_admin_profile");
@@ -32,7 +97,7 @@ function AdminSidebar() {
         try {
           const parsed = JSON.parse(saved);
           setProfile({
-            username: parsed.username || parsed.fullName || user?.fullName || "Yönetici",
+            username: parsed.username || parsed.fullName || user?.fullName || "Kullanıcı",
             avatar: parsed.avatar || "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=100",
           });
         } catch (e) {
@@ -88,13 +153,27 @@ function AdminSidebar() {
           </div>
         </Link>
 
+        {/* ROLE BADGE HEADER */}
+        <div className="px-2 mb-3">
+          <div
+            className={`p-2 rounded-3 bg-${roleInfo.color} bg-opacity-10 border border-${roleInfo.color} border-opacity-25 d-flex align-items-center justify-content-between`}
+          >
+            <span className={`text-${roleInfo.color} fw-bold small`} style={{ fontSize: "11px" }}>
+              {roleInfo.label}
+            </span>
+            <span className="badge bg-white bg-opacity-25 text-white" style={{ fontSize: "9px" }}>
+              Aktif Oturum
+            </span>
+          </div>
+        </div>
+
         {/* NAVIGATION LINKS */}
         <nav className="d-flex flex-column gap-1">
           <small className="text-uppercase text-secondary fw-bold px-3 py-1 mb-1" style={{ fontSize: "10px", letterSpacing: "0.08em" }}>
-            Ana Menü
+            Yetkili Menü
           </small>
 
-          {adminMenuItems.map((item) => (
+          {menuItems.map((item) => (
             <NavLink
               key={item.to}
               to={item.to}
@@ -133,9 +212,8 @@ function AdminSidebar() {
         </nav>
       </div>
 
-      {/* FOOTER USER CARD (UDEMY / INSTAGRAM STYLE) */}
+      {/* FOOTER USER CARD */}
       <div className="pt-3 border-top border-secondary border-opacity-25">
-        {/* Live Site Shortcut */}
         <Link
           to="/"
           target="_blank"
@@ -146,7 +224,6 @@ function AdminSidebar() {
           <i className="bi bi-chevron-right small" />
         </Link>
 
-        {/* User Profile Pill */}
         <div className="d-flex align-items-center justify-content-between p-2 rounded-3 bg-black bg-opacity-40 border border-white border-opacity-10">
           <Link to="/admin/profil" className="d-flex align-items-center gap-2 text-decoration-none overflow-hidden">
             <img
@@ -159,9 +236,9 @@ function AdminSidebar() {
               <div className="text-white fw-semibold text-truncate small lh-1">
                 {profile.username}
               </div>
-              <span className="badge bg-success bg-opacity-25 text-success rounded-pill mt-1" style={{ fontSize: "9px" }}>
-                Yönetici
-              </span>
+              <small className="text-secondary d-block mt-1 text-truncate" style={{ fontSize: "10px" }}>
+                {user?.email || "admin@technova.com"}
+              </small>
             </div>
           </Link>
 

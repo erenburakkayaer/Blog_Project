@@ -25,6 +25,7 @@ import ServiceEditPage from "../pages/admin/Services/ServiceEditPage";
 import UserListPage from "../pages/admin/Users/UserListPage";
 import SettingsPage from "../pages/admin/Settings/SettingsPage";
 import ProfilePage from "../pages/admin/Profile/ProfilePage";
+import CareerListPage from "../pages/admin/Careers/CareerListPage";
 
 import LoginPage from "../pages/auth/Login/LoginPage";
 
@@ -101,6 +102,10 @@ const router = createBrowserRouter([
           {
             path: "mesajlar",
             element: <MessageListPage />,
+          },
+          {
+            path: "kariyer",
+            element: <CareerListPage />,
           },
           {
             path: "profil",

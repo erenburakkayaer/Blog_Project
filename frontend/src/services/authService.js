@@ -9,7 +9,7 @@
  * - POST /api/auth/register → { accessToken, refreshToken, user }
  * - POST /api/auth/refresh → { accessToken, refreshToken }
  * - GET  /api/auth/me → Profil bilgileri
- * - Roller: SuperAdmin, Admin, Editor, Yazar
+ * - Roller: SuperAdmin, Admin, HR, Editor, Yazar, User
  */
 
 import { USE_MOCK_DATA, apiRequest, setTokens, clearTokens } from "./api";
@@ -20,7 +20,7 @@ const FAKE_USERS = [
     userName: "admin",
     firstName: "Samet",
     lastName: "Başkale",
-    fullName: "Samet Başkale (Yönetici)",
+    fullName: "Samet Başkale",
     email: "admin@technova.com",
     password: "Admin123!",
     roles: ["SuperAdmin", "Admin"],
@@ -29,15 +29,51 @@ const FAKE_USERS = [
   },
   {
     id: 2,
-    userName: "yazar",
+    userName: "merve_ik",
+    firstName: "Merve",
+    lastName: "Aydın",
+    fullName: "Merve Aydın (İK)",
+    email: "ik@technova.com",
+    password: "Ik123!",
+    roles: ["HR"],
+    role: "hr",
+    balance: 0,
+  },
+  {
+    id: 3,
+    userName: "zeynep_yazar",
     firstName: "Zeynep",
     lastName: "Kaya",
     fullName: "Zeynep Kaya",
     email: "yazar@technova.com",
     password: "Yazar123!",
-    roles: ["Yazar", "Editor"],
-    role: "editor",
+    roles: ["Yazar"],
+    role: "author",
     balance: 620.0,
+  },
+  {
+    id: 4,
+    userName: "eren_dev",
+    firstName: "Eren",
+    lastName: "Demir",
+    fullName: "Eren Demir",
+    email: "dev@technova.com",
+    password: "Dev123!",
+    roles: ["Editor"],
+    role: "editor",
+    balance: 350.0,
+  },
+  {
+    id: 5,
+    userName: "burak_ogrenci",
+    firstName: "Burak",
+    lastName: "Çelik",
+    fullName: "Burak Çelik",
+    email: "ogrenci@technova.com",
+    password: "User123!",
+    roles: ["User"],
+    role: "user",
+    balance: 0,
   },
 ];
 
@@ -52,14 +88,12 @@ export const authService = {
   /**
    * Login (Giriş)
    * ASP.NET Core: POST /api/auth/login
-   * Body: { email/userName, password }
-   * Response: { accessToken, refreshToken, user }
    */
   async login(credentials) {
     const identifier = (credentials.email || credentials.userName || "").trim().toLowerCase();
 
     if (USE_MOCK_DATA) {
-      await wait(600);
+      await wait(500);
       const user = FAKE_USERS.find(
         (u) =>
           (u.email.toLowerCase() === identifier || u.userName.toLowerCase() === identifier) &&
@@ -102,7 +136,8 @@ export const authService = {
    */
   async register(userData) {
     if (USE_MOCK_DATA) {
-      await wait(600);
+      await wait(500);
+      const roleKey = userData.role || "author";
       const newUser = {
         id: Date.now(),
         userName: userData.email?.split("@")[0] || "kullanici",
@@ -110,8 +145,8 @@ export const authService = {
         lastName: userData.fullName?.split(" ").slice(1).join(" ") || "",
         fullName: userData.fullName || "Yeni Kullanıcı",
         email: userData.email,
-        roles: [userData.role === "admin" ? "Admin" : "Yazar"],
-        role: userData.role === "admin" ? "admin" : "editor",
+        roles: [roleKey === "admin" ? "Admin" : roleKey === "hr" ? "HR" : "Yazar"],
+        role: roleKey,
         balance: 0,
       };
       const accessToken = createFakeToken(newUser);
@@ -160,7 +195,7 @@ export const authService = {
    */
   async forgotPassword(email) {
     if (USE_MOCK_DATA) {
-      await wait(500);
+      await wait(400);
       return { success: true, message: `Sıfırlama bağlantısı ${email} adresine iletildi.` };
     }
     return await apiRequest("/auth/forgot-password", {
