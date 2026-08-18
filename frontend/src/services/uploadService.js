@@ -1,65 +1,73 @@
-import { USE_MOCK_DATA, apiRequest } from "./api";
+import { apiRequest, USE_MOCK_DATA } from "./api";
 
 /**
- * TechNova Upload Service
- *
- * Desteklenen formatlar: .zip, .apk, .pdf, .png, .jpg, .mp4 vb.
- * Backend: POST /api/upload (Multipart Form Data)
- * Response: { success, fileName, fileSize, url }
+ * TechNova — FileAsset Service
+ * Mehdi'nin Branch'i (DTO/FileAsset/) ile %100 senkronize
+ * 
+ * Model:
+ * - id: int
+ * - originalFileName: string
+ * - url: string
+ * - contentType: string
+ * - fileSizeBytes: long
+ * - fileCategory: string (Images, Documents, SourceCode, Releases)
+ * - uploadedByUserId: int
+ * - uploadedByUserName: string
+ * - uploadedAt: DateTime
  */
-export const uploadService = {
-  uploadFile: async (file, folder = "projects") => {
-    if (!file) throw new Error("Dosya seçilmedi.");
 
+export const uploadService = {
+  /**
+   * Dosya Yükler (Görsel, Zip, PDF, APK vb.)
+   * Backend: POST /api/fileassets/upload
+   */
+  uploadFile: async (file, category = "General") => {
     if (USE_MOCK_DATA) {
-      // Simulate 500ms upload delay
-      await new Promise((res) => setTimeout(res, 500));
-      const mockUrl = URL.createObjectURL(file);
+      await new Promise((resolve) => setTimeout(resolve, 300));
+      const objectUrl = URL.createObjectURL(file);
       return {
-        success: true,
-        fileName: file.name,
-        fileSize: `${(file.size / (1024 * 1024)).toFixed(2)} MB`,
-        url: mockUrl,
-        folder,
+        id: Date.now(),
+        originalFileName: file.name,
+        url: objectUrl,
+        contentType: file.type || "application/octet-stream",
+        fileSizeBytes: file.size,
+        fileCategory: category,
+        uploadedByUserId: 1,
+        uploadedByUserName: "Samet Başkale",
+        uploadedAt: new Date().toISOString(),
       };
     }
 
-    const token = localStorage.getItem("technova_token");
     const formData = new FormData();
     formData.append("file", file);
-    formData.append("folder", folder);
+    formData.append("fileCategory", category);
 
-    const response = await fetch(
-      `${import.meta.env?.VITE_API_URL || "http://localhost:5000/api"}/upload`,
-      {
-        method: "POST",
-        headers: {
-          ...(token ? { Authorization: `Bearer ${token}` } : {}),
-        },
-        body: formData,
-      }
-    );
-
-    if (!response.ok) {
-      throw new Error("Dosya yükleme başarısız oldu. Lütfen tekrar deneyin.");
-    }
-
-    return await response.json();
+    return await apiRequest("/fileassets/upload", {
+      method: "POST",
+      body: formData,
+    });
   },
 
   /**
-   * Delete a file from server
-   * Backend: DELETE /api/upload/:fileId
+   * Tüm Yüklenen Dosyaları Listeler (Admin)
+   * Backend: GET /api/fileassets
    */
-  deleteFile: async (fileUrl) => {
+  getAll: async () => {
     if (USE_MOCK_DATA) {
-      await new Promise((res) => setTimeout(res, 200));
+      return [];
+    }
+    return await apiRequest("/fileassets");
+  },
+
+  /**
+   * Dosyayı Siler
+   * Backend: DELETE /api/fileassets/{id}
+   */
+  deleteFile: async (id) => {
+    if (USE_MOCK_DATA) {
       return { success: true };
     }
-    return await apiRequest(`/upload/delete`, {
-      method: "DELETE",
-      body: JSON.stringify({ url: fileUrl }),
-    });
+    return await apiRequest(`/fileassets/${id}`, { method: "DELETE" });
   },
 };
 
