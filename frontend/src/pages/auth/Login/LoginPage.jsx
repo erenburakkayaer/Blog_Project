@@ -7,7 +7,7 @@ import useAuth from "../../../hooks/useAuth";
 function LoginPage() {
   const navigate = useNavigate();
   const location = useLocation();
-  const { login, isLoading } = useAuth();
+  const { login, register: authRegister, isLoading } = useAuth();
 
   const [mode, setMode] = useState("login"); // 'login' or 'register'
   const [showPassword, setShowPassword] = useState(false);
@@ -16,12 +16,12 @@ function LoginPage() {
   const [forgotSent, setForgotSent] = useState(false);
 
   // Form states for Register
-  const [regRole, setRegRole] = useState("yazar");
+  const [regRole, setRegRole] = useState("author");
 
   const {
     register,
     handleSubmit,
-    formState: { errors },
+    setValue,
   } = useForm({
     defaultValues: {
       email: "",
@@ -40,12 +40,47 @@ function LoginPage() {
         toast.success("Giriş başarılı! Yönetim paneline yönlendiriliyorsunuz.");
         navigate(from, { replace: true });
       } else {
-        // Register Simulation
-        toast.success(`Kayıt başarılı! (${regRole.toUpperCase()} olarak oluşturuldu). Şimdi giriş yapabilirsiniz.`);
-        setMode("login");
+        // Direct Register & Login Flow with Selected Role
+        const roleMapping = {
+          author: { label: "Yazar & İçerik Üreticisi", role: "author" },
+          editor: { label: "Geliştirici", role: "editor" },
+          hr: { label: "İnsan Kaynakları (İK)", role: "hr" },
+          user: { label: "Öğrenci / Üye", role: "user" },
+        };
+
+        const targetRole = roleMapping[regRole] || { label: "Yazar", role: "author" };
+
+        await login({
+          email: formData.email,
+          password: formData.password,
+          fullName: formData.fullName || "Yeni Kullanıcı",
+          role: targetRole.role,
+        });
+
+        toast.success(`🎉 Tebrikler! ${targetRole.label} olarak kaydınız oluşturuldu ve giriş yapıldı!`);
+        navigate("/admin", { replace: true });
       }
     } catch (error) {
-      toast.error(error.message || "Giriş işlemi başarısız.");
+      toast.error(error.message || "İşlem başarısız.");
+    }
+  };
+
+  const handleQuickRoleLogin = async (roleKey) => {
+    const roleAccounts = {
+      admin: { email: "admin@technova.com", pass: "Admin123!", label: "👑 Şirket Yöneticisi" },
+      hr: { email: "ik@technova.com", pass: "Ik123!", label: "👥 İnsan Kaynakları (İK)" },
+      author: { email: "yazar@technova.com", pass: "Yazar123!", label: "✍️ Yazar & İçerik Üreticisi" },
+      editor: { email: "dev@technova.com", pass: "Dev123!", label: "💻 Geliştirici" },
+      user: { email: "ogrenci@technova.com", pass: "User123!", label: "👤 Öğrenci / Üye" },
+    };
+
+    const target = roleAccounts[roleKey];
+    if (target) {
+      setValue("email", target.email);
+      setValue("password", target.pass);
+      await login({ email: target.email, password: target.pass });
+      toast.success(`${target.label} olarak giriş yapıldı!`);
+      navigate("/admin", { replace: true });
     }
   };
 
@@ -98,18 +133,9 @@ function LoginPage() {
         <p className="text-secondary small mb-0">
           {mode === "login"
             ? "Projelerinizi yönetmek ve yazar kazanç bakiyenizi takip etmek için giriş yapın."
-            : "TechNova platformunda yazar, geliştirici veya şirket hesabı oluşturun."}
+            : "TechNova platformunda yazar, geliştirici, İK veya üye hesabı oluşturun."}
         </p>
       </div>
-
-      {/* Demo Credentials Alert */}
-      {mode === "login" && (
-        <div className="alert alert-primary small border-0 mb-4" style={{ background: "rgba(99,102,241,0.12)", color: "#a5b4fc" }}>
-          <div className="fw-bold mb-1"><i className="bi bi-key-fill me-1" /> Hızlı Test Hesabı:</div>
-          <div>E-posta: <strong>admin@technova.com</strong></div>
-          <div>Şifre: <strong>Admin123!</strong></div>
-        </div>
-      )}
 
       {/* Social Login Buttons */}
       <div className="d-flex gap-2 mb-4">
@@ -148,7 +174,7 @@ function LoginPage() {
               <input
                 type="text"
                 className="form-control contact-input"
-                placeholder="Samet Başkale"
+                placeholder="Örn: Samet Başkale"
                 {...register("fullName")}
               />
             </div>
@@ -180,10 +206,14 @@ function LoginPage() {
               value={regRole}
               onChange={(e) => setRegRole(e.target.value)}
             >
-              <option value="yazar">✍️ Yazar (Blog Yazıp Para Kazan)</option>
-              <option value="gelistirici">💻 Geliştirici (Proje Sergile & Boost Et)</option>
-              <option value="isveren">🏢 Şirket / İşveren (Yetenek Ara & İlan Ver)</option>
+              <option value="author">✍️ Yazar (Blog Yazıp Para Kazan & Bakiye Takip)</option>
+              <option value="editor">💻 Geliştirici (Proje Sergile & Boost Et)</option>
+              <option value="hr">👥 İnsan Kaynakları (İş/Staj İlanı Ver & CV İncele)</option>
+              <option value="user">👤 Öğrenci / Normal Üye (İçerikleri İncele & Yorum Yap)</option>
             </select>
+            <div className="form-text small text-white-50" style={{ fontSize: "11px" }}>
+              Kayıt olduğunuzda paneliniz bu role göre otomatik özelleştirilecektir.
+            </div>
           </div>
         )}
 
@@ -229,7 +259,7 @@ function LoginPage() {
         )}
 
         <button
-          className="btn btn-primary btn-lg w-100 fw-bold py-3"
+          className="btn btn-primary btn-lg w-100 fw-bold py-3 shadow-sm"
           type="submit"
           disabled={isLoading}
           style={{ borderRadius: 12 }}
@@ -247,92 +277,70 @@ function LoginPage() {
           ) : (
             <>
               <i className="bi bi-person-check me-2" />
-              Ücretsiz Kayıt Ol
+              Ücretsiz Kayıt Ol & Panele Git
             </>
           )}
         </button>
       </form>
 
-      {/* QUICK ROLE DEMO SELECTOR (UDEMY / BTK AKADEMİ TARZI) */}
-      {mode === "login" && (
-        <div className="mt-4 p-3 rounded-4 bg-black bg-opacity-20 border border-white border-opacity-10">
-          <div className="d-flex align-items-center justify-content-between mb-2">
-            <span className="fw-bold small text-white-50" style={{ fontSize: "11px", letterSpacing: "0.05em" }}>
-              ⚡ HIZLI ROL İLE TEST GİRİŞİ:
-            </span>
-            <span className="badge bg-primary bg-opacity-20 text-primary" style={{ fontSize: "9px" }}>
-              Tek Tıkla Giriş
-            </span>
-          </div>
-
-          <div className="d-flex flex-wrap gap-2">
-            <button
-              type="button"
-              className="btn btn-sm btn-outline-danger rounded-pill px-3 py-1 text-white"
-              style={{ fontSize: "11px" }}
-              onClick={async () => {
-                await login({ email: "admin@technova.com", password: "Admin123!" });
-                toast.success("👑 Şirket Yöneticisi olarak giriş yapıldı!");
-                navigate("/admin", { replace: true });
-              }}
-            >
-              👑 Şirket Yöneticisi
-            </button>
-
-            <button
-              type="button"
-              className="btn btn-sm btn-outline-warning rounded-pill px-3 py-1 text-white"
-              style={{ fontSize: "11px" }}
-              onClick={async () => {
-                await login({ email: "ik@technova.com", password: "Ik123!" });
-                toast.success("👥 İnsan Kaynakları (İK) olarak giriş yapıldı!");
-                navigate("/admin", { replace: true });
-              }}
-            >
-              👥 İnsan Kaynakları
-            </button>
-
-            <button
-              type="button"
-              className="btn btn-sm btn-outline-primary rounded-pill px-3 py-1 text-white"
-              style={{ fontSize: "11px" }}
-              onClick={async () => {
-                await login({ email: "yazar@technova.com", password: "Yazar123!" });
-                toast.success("✍️ Yazar & İçerik Üreticisi olarak giriş yapıldı!");
-                navigate("/admin", { replace: true });
-              }}
-            >
-              ✍️ Yazar
-            </button>
-
-            <button
-              type="button"
-              className="btn btn-sm btn-outline-info rounded-pill px-3 py-1 text-white"
-              style={{ fontSize: "11px" }}
-              onClick={async () => {
-                await login({ email: "dev@technova.com", password: "Dev123!" });
-                toast.success("💻 Geliştirici olarak giriş yapıldı!");
-                navigate("/admin", { replace: true });
-              }}
-            >
-              💻 Geliştirici
-            </button>
-
-            <button
-              type="button"
-              className="btn btn-sm btn-outline-secondary rounded-pill px-3 py-1 text-white"
-              style={{ fontSize: "11px" }}
-              onClick={async () => {
-                await login({ email: "ogrenci@technova.com", password: "User123!" });
-                toast.success("👤 Normal Kullanıcı / Öğrenci olarak giriş yapıldı!");
-                navigate("/admin", { replace: true });
-              }}
-            >
-              👤 Öğrenci / Üye
-            </button>
-          </div>
+      {/* QUICK ROLE DEMO SELECTOR (HER ROLLERİ CANLI TEST ETMEK İÇİN) */}
+      <div className="mt-4 p-3 rounded-4 bg-black bg-opacity-30 border border-white border-opacity-10">
+        <div className="d-flex align-items-center justify-content-between mb-2">
+          <span className="fw-bold small text-white-50" style={{ fontSize: "11px", letterSpacing: "0.05em" }}>
+            ⚡ HIZLI ROL İLE TEST GİRİŞİ:
+          </span>
+          <span className="badge bg-primary bg-opacity-25 text-white" style={{ fontSize: "9px" }}>
+            Tek Tıkla Giriş
+          </span>
         </div>
-      )}
+
+        <div className="d-flex flex-wrap gap-2">
+          <button
+            type="button"
+            className="btn btn-sm btn-outline-danger rounded-pill px-3 py-1 text-white"
+            style={{ fontSize: "11px" }}
+            onClick={() => handleQuickRoleLogin("admin")}
+          >
+            👑 Şirket Yöneticisi
+          </button>
+
+          <button
+            type="button"
+            className="btn btn-sm btn-outline-warning rounded-pill px-3 py-1 text-white"
+            style={{ fontSize: "11px" }}
+            onClick={() => handleQuickRoleLogin("hr")}
+          >
+            👥 İnsan Kaynakları
+          </button>
+
+          <button
+            type="button"
+            className="btn btn-sm btn-outline-primary rounded-pill px-3 py-1 text-white"
+            style={{ fontSize: "11px" }}
+            onClick={() => handleQuickRoleLogin("author")}
+          >
+            ✍️ Yazar
+          </button>
+
+          <button
+            type="button"
+            className="btn btn-sm btn-outline-info rounded-pill px-3 py-1 text-white"
+            style={{ fontSize: "11px" }}
+            onClick={() => handleQuickRoleLogin("editor")}
+          >
+            💻 Geliştirici
+          </button>
+
+          <button
+            type="button"
+            className="btn btn-sm btn-outline-secondary rounded-pill px-3 py-1 text-white"
+            style={{ fontSize: "11px" }}
+            onClick={() => handleQuickRoleLogin("user")}
+          >
+            👤 Öğrenci / Üye
+          </button>
+        </div>
+      </div>
 
       <div className="text-center mt-4">
         <Link className="text-secondary small text-decoration-none" to="/">
@@ -342,38 +350,55 @@ function LoginPage() {
 
       {/* Forgot Password Modal */}
       {showForgotModal && (
-        <div className="modal show d-block" tabIndex="-1" style={{ background: "rgba(0,0,0,0.7)" }}>
+        <div className="modal show fade d-block" style={{ backgroundColor: "rgba(0,0,0,0.6)" }}>
           <div className="modal-dialog modal-dialog-centered">
-            <div className="modal-content surface-card p-4" style={{ borderRadius: 20 }}>
-              <div className="modal-header border-0 pb-0">
-                <h5 className="modal-title fw-bold">Şifremi Unuttum</h5>
-                <button type="button" className="btn-close btn-close-white" onClick={() => setShowForgotModal(false)} />
+            <div className="modal-content border-0 shadow-lg rounded-4 overflow-hidden">
+              <div className="modal-header bg-light px-4 py-3 border-bottom">
+                <h5 className="modal-title fw-bold text-dark fs-6">
+                  <i className="bi bi-key-fill me-2 text-primary" />
+                  Şifre Sıfırlama
+                </h5>
+                <button type="button" className="btn-close" onClick={() => setShowForgotModal(false)} />
               </div>
-              <div className="modal-body py-3">
-                {forgotSent ? (
-                  <div className="text-center py-3">
-                    <i className="bi bi-check-circle-fill text-success fs-1 mb-2 d-block" />
-                    <p className="fw-semibold">Şifre sıfırlama talimatı gönderildi!</p>
-                    <p className="text-secondary small">Lütfen <strong>{forgotEmail}</strong> e-posta kutunuzu kontrol edin.</p>
-                    <button className="btn btn-primary w-100 mt-2" onClick={() => setShowForgotModal(false)}>Kapat</button>
-                  </div>
-                ) : (
-                  <form onSubmit={handleForgotSubmit}>
-                    <p className="text-secondary small mb-3">Hesabınıza ait e-posta adresinizi girin, sıfırlama bağlantısını iletelim.</p>
-                    <input
-                      type="email"
-                      className="form-control contact-input mb-3"
-                      placeholder="ornek@technova.com"
-                      value={forgotEmail}
-                      onChange={(e) => setForgotEmail(e.target.value)}
-                      required
-                    />
-                    <button type="submit" className="btn btn-primary w-100 fw-bold py-2" style={{ borderRadius: 10 }}>
+
+              <form onSubmit={handleForgotSubmit}>
+                <div className="modal-body p-4">
+                  {forgotSent ? (
+                    <div className="text-center py-3">
+                      <div className="text-success display-4 mb-2"><i className="bi bi-check-circle-fill" /></div>
+                      <h6 className="fw-bold text-dark mb-1">E-posta Gönderildi!</h6>
+                      <p className="text-secondary small mb-0">
+                        {forgotEmail} adresine şifre sıfırlama bağlantısı iletildi.
+                      </p>
+                    </div>
+                  ) : (
+                    <>
+                      <p className="text-secondary small mb-3">
+                        Kayıtlı e-posta adresinizi girin, size şifrenizi sıfırlayabileceğiniz bir bağlantı gönderelim.
+                      </p>
+                      <input
+                        type="email"
+                        className="form-control rounded-3"
+                        placeholder="ornek@technova.com"
+                        value={forgotEmail}
+                        onChange={(e) => setForgotEmail(e.target.value)}
+                        required
+                      />
+                    </>
+                  )}
+                </div>
+
+                <div className="modal-footer bg-light px-4 py-3 border-top">
+                  <button type="button" className="btn btn-outline-secondary rounded-pill px-4" onClick={() => setShowForgotModal(false)}>
+                    Kapat
+                  </button>
+                  {!forgotSent && (
+                    <button type="submit" className="btn btn-primary rounded-pill px-4 fw-semibold">
                       Sıfırlama Bağlantısı Gönder
                     </button>
-                  </form>
-                )}
-              </div>
+                  )}
+                </div>
+              </form>
             </div>
           </div>
         </div>
