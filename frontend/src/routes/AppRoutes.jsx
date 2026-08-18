@@ -26,9 +26,18 @@ import UserListPage from "../pages/admin/Users/UserListPage";
 import SettingsPage from "../pages/admin/Settings/SettingsPage";
 
 import LoginPage from "../pages/auth/Login/LoginPage";
+import UnauthorizedPage from "../pages/auth/UnauthorizedPage";
 
 import AboutPage from "../pages/site/About/AboutPage";
 import HomePage from "../pages/site/Home/HomePage";
+import ServicesPage from "../pages/site/Services/ServicesPage";
+import ProjectsPage from "../pages/site/Projects/ProjectsPage";
+import BlogPage from "../pages/site/Blog/BlogPage";
+import CareerPage from "../pages/site/Career/CareerPage";
+import ContactPage from "../pages/site/Contact/ContactPage";
+import OfferPage from "../pages/site/Offer/OfferPage";
+import ReferencesPage from "../pages/site/References/ReferencesPage";
+import FAQPage from "../pages/site/FAQ/FAQPage";
 
 const router = createBrowserRouter([
   {
@@ -39,6 +48,10 @@ const router = createBrowserRouter([
         element: <LoginPage />,
       },
     ],
+  },
+  {
+    path: "/yetkisiz",
+    element: <UnauthorizedPage />,
   },
   {
     element: <ProtectedRoute allowedRoles={["admin", "editor"]} />,
@@ -128,75 +141,35 @@ const router = createBrowserRouter([
       },
       {
         path: "hizmetler",
-        element: (
-          <PlaceholderPage
-            title="Hizmetlerimiz"
-            description="Web, mobil, yapay zekâ ve siber güvenlik hizmetlerimizi keşfedin."
-          />
-        ),
+        element: <ServicesPage />,
       },
       {
         path: "projeler",
-        element: (
-          <PlaceholderPage
-            title="Projelerimiz"
-            description="Tamamladığımız yenilikçi projeleri inceleyin."
-          />
-        ),
+        element: <ProjectsPage />,
       },
       {
         path: "referanslar",
-        element: (
-          <PlaceholderPage
-            title="Referanslarımız"
-            description="Birlikte çalıştığımız markaları ve iş ortaklarımızı görün."
-          />
-        ),
+        element: <ReferencesPage />,
       },
       {
         path: "blog",
-        element: (
-          <PlaceholderPage
-            title="Blog"
-            description="Teknoloji dünyasından güncel içerikleri ve rehberleri keşfedin."
-          />
-        ),
+        element: <BlogPage />,
       },
       {
         path: "kariyer",
-        element: (
-          <PlaceholderPage
-            title="Kariyer"
-            description="Açık pozisyonları görüntüleyin ve ekibimize katılın."
-          />
-        ),
+        element: <CareerPage />,
       },
       {
         path: "sss",
-        element: (
-          <PlaceholderPage
-            title="Sıkça Sorulan Sorular"
-            description="Hizmetlerimiz hakkında sıkça sorulan sorulara ulaşın."
-          />
-        ),
+        element: <FAQPage />,
       },
       {
         path: "iletisim",
-        element: (
-          <PlaceholderPage
-            title="İletişim"
-            description="Projeleriniz ve sorularınız için bizimle iletişime geçin."
-          />
-        ),
+        element: <ContactPage />,
       },
       {
         path: "teklif-al",
-        element: (
-          <PlaceholderPage
-            title="Teklif Al"
-            description="Projenizin ayrıntılarını paylaşın, size özel teklif hazırlayalım."
-          />
-        ),
+        element: <OfferPage />,
       },
       {
         path: "*",

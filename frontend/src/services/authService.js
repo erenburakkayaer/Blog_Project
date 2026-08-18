@@ -1,74 +1,34 @@
-const FAKE_ADMIN = {
-  id: 1,
-  firstName: "Admin",
-  lastName: "TechNova",
-  fullName: "Admin TechNova",
-  email: "admin@technova.com",
-  roles: ["Admin"],
-};
+import apiClient, { TOKEN_STORAGE_KEY } from "../api/apiClient";
 
-const FAKE_CREDENTIALS = {
-  email: "admin@technova.com",
-  password: "Admin123!",
-};
-
-const wait = (milliseconds) =>
-  new Promise((resolve) => {
-    setTimeout(resolve, milliseconds);
-  });
-
-const createFakeToken = (user) => {
-  const payload = {
-    sub: user.id,
-    email: user.email,
-    roles: user.roles,
-    issuedAt: Date.now(),
-  };
-
-  return `fake-token.${btoa(JSON.stringify(payload))}.${Date.now()}`;
-};
+const REFRESH_STORAGE_KEY = "technova_refresh_token";
 
 export const authService = {
   async login(credentials) {
-    await wait(900);
+    const response = await apiClient.post("/api/auth/login", {
+      username: credentials.username?.trim() ?? credentials.email?.trim(),
+      password: credentials.password,
+    });
 
-    const normalizedEmail = credentials.email.trim().toLowerCase();
+    const { accessToken, refreshToken } = response.data;
 
-    const credentialsAreValid =
-      normalizedEmail === FAKE_CREDENTIALS.email &&
-      credentials.password === FAKE_CREDENTIALS.password;
-
-    if (!credentialsAreValid) {
-      throw new Error("E-posta adresi veya şifre hatalı.");
+    localStorage.setItem(TOKEN_STORAGE_KEY, accessToken);
+    if (refreshToken) {
+      localStorage.setItem(REFRESH_STORAGE_KEY, refreshToken);
     }
 
-    return {
-      token: createFakeToken(FAKE_ADMIN),
-      user: FAKE_ADMIN,
-    };
+    return response.data;
   },
 
   async logout() {
-    await wait(250);
+    const refreshToken = localStorage.getItem(REFRESH_STORAGE_KEY);
+    if (refreshToken) {
+      await apiClient.post("/api/auth/logout", { refreshToken }).catch(() => {});
+    }
+    localStorage.removeItem(TOKEN_STORAGE_KEY);
+    localStorage.removeItem(REFRESH_STORAGE_KEY);
+  },
+
+  getRefreshToken() {
+    return localStorage.getItem(REFRESH_STORAGE_KEY);
   },
 };
-
-/*
-  BACKEND ENTEGRASYONU:
-
-  Arkadaşın daha sonra yalnızca login fonksiyonunu gerçek API çağrısıyla
-  değiştirebilir.
-
-  Örnek:
-
-  import apiClient from "../api/apiClient";
-
-  async login(credentials) {
-    const response = await apiClient.post("/api/auth/login", credentials);
-
-    return {
-      token: response.data.accessToken,
-      user: response.data.user,
-    };
-  }
-*/
