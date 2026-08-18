@@ -28,6 +28,7 @@ import ProfilePage from "../pages/admin/Profile/ProfilePage";
 import CareerListPage from "../pages/admin/Careers/CareerListPage";
 
 import LoginPage from "../pages/auth/Login/LoginPage";
+import UnauthorizedPage from "../pages/auth/UnauthorizedPage";
 
 // ── Site pages ──────────────────────────────────────────────
 import HomePage from "../pages/site/Home/HomePage";
@@ -50,10 +51,15 @@ const router = createBrowserRouter([
         path: "/giris",
         element: <LoginPage />,
       },
+      {
+        path: "/yetkisiz",
+        element: <UnauthorizedPage />,
+      },
     ],
   },
   {
-    element: <ProtectedRoute allowedRoles={["admin", "editor"]} />,
+    // Tüm giriş yapmış roller (Admin, HR, Author, Editor, User) portala erişebilir
+    element: <ProtectedRoute />,
     children: [
       {
         path: "/admin",
@@ -96,10 +102,6 @@ const router = createBrowserRouter([
             element: <ServiceEditPage />,
           },
           {
-            path: "kullanicilar",
-            element: <UserListPage />,
-          },
-          {
             path: "mesajlar",
             element: <MessageListPage />,
           },
@@ -112,8 +114,12 @@ const router = createBrowserRouter([
             element: <ProfilePage />,
           },
           {
-            element: <ProtectedRoute allowedRoles={["admin"]} />,
+            element: <ProtectedRoute allowedRoles={["admin", "superadmin"]} />,
             children: [
+              {
+                path: "kullanicilar",
+                element: <UserListPage />,
+              },
               {
                 path: "ayarlar",
                 element: <SettingsPage />,
