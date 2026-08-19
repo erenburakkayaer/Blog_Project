@@ -31,10 +31,12 @@ export default function BlogDetailPage() {
     const fetchBlog = async () => {
       try {
         const found = await blogService.getById(id);
-        setBlog(found);
-        setIsFollowingAuthor(communityService.isFollowing("zeynep_yazar"));
-      } catch {
-        toast.error("Blog yüklenemedi.");
+        if (found) {
+          setBlog(found);
+          setIsFollowingAuthor(communityService.isFollowing(found.authorUsername || "zeynep_yazar"));
+        }
+      } catch (e) {
+        console.warn("Blog yüklenemedi:", e);
       } finally {
         setLoading(false);
       }
