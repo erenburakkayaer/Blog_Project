@@ -7,7 +7,7 @@ import useAuth from "../../../hooks/useAuth";
 function LoginPage() {
   const navigate = useNavigate();
   const location = useLocation();
-  const { login, isLoading } = useAuth();
+  const { login, register: authRegister, isLoading } = useAuth();
 
   const [mode, setMode] = useState("login"); // 'login' or 'register'
   const [showPassword, setShowPassword] = useState(false);
@@ -64,7 +64,7 @@ function LoginPage() {
 
         const targetRole = roleMapping[regRole] || { label: "Yazar", role: "author" };
 
-        await login({
+        await authRegister({
           email: formData.email,
           password: formData.password,
           fullName: formData.fullName || "Yeni Kullanıcı",
