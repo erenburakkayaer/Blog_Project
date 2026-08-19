@@ -14,11 +14,14 @@ function LoginPage() {
   const [showPassword, setShowPassword] = useState(false);
   const [showForgotModal, setShowForgotModal] = useState(false);
   const [forgotEmail, setForgotEmail] = useState("");
-  const [forgotStep, setForgotStep] = useState(1); // 1: Email girisi, 2: 6 haneli kod ve yeni sifre
+  const [forgotPhone, setForgotPhone] = useState("+90 532 123 45 67");
+  const [forgotChannel, setForgotChannel] = useState("sms"); // 'sms' (Telefon) or 'email' (Gmail)
+  const [forgotStep, setForgotStep] = useState(1); // 1: Kanal & Bilgi, 2: 6 haneli kod ve yeni sifre
   const [generatedPin, setGeneratedPin] = useState("849201");
   const [inputPin, setInputPin] = useState("");
   const [newResetPass, setNewResetPass] = useState("");
   const [newResetPassConfirm, setNewResetPassConfirm] = useState("");
+  const [pushNotification, setPushNotification] = useState(null); // { title, text, code, type }
 
   // e-Devlet Modal State (BTK Akademi Tarzı)
   const [showEDevletModal, setShowEDevletModal] = useState(false);
@@ -279,14 +282,40 @@ function LoginPage() {
 
   const handleForgotSubmit = (e) => {
     e.preventDefault();
-    if (!forgotEmail) {
-      toast.error("Lütfen e-posta adresinizi giriniz.");
-      return;
-    }
     const pin = Math.floor(100000 + Math.random() * 900000).toString();
     setGeneratedPin(pin);
     setForgotStep(2);
-    toast.success(`🔐 6 Haneli Güvenlik Kodu üretildi: ${pin}`);
+
+    if (forgotChannel === "sms") {
+      if (!forgotPhone || forgotPhone.length < 10) {
+        toast.error("Lütfen geçerli bir telefon numarası giriniz.");
+        return;
+      }
+      setPushNotification({
+        type: "sms",
+        title: "💬 NetGSM / TechNova SMS Servisi",
+        text: `Doğrulama Kodunuz: ${pin}. Güvenliğiniz için bu kodu kimseyle paylaşmayınız.`,
+        code: pin,
+      });
+      toast.success(`📱 ${forgotPhone} numarasına SMS gönderildi!`);
+    } else {
+      if (!forgotEmail || !forgotEmail.includes("@")) {
+        toast.error("Lütfen geçerli bir e-posta adresi giriniz.");
+        return;
+      }
+      setPushNotification({
+        type: "email",
+        title: "📧 Google Mail • TechNova Security",
+        text: `${forgotEmail} hesabınız için tek kullanımlık güvenlik kodu: ${pin}`,
+        code: pin,
+      });
+      toast.success(`📧 ${forgotEmail} adresine e-posta gönderildi!`);
+    }
+
+    // Bildirimi 10 saniye sonra gizle
+    setTimeout(() => {
+      setPushNotification((prev) => (prev?.code === pin ? null : prev));
+    }, 10000);
   };
 
   const handleResetPasswordSubmit = (e) => {
@@ -309,8 +338,13 @@ function LoginPage() {
       const raw = localStorage.getItem("technova_registered_users");
       let users = raw ? JSON.parse(raw) : [];
       let found = false;
+      const targetIdentifier = forgotChannel === "sms" ? forgotPhone : forgotEmail;
       users = users.map((u) => {
-        if (u.email?.toLowerCase() === forgotEmail.toLowerCase() || u.userName?.toLowerCase() === forgotEmail.toLowerCase()) {
+        if (
+          u.email?.toLowerCase() === forgotEmail.toLowerCase() ||
+          u.phone === forgotPhone ||
+          u.userName?.toLowerCase() === forgotEmail.toLowerCase()
+        ) {
           found = true;
           return { ...u, password: newResetPass };
         }
@@ -318,9 +352,10 @@ function LoginPage() {
       });
       if (!found) {
         users.push({
-          email: forgotEmail,
-          userName: forgotEmail.split("@")[0],
-          fullName: "Kullanıcı",
+          email: forgotEmail || "sametbaskale33@gmail.com",
+          phone: forgotPhone,
+          userName: forgotEmail ? forgotEmail.split("@")[0] : "sametb",
+          fullName: "Samet Başkale",
           password: newResetPass,
           role: "author",
         });
@@ -330,14 +365,15 @@ function LoginPage() {
       console.error(err);
     }
 
-    setValue("email", forgotEmail);
+    setValue("email", forgotEmail || "sametbaskale33@gmail.com");
     setValue("password", newResetPass);
     setShowForgotModal(false);
     setForgotStep(1);
     setInputPin("");
     setNewResetPass("");
     setNewResetPassConfirm("");
-    toast.success("🎉 Şifreniz başarıyla güncellendi! 'Giriş Yap' butonuna basarak panele erişebilirsiniz.");
+    setPushNotification(null);
+    toast.success("🎉 Şifreniz başarıyla sıfırlandı! Yeni şifrenizle giriş yapabilirsiniz.");
   };
 
   return (
@@ -720,15 +756,59 @@ function LoginPage() {
         </div>
       )}
 
-      {/* Forgot Password Modal (Instagram & BTK Akademi 2-Step OTP Flow) */}
+      {/* FLOATING REALTIME PUSH NOTIFICATION (SMS / GMAIL BANNER) */}
+      {pushNotification && (
+        <div
+          className="position-fixed top-0 start-50 translate-middle-x mt-3 z-3 shadow-2xl rounded-4 p-3 d-flex align-items-center gap-3 border animate-bounce"
+          style={{
+            background: pushNotification.type === "sms" ? "#0f172a" : "#1e1b4b",
+            color: "#fff",
+            border: "1px solid rgba(255,255,255,0.2)",
+            minWidth: "360px",
+            maxWidth: "90vw",
+            zIndex: 9999,
+          }}
+        >
+          <div
+            className="rounded-circle p-2 d-flex align-items-center justify-content-center"
+            style={{ background: pushNotification.type === "sms" ? "rgba(16, 185, 129, 0.2)" : "rgba(99, 102, 241, 0.2)" }}
+          >
+            <i
+              className={`bi ${pushNotification.type === "sms" ? "bi-chat-dots-fill text-success" : "bi-envelope-check-fill text-primary"} fs-4`}
+            />
+          </div>
+
+          <div className="flex-grow-1">
+            <div className="d-flex justify-content-between align-items-center mb-1">
+              <strong className="small text-white">{pushNotification.title}</strong>
+              <small className="text-white-50" style={{ fontSize: "10px" }}>Şimdi</small>
+            </div>
+            <p className="small text-white-50 mb-0">{pushNotification.text}</p>
+          </div>
+
+          <button
+            type="button"
+            className="btn btn-sm btn-outline-light rounded-pill px-3 py-1 fw-bold"
+            style={{ fontSize: "11px" }}
+            onClick={() => {
+              setInputPin(pushNotification.code);
+              toast.success("📋 Kod doğrulama kutusuna aktarıldı!");
+            }}
+          >
+            Kodu Al
+          </button>
+        </div>
+      )}
+
+      {/* Forgot Password Modal (SMS & Gmail 2-Step OTP Flow) */}
       {showForgotModal && (
-        <div className="modal show fade d-block" style={{ backgroundColor: "rgba(0,0,0,0.7)" }}>
+        <div className="modal show fade d-block" style={{ backgroundColor: "rgba(0,0,0,0.75)" }}>
           <div className="modal-dialog modal-dialog-centered">
             <div className="modal-content border-0 shadow-2xl rounded-4 overflow-hidden">
               <div className="modal-header bg-light px-4 py-3 border-bottom d-flex justify-content-between align-items-center">
                 <h5 className="modal-title fw-bold text-dark fs-6 mb-0">
                   <i className="bi bi-shield-lock-fill me-2 text-primary" />
-                  {forgotStep === 1 ? "Şifre Sıfırlama Talebi" : "Doğrulama Kodu & Yeni Şifre"}
+                  {forgotStep === 1 ? "Şifre Sıfırlama (SMS / Gmail)" : "Doğrulama Kodu & Yeni Şifre"}
                 </h5>
                 <button type="button" className="btn-close" onClick={() => setShowForgotModal(false)} />
               </div>
@@ -737,17 +817,61 @@ function LoginPage() {
                 <form onSubmit={handleForgotSubmit}>
                   <div className="modal-body p-4 bg-white">
                     <p className="text-secondary small mb-3">
-                      Hesabınıza kayıtlı e-posta adresinizi giriniz. Sistemimiz anında 6 haneli güvenlik doğrulama kodunuzu üretecektir.
+                      Güvenliğiniz için 6 haneli tek kullanımlık doğrulama kodunu (OTP) nasıl almak istersiniz?
                     </p>
-                    <label className="form-label text-dark small fw-semibold">E-posta Adresi</label>
-                    <input
-                      type="email"
-                      className="form-control rounded-3 py-2"
-                      placeholder="ornek@technova.com"
-                      value={forgotEmail}
-                      onChange={(e) => setForgotEmail(e.target.value)}
-                      required
-                    />
+
+                    {/* Kanal Seçici */}
+                    <div className="d-flex gap-2 mb-3">
+                      <button
+                        type="button"
+                        className={`btn w-50 py-2 rounded-3 fw-semibold small ${forgotChannel === "sms" ? "btn-primary shadow-sm" : "btn-outline-secondary"}`}
+                        onClick={() => setForgotChannel("sms")}
+                      >
+                        <i className="bi bi-phone me-1" /> 📱 SMS (Telefon)
+                      </button>
+                      <button
+                        type="button"
+                        className={`btn w-50 py-2 rounded-3 fw-semibold small ${forgotChannel === "email" ? "btn-primary shadow-sm" : "btn-outline-secondary"}`}
+                        onClick={() => setForgotChannel("email")}
+                      >
+                        <i className="bi bi-envelope me-1" /> 📧 Gmail (E-Posta)
+                      </button>
+                    </div>
+
+                    {forgotChannel === "sms" ? (
+                      <div>
+                        <label className="form-label text-dark small fw-semibold">Telefon Numaranız</label>
+                        <div className="input-group">
+                          <span className="input-group-text bg-light text-secondary">🇹🇷 +90</span>
+                          <input
+                            type="tel"
+                            className="form-control rounded-end-3 py-2"
+                            placeholder="532 123 45 67"
+                            value={forgotPhone}
+                            onChange={(e) => setForgotPhone(e.target.value)}
+                            required
+                          />
+                        </div>
+                        <div className="form-text small" style={{ fontSize: "11px" }}>
+                          Kayıtlı telefonunuza anında SMS doğrulama kodu gönderilecektir.
+                        </div>
+                      </div>
+                    ) : (
+                      <div>
+                        <label className="form-label text-dark small fw-semibold">Gmail / E-posta Adresiniz</label>
+                        <input
+                          type="email"
+                          className="form-control rounded-3 py-2"
+                          placeholder="sametbaskale33@gmail.com"
+                          value={forgotEmail}
+                          onChange={(e) => setForgotEmail(e.target.value)}
+                          required
+                        />
+                        <div className="form-text small" style={{ fontSize: "11px" }}>
+                          Kayıtlı e-postanıza tek kullanımlık güvenlik kodu iletilecektir.
+                        </div>
+                      </div>
+                    )}
                   </div>
 
                   <div className="modal-footer bg-light px-4 py-3 border-top">
@@ -755,17 +879,21 @@ function LoginPage() {
                       İptal
                     </button>
                     <button type="submit" className="btn btn-primary rounded-pill px-4 fw-semibold shadow-sm">
-                      Doğrulama Kodu Üret & Devam Et <i className="bi bi-arrow-right ms-1" />
+                      {forgotChannel === "sms" ? "Telefona SMS Gönder" : "Gmail'e Kod Gönder"} <i className="bi bi-arrow-right ms-1" />
                     </button>
                   </div>
                 </form>
               ) : (
                 <form onSubmit={handleResetPasswordSubmit}>
                   <div className="modal-body p-4 bg-white">
-                    {/* Live Generated PIN Banner */}
+                    {/* Live Generated PIN Info Banner */}
                     <div className="p-3 bg-primary bg-opacity-10 border border-primary border-opacity-25 rounded-3 mb-3 text-center">
                       <div className="small text-secondary mb-1">
-                        📧 <strong>{forgotEmail}</strong> için üretilen doğrulama kodu:
+                        {forgotChannel === "sms" ? (
+                          <span>📱 <strong>{forgotPhone}</strong> numaralı telefonunuza SMS iletildi:</span>
+                        ) : (
+                          <span>📧 <strong>{forgotEmail}</strong> adresinize e-posta iletildi:</span>
+                        )}
                       </div>
                       <div className="fs-3 fw-bold text-primary font-monospace letter-spacing-2">
                         {generatedPin}
