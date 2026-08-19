@@ -20,7 +20,7 @@ namespace BlogProject.Tests
 
         public static IMapper CreateMapper()
         {
-            var config = new MapperConfiguration(cfg => cfg.AddProfile<MappingProfile>(), NullLoggerFactory.Instance);
+            var config = new MapperConfiguration(cfg => cfg.AddProfile<MappingProfile>());
             return config.CreateMapper();
         }
     }
