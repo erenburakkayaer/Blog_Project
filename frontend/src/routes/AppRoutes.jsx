@@ -35,13 +35,16 @@ import HomePage from "../pages/site/Home/HomePage";
 import AboutPage from "../pages/site/About/AboutPage";
 import ServicesPage from "../pages/site/Services/ServicesPage";
 import ProjectsPage from "../pages/site/Projects/ProjectsPage";
+import ProjectDetailPage from "../pages/site/Projects/ProjectDetailPage";
 import BlogPage from "../pages/site/Blog/BlogPage";
+import BlogDetailPage from "../pages/site/Blog/BlogDetailPage";
 import ContactPage from "../pages/site/Contact/ContactPage";
 import CareerPage from "../pages/site/Career/CareerPage";
 import FAQPage from "../pages/site/FAQ/FAQPage";
 import ReferencesPage from "../pages/site/References/ReferencesPage";
 import OfferPage from "../pages/site/Offer/OfferPage";
 import MonetizationPage from "../pages/site/Monetization/MonetizationPage";
+import PublicProfilePage from "../pages/site/Profile/PublicProfilePage";
 
 const router = createBrowserRouter([
   {
@@ -161,8 +164,24 @@ const router = createBrowserRouter([
         element: <ProjectsPage />,
       },
       {
+        path: "projeler/:id",
+        element: <ProjectDetailPage />,
+      },
+      {
         path: "blog",
         element: <BlogPage />,
+      },
+      {
+        path: "blog/:id",
+        element: <BlogDetailPage />,
+      },
+      {
+        path: "profil/:username",
+        element: <PublicProfilePage />,
+      },
+      {
+        path: "u/:username",
+        element: <PublicProfilePage />,
       },
       {
         path: "iletisim",
