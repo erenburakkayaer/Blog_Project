@@ -145,7 +145,14 @@ export default function PublicProfilePage() {
                 <button
                   type="button"
                   className="btn btn-outline-info px-4 rounded-pill fw-semibold shadow-sm"
-                  onClick={() => setShowDmModal(true)}
+                  onClick={() => {
+                    if (!currentUser) {
+                      toast("Mesaj göndermek için lütfen giriş yapınız.", { icon: "🔒" });
+                      navigate("/giris");
+                      return;
+                    }
+                    setShowDmModal(true);
+                  }}
                 >
                   <i className="bi bi-chat-dots-fill me-1" />
                   Mesaj Gönder
