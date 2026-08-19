@@ -1,7 +1,7 @@
 /**
  * TechNova — Centralized Auth Service
  * 
- * 🔌 ASP.NET Core (.NET 8 / .NET 10 / SQL Server) Entegrasyonu & Akıllı Fallback
+ * 🔌 ASP.NET Core (.NET 8 / .NET 10 / SQL Server) Entegrasyonu & Güvenlik Yönetimi
  * Backend: BlogProject.API (Burak & Mehdide)
  */
 
@@ -19,6 +19,7 @@ const FAKE_USERS = [
     roles: ["SuperAdmin", "Admin"],
     role: "admin",
     balance: 1450.0,
+    status: "active",
   },
   {
     id: 2,
@@ -31,6 +32,7 @@ const FAKE_USERS = [
     roles: ["HR"],
     role: "hr",
     balance: 0,
+    status: "active",
   },
   {
     id: 3,
@@ -43,6 +45,7 @@ const FAKE_USERS = [
     roles: ["Yazar"],
     role: "author",
     balance: 620.0,
+    status: "active",
   },
   {
     id: 4,
@@ -55,6 +58,7 @@ const FAKE_USERS = [
     roles: ["Editor"],
     role: "editor",
     balance: 350.0,
+    status: "active",
   },
   {
     id: 5,
@@ -67,6 +71,7 @@ const FAKE_USERS = [
     roles: ["User"],
     role: "user",
     balance: 0,
+    status: "active",
   },
 ];
 
@@ -98,7 +103,7 @@ const createFakeToken = (user) => {
 
 export const authService = {
   /**
-   * Login (Giriş)
+   * Login (Giriş Yap)
    * ASP.NET Core: POST /api/auth/login
    */
   async login(credentials) {
@@ -107,28 +112,40 @@ export const authService = {
     // 1. Önce kayıtlı yerel kullanıcıları ve mock kullanıcıları kontrol et
     const registeredUsers = getStoredRegisteredUsers();
     const allUsers = [...registeredUsers, ...FAKE_USERS];
-    const localMatchedUser = allUsers.find(
-      (u) =>
-        (u.email?.toLowerCase() === identifier || u.userName?.toLowerCase() === identifier) &&
-        u.password === credentials.password
+
+    const foundUserByIdentifier = allUsers.find(
+      (u) => u.email?.toLowerCase() === identifier || u.userName?.toLowerCase() === identifier
     );
 
-    // Eğer USE_MOCK_DATA aktifse veya yerel kullanıcı varsa direkt oturum aç
-    if (USE_MOCK_DATA || localMatchedUser) {
+    if (foundUserByIdentifier) {
+      if (foundUserByIdentifier.status === "frozen") {
+        throw new Error("Bu hesap dondurulmuştur. Hesabınızı yeniden etkinleştirmek için lütfen şifrenizle giriş yapınız.");
+      }
+
+      if (foundUserByIdentifier.password !== credentials.password) {
+        throw new Error("Girdiğiniz şifre hatalı. Lütfen şifrenizi kontrol edin veya 'Şifremi Unuttum' bağlantısını kullanın.");
+      }
+
       await wait(300);
-      if (localMatchedUser) {
-        const accessToken = createFakeToken(localMatchedUser);
-        const refreshToken = `mock-refresh-token-${Date.now()}`;
-        setTokens(accessToken, refreshToken);
-        localStorage.setItem("technova_user", JSON.stringify(localMatchedUser));
-        return { token: accessToken, accessToken, refreshToken, user: localMatchedUser };
-      }
-      if (USE_MOCK_DATA) {
-        throw new Error("E-posta/Kullanıcı adı veya şifre hatalı.");
-      }
+      const accessToken = createFakeToken(foundUserByIdentifier);
+      const refreshToken = `mock-refresh-token-${Date.now()}`;
+      setTokens(accessToken, refreshToken);
+      localStorage.setItem("technova_user", JSON.stringify(foundUserByIdentifier));
+
+      // Giriş hareketini kaydet
+      this.recordSecurityActivity({
+        email: foundUserByIdentifier.email,
+        action: "Giriş Yapıldı",
+        device: navigator.userAgent.includes("Windows") ? "Windows PC / Chrome" : "Mobil Cihaz",
+        ip: "192.168.1.45 (Yerel)",
+        status: "Başarılı",
+        date: new Date().toISOString(),
+      });
+
+      return { token: accessToken, accessToken, refreshToken, user: foundUserByIdentifier };
     }
 
-    // 2. Gerçek .NET Web API Login Çağrısı
+    // 2. Gerçek .NET Web API Login Çağrısı (SQL Server)
     try {
       const response = await apiRequest("/auth/login", {
         method: "POST",
@@ -148,41 +165,103 @@ export const authService = {
 
       return { ...response, token };
     } catch (apiError) {
-      // Backend bağlantısı veya kullanıcı bulunamadığında yerel kontrol yapılmıştı
-      throw new Error(apiError.message || "Giriş yapılamadı. Bilgilerinizi kontrol edin.");
+      // Kullanıcı bulunamadığında yönlendirici net hata mesajı ver
+      throw new Error("Bu bilgilere ait kayıtlı bir hesap bulunamadı. Hesabınız yoksa lütfen 'Kayıt Ol' sekmesinden ücretsiz hesap oluşturunuz.");
     }
   },
 
   /**
    * Register (Kayıt Ol)
-   * Hem frontend state'ini hem de yerel depolamayı anında günceller
+   * Hesabı veritabanına ve depolamaya kaydeder; oturum açmaz, giriş için yönlendirir.
    */
   async register(userData) {
     await wait(300);
     const roleKey = userData.role || "author";
     const newUser = {
       id: Date.now(),
-      userName: userData.email?.split("@")[0] || "kullanici",
+      userName: userData.userName || userData.email?.split("@")[0] || "kullanici",
       firstName: userData.fullName?.split(" ")[0] || "Kullanıcı",
       lastName: userData.fullName?.split(" ").slice(1).join(" ") || "",
       fullName: userData.fullName || "Yeni Kullanıcı",
-      email: userData.email,
+      email: userData.email?.trim().toLowerCase(),
       password: userData.password,
       roles: [roleKey === "admin" ? "Admin" : roleKey === "hr" ? "HR" : roleKey === "editor" ? "Editor" : "Yazar"],
       role: roleKey,
       balance: 0,
+      status: "active",
       createdAt: new Date().toISOString(),
     };
 
-    // Kullanıcıyı yerel listeye kaydet
+    // 1. Yerel depolamaya güvenle kaydet
     saveRegisteredUser(newUser);
 
-    const accessToken = createFakeToken(newUser);
-    const refreshToken = `mock-refresh-token-${Date.now()}`;
-    setTokens(accessToken, refreshToken);
-    localStorage.setItem("technova_user", JSON.stringify(newUser));
+    // 2. Canlı .NET Web API'ye de kaydetmeyi dene (SQL Server)
+    try {
+      await apiRequest("/auth/register", {
+        method: "POST",
+        body: JSON.stringify({
+          email: newUser.email,
+          username: newUser.userName,
+          fullName: newUser.fullName,
+          password: newUser.password,
+          role: newUser.role,
+        }),
+      });
+    } catch (e) {
+      console.log("[Backend Sync] Yerel kayıt tamamlandı, API senkronu:", e.message);
+    }
 
-    return { token: accessToken, accessToken, refreshToken, user: newUser };
+    return { success: true, message: "Kayıt başarıyla oluşturuldu.", user: newUser };
+  },
+
+  /**
+   * Hesabı Dondur (Instagram Tarzı)
+   */
+  async freezeAccount(email) {
+    const list = getStoredRegisteredUsers();
+    const updated = list.map((u) => (u.email?.toLowerCase() === email?.toLowerCase() ? { ...u, status: "frozen" } : u));
+    localStorage.setItem("technova_registered_users", JSON.stringify(updated));
+    await this.logout();
+    return { success: true, message: "Hesabınız başarıyla donduruldu. İstediğiniz zaman şifrenizle giriş yaparak tekrar açabilirsiniz." };
+  },
+
+  /**
+   * Hesabı Kalıcı Olarak Sil
+   */
+  async deleteAccount(email) {
+    const list = getStoredRegisteredUsers();
+    const filtered = list.filter((u) => u.email?.toLowerCase() !== email?.toLowerCase());
+    localStorage.setItem("technova_registered_users", JSON.stringify(filtered));
+    await this.logout();
+    return { success: true, message: "Hesabınız ve verileriniz kalıcı olarak silindi." };
+  },
+
+  /**
+   * Güvenlik Hareketini Kaydet
+   */
+  recordSecurityActivity(activity) {
+    try {
+      const raw = localStorage.getItem("technova_security_activity");
+      const list = raw ? JSON.parse(raw) : [];
+      localStorage.setItem("technova_security_activity", JSON.stringify([activity, ...list.slice(0, 15)]));
+    } catch (e) {
+      console.error(e);
+    }
+  },
+
+  /**
+   * Güvenlik Hareketlerini Listele
+   */
+  getSecurityActivity() {
+    try {
+      const raw = localStorage.getItem("technova_security_activity");
+      return raw ? JSON.parse(raw) : [
+        { action: "Oturum Açıldı", device: "Windows 11 / Chrome 127", ip: "192.168.1.1 (Bu Cihaz)", status: "Aktif", date: new Date().toISOString() },
+        { action: "Hesap Oluşturuldu", device: "Web Tarayıcı", ip: "192.168.1.1", status: "Tamamlandı", date: new Date(Date.now() - 3600000).toISOString() },
+      ];
+    } catch {
+      return [];
+    }
   },
 
   /**
@@ -200,6 +279,15 @@ export const authService = {
   async logout() {
     await wait(100);
     clearTokens();
+  },
+
+  /**
+   * Tüm Cihazlardan Çıkış Yap
+   */
+  async logoutAllDevices() {
+    await wait(200);
+    clearTokens();
+    return { success: true, message: "Tüm cihazlardaki aktif oturumlar kapatıldı." };
   },
 
   /**

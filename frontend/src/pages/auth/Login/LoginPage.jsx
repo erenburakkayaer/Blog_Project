@@ -65,7 +65,7 @@ function LoginPage() {
     else setPasswordStrength({ score, label: "Çok Güçlü", color: "#10b981" });
   }, [watchPassword]);
 
-  // Instagram Style Kullanıcı/E-posta Kontrolü
+  // Instagram Style Kullanıcı/E-posta Varlık Kontrolü
   useEffect(() => {
     if (mode !== "register" || !watchEmail || !watchEmail.includes("@") || watchEmail.length < 5) {
       setEmailCheckState({ checking: false, exists: null });
@@ -97,20 +97,8 @@ function LoginPage() {
         toast.error("Lütfen Kullanıcı Sözleşmesi ve KVKK metnini onaylayınız.");
         return;
       }
-    }
 
-    try {
-      if (mode === "login") {
-        await login({
-          email: formData.email,
-          username: formData.email, // Backend LoginDto: { Username, Password }
-          password: formData.password,
-        });
-        toast.success("Giriş başarılı! Yönetim paneline yönlendiriliyorsunuz.");
-        navigate(from, { replace: true });
-      } else {
-        // Profesyonel Akış (Udemy / BTK Akademi):
-        // 1. Kayıt oluşturulur
+      try {
         const roleMapping = {
           author: { label: "Yazar & İçerik Üreticisi", role: "author" },
           editor: { label: "Geliştirici", role: "editor" },
@@ -120,6 +108,7 @@ function LoginPage() {
 
         const targetRole = roleMapping[regRole] || { label: "Yazar", role: "author" };
 
+        // 1. Kaydı oluştur (Oturum AÇMAZ)
         await authRegister({
           email: formData.email,
           password: formData.password,
@@ -127,39 +116,112 @@ function LoginPage() {
           role: targetRole.role,
         });
 
-        // 2. Kullanıcıya net bilgi verilir ve Giriş Yap sekmesine geçirilir
+        // 2. Kullanıcıyı bilgilendirip Giriş Yap ekranına yönlendir
         toast.success(
-          `🎉 Tebrikler! ${targetRole.label} hesabınız başarıyla oluşturuldu. Lütfen şifrenizle giriş yapınız.`,
-          { duration: 5000 }
+          `🎉 Tebrikler! ${targetRole.label} hesabınız başarıyla oluşturuldu. Güvenliğiniz için lütfen e-posta ve şifrenizle giriş yapınız.`,
+          { duration: 6000 }
         );
 
-        // Giriş Yap sekmesine geçir, e-postayı hazır tut, şifreyi temizle
+        // Giriş Yap tab'ine geçir, e-postayı hazır doldur, şifreyi temizle
         setValue("email", formData.email);
         setValue("password", "");
         setMode("login");
+      } catch (error) {
+        toast.error(error.message || "Kayıt işlemi gerçekleştirilemedi.");
       }
+      return;
+    }
+
+    // GİRİŞ YAPMA (LOGIN) MODU
+    try {
+      await login({
+        email: formData.email,
+        username: formData.email,
+        password: formData.password,
+      });
+      toast.success("Giriş başarılı! Yönetim paneline yönlendiriliyorsunuz.");
+      navigate(from, { replace: true });
     } catch (error) {
-      toast.error(error.message || "İşlem başarısız. Lütfen bilgilerinizi kontrol edin.");
+      toast.error(error.message || "Giriş işlemi başarısız. Lütfen bilgilerinizi kontrol edin.");
     }
   };
 
-  // Google SSO Giriş
+  // Google SSO Giriş & Otomatik Kayıt
   const handleGoogleLogin = async () => {
-    toast.loading("Google ile kimlik doğrulanıyor...", { id: "google-auth" });
+    toast.loading("Google ile kimlik doğrulanıyor...", { id: "oauth" });
     setTimeout(async () => {
-      await login({
-        email: "user@gmail.com",
-        username: "google_user",
-        password: "GoogleUser123!",
-        fullName: "Google Kullanıcısı",
-        role: "author",
-      });
-      toast.success("Google ile güvenli giriş başarılı!", { id: "google-auth" });
-      navigate("/admin", { replace: true });
+      try {
+        await login({
+          email: "user@gmail.com",
+          username: "google_user",
+          password: "GoogleUser123!",
+          fullName: "Google Kullanıcısı",
+          role: "author",
+          provider: "Google",
+        });
+        toast.success("Google ile güvenli giriş başarılı!", { id: "oauth" });
+        navigate("/admin", { replace: true });
+      } catch {
+        // Hesap yoksa oluştur ve giriş yap
+        await authRegister({
+          email: "user@gmail.com",
+          username: "google_user",
+          password: "GoogleUser123!",
+          fullName: "Google Kullanıcısı",
+          role: "author",
+          provider: "Google",
+        });
+        await login({
+          email: "user@gmail.com",
+          username: "google_user",
+          password: "GoogleUser123!",
+          fullName: "Google Kullanıcısı",
+          role: "author",
+        });
+        toast.success("Google hesabınızla profiliniz oluşturuldu ve giriş yapıldı!", { id: "oauth" });
+        navigate("/admin", { replace: true });
+      }
     }, 600);
   };
 
-  // BTK Akademi Tarzı e-Devlet Girişi
+  // GitHub SSO Giriş & Otomatik Kayıt (Geliştirici Platformu)
+  const handleGithubLogin = async () => {
+    toast.loading("GitHub ile geliştirici kimliği doğrulanıyor...", { id: "oauth" });
+    setTimeout(async () => {
+      try {
+        await login({
+          email: "dev@github.com",
+          username: "github_developer",
+          password: "GithubDev123!",
+          fullName: "GitHub Geliştiricisi",
+          role: "editor",
+          provider: "GitHub",
+        });
+        toast.success("GitHub ile geliştirici girişi başarılı!", { id: "oauth" });
+        navigate("/admin", { replace: true });
+      } catch {
+        await authRegister({
+          email: "dev@github.com",
+          username: "github_developer",
+          password: "GithubDev123!",
+          fullName: "GitHub Geliştiricisi",
+          role: "editor",
+          provider: "GitHub",
+        });
+        await login({
+          email: "dev@github.com",
+          username: "github_developer",
+          password: "GithubDev123!",
+          fullName: "GitHub Geliştiricisi",
+          role: "editor",
+        });
+        toast.success("GitHub geliştirici hesabınızla profiliniz oluşturuldu ve giriş yapıldı!", { id: "oauth" });
+        navigate("/admin", { replace: true });
+      }
+    }, 600);
+  };
+
+  // BTK Akademi Tarzı e-Devlet Girişi & Otomatik Kayıt
   const handleEDevletSubmit = (e) => {
     e.preventDefault();
     if (eDevletTc.length !== 11) {
@@ -176,17 +238,38 @@ function LoginPage() {
       setEDevletLoading(false);
       setShowEDevletModal(false);
 
-      await login({
-        email: `tc_${eDevletTc}@turkiye.gov.tr`,
-        username: `tc_${eDevletTc}`,
-        password: "EDevletAuth123!",
-        fullName: "Samet Başkale (e-Devlet Onaylı)",
-        role: "author",
-        isEDevletVerified: true,
-      });
-
-      toast.success("🇹🇷 e-Devlet Kapısı üzerinden kimliğiniz doğrulandı ve giriş yapıldı!");
-      navigate("/admin", { replace: true });
+      try {
+        await login({
+          email: `tc_${eDevletTc}@turkiye.gov.tr`,
+          username: `tc_${eDevletTc}`,
+          password: "EDevletAuth123!",
+          fullName: `Vatandaş (${eDevletTc.slice(0, 3)}***${eDevletTc.slice(-2)})`,
+          role: "author",
+          isEDevletVerified: true,
+          provider: "e-Devlet",
+        });
+        toast.success("🇹🇷 e-Devlet Kapısı üzerinden kimliğiniz doğrulandı ve giriş yapıldı!");
+        navigate("/admin", { replace: true });
+      } catch {
+        await authRegister({
+          email: `tc_${eDevletTc}@turkiye.gov.tr`,
+          username: `tc_${eDevletTc}`,
+          password: "EDevletAuth123!",
+          fullName: `Vatandaş (${eDevletTc.slice(0, 3)}***${eDevletTc.slice(-2)})`,
+          role: "author",
+          isEDevletVerified: true,
+          provider: "e-Devlet",
+        });
+        await login({
+          email: `tc_${eDevletTc}@turkiye.gov.tr`,
+          username: `tc_${eDevletTc}`,
+          password: "EDevletAuth123!",
+          fullName: `Vatandaş (${eDevletTc.slice(0, 3)}***${eDevletTc.slice(-2)})`,
+          role: "author",
+        });
+        toast.success("🇹🇷 e-Devlet Kapısı ile hesabınız oluşturuldu ve onaylı giriş yapıldı!");
+        navigate("/admin", { replace: true });
+      }
     }, 800);
   };
 
@@ -243,7 +326,7 @@ function LoginPage() {
         </p>
       </div>
 
-      {/* 🇹🇷 BTK AKADEMİ / E-DEVLET & GOOGLE SSO BUTTONS */}
+      {/* 🇹🇷 BTK AKADEMİ / E-DEVLET, GOOGLE & GITHUB SSO BUTTONS */}
       <div className="d-flex flex-column gap-2 mb-4">
         {/* e-Devlet Button (BTK Akademi Style) */}
         <button
@@ -261,32 +344,50 @@ function LoginPage() {
           <span>e-Devlet Kapısı ile {mode === "login" ? "Giriş Yap" : "Kayıt Ol"}</span>
         </button>
 
-        {/* Google SSO Button */}
-        <button
-          type="button"
-          className="btn btn-outline-light w-100 d-flex align-items-center justify-content-center gap-2 py-2 text-white"
-          style={{
-            background: "rgba(255,255,255,0.06)",
-            border: "1px solid rgba(255,255,255,0.15)",
-            borderRadius: 12,
-            fontSize: "0.9rem",
-          }}
-          onClick={handleGoogleLogin}
-        >
-          <svg width="18" height="18" viewBox="0 0 24 24">
-            <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" />
-            <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" />
-            <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.06H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.94l2.85-2.22.81-.63z" />
-            <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.52 6.16-4.52z" />
-          </svg>
-          <span>Google ile {mode === "login" ? "Giriş Yap" : "Devam Et"}</span>
-        </button>
+        <div className="d-flex gap-2">
+          {/* Google SSO Button */}
+          <button
+            type="button"
+            className="btn btn-outline-light w-50 d-flex align-items-center justify-content-center gap-2 py-2 text-white"
+            style={{
+              background: "rgba(255,255,255,0.06)",
+              border: "1px solid rgba(255,255,255,0.15)",
+              borderRadius: 12,
+              fontSize: "0.88rem",
+            }}
+            onClick={handleGoogleLogin}
+          >
+            <svg width="16" height="16" viewBox="0 0 24 24">
+              <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" />
+              <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" />
+              <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.06H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.94l2.85-2.22.81-.63z" />
+              <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.52 6.16-4.52z" />
+            </svg>
+            <span>Google</span>
+          </button>
+
+          {/* GitHub SSO Button */}
+          <button
+            type="button"
+            className="btn btn-outline-light w-50 d-flex align-items-center justify-content-center gap-2 py-2 text-white"
+            style={{
+              background: "rgba(255,255,255,0.06)",
+              border: "1px solid rgba(255,255,255,0.15)",
+              borderRadius: 12,
+              fontSize: "0.88rem",
+            }}
+            onClick={handleGithubLogin}
+          >
+            <i className="bi bi-github fs-6" />
+            <span>GitHub</span>
+          </button>
+        </div>
       </div>
 
       <div className="position-relative text-center mb-4">
         <hr className="border-secondary opacity-25" />
         <span className="position-absolute top-50 start-50 translate-middle px-3 text-white-50 small" style={{ background: "#0f172a" }}>
-          veya kurumsal hesap ile
+          veya e-posta ile
         </span>
       </div>
 

@@ -57,23 +57,14 @@ const AuthProvider = ({ children }) => {
     }
   }, []);
 
+  // Kayıt işlemi: ASLA otomatik oturum açmaz. Sadece kaydı tamamlar.
   const register = useCallback(async (userData) => {
     setIsLoading(true);
     try {
       const response = await authService.register(userData);
-      if (response && response.user) {
-        const authUser = {
-          ...response.user,
-          role: mapRole(response.user),
-        };
-        localStorage.setItem(AUTH_STORAGE_KEY, JSON.stringify(authUser));
-        localStorage.setItem("technova_user", JSON.stringify(authUser));
-        setUser(authUser);
-        return { success: true, user: authUser };
-      }
-      throw new Error("Kayıt işlemi tamamlanamadı.");
+      return { success: true, message: response?.message || "Kayıt başarıyla oluşturuldu." };
     } catch (err) {
-      const message = err.message || "Kayıt yapılamadı.";
+      const message = err.message || "Kayıt işlemi gerçekleştirilemedi.";
       throw new Error(message);
     } finally {
       setIsLoading(false);
@@ -90,6 +81,26 @@ const AuthProvider = ({ children }) => {
     localStorage.removeItem("accessToken");
     localStorage.removeItem("refreshToken");
     setUser(null);
+  }, []);
+
+  const freezeAccount = useCallback(async () => {
+    if (!user?.email) return;
+    const res = await authService.freezeAccount(user.email);
+    setUser(null);
+    return res;
+  }, [user]);
+
+  const deleteAccount = useCallback(async () => {
+    if (!user?.email) return;
+    const res = await authService.deleteAccount(user.email);
+    setUser(null);
+    return res;
+  }, [user]);
+
+  const logoutAllDevices = useCallback(async () => {
+    const res = await authService.logoutAllDevices();
+    setUser(null);
+    return res;
   }, []);
 
   const hasRole = useCallback(
@@ -122,9 +133,12 @@ const AuthProvider = ({ children }) => {
       login,
       register,
       logout,
+      freezeAccount,
+      deleteAccount,
+      logoutAllDevices,
       hasRole,
     }),
-    [user, isLoading, login, register, logout, hasRole]
+    [user, isLoading, login, register, logout, freezeAccount, deleteAccount, logoutAllDevices, hasRole]
   );
 
   return (
