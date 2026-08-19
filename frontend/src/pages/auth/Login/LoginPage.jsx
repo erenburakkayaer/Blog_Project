@@ -14,7 +14,11 @@ function LoginPage() {
   const [showPassword, setShowPassword] = useState(false);
   const [showForgotModal, setShowForgotModal] = useState(false);
   const [forgotEmail, setForgotEmail] = useState("");
-  const [forgotSent, setForgotSent] = useState(false);
+  const [forgotStep, setForgotStep] = useState(1); // 1: Email girisi, 2: 6 haneli kod ve yeni sifre
+  const [generatedPin, setGeneratedPin] = useState("849201");
+  const [inputPin, setInputPin] = useState("");
+  const [newResetPass, setNewResetPass] = useState("");
+  const [newResetPassConfirm, setNewResetPassConfirm] = useState("");
 
   // e-Devlet Modal State (BTK Akademi Tarzı)
   const [showEDevletModal, setShowEDevletModal] = useState(false);
@@ -279,8 +283,61 @@ function LoginPage() {
       toast.error("Lütfen e-posta adresinizi giriniz.");
       return;
     }
-    setForgotSent(true);
-    toast.success("Şifre sıfırlama bağlantısı e-postanıza gönderildi!");
+    const pin = Math.floor(100000 + Math.random() * 900000).toString();
+    setGeneratedPin(pin);
+    setForgotStep(2);
+    toast.success(`🔐 6 Haneli Güvenlik Kodu üretildi: ${pin}`);
+  };
+
+  const handleResetPasswordSubmit = (e) => {
+    e.preventDefault();
+    if (inputPin !== generatedPin) {
+      toast.error("Girdiğiniz 6 haneli doğrulama kodu hatalı!");
+      return;
+    }
+    if (newResetPass.length < 6) {
+      toast.error("Yeni şifre en az 6 karakter olmalıdır.");
+      return;
+    }
+    if (newResetPass !== newResetPassConfirm) {
+      toast.error("Şifreler birbiriyle uyuşmuyor!");
+      return;
+    }
+
+    // Local storage kayıtlı kullanıcıyı güncelle
+    try {
+      const raw = localStorage.getItem("technova_registered_users");
+      let users = raw ? JSON.parse(raw) : [];
+      let found = false;
+      users = users.map((u) => {
+        if (u.email?.toLowerCase() === forgotEmail.toLowerCase() || u.userName?.toLowerCase() === forgotEmail.toLowerCase()) {
+          found = true;
+          return { ...u, password: newResetPass };
+        }
+        return u;
+      });
+      if (!found) {
+        users.push({
+          email: forgotEmail,
+          userName: forgotEmail.split("@")[0],
+          fullName: "Kullanıcı",
+          password: newResetPass,
+          role: "author",
+        });
+      }
+      localStorage.setItem("technova_registered_users", JSON.stringify(users));
+    } catch (err) {
+      console.error(err);
+    }
+
+    setValue("email", forgotEmail);
+    setValue("password", newResetPass);
+    setShowForgotModal(false);
+    setForgotStep(1);
+    setInputPin("");
+    setNewResetPass("");
+    setNewResetPassConfirm("");
+    toast.success("🎉 Şifreniz başarıyla güncellendi! 'Giriş Yap' butonuna basarak panele erişebilirsiniz.");
   };
 
   return (
@@ -663,57 +720,113 @@ function LoginPage() {
         </div>
       )}
 
-      {/* Forgot Password Modal */}
+      {/* Forgot Password Modal (Instagram & BTK Akademi 2-Step OTP Flow) */}
       {showForgotModal && (
-        <div className="modal show fade d-block" style={{ backgroundColor: "rgba(0,0,0,0.6)" }}>
+        <div className="modal show fade d-block" style={{ backgroundColor: "rgba(0,0,0,0.7)" }}>
           <div className="modal-dialog modal-dialog-centered">
-            <div className="modal-content border-0 shadow-lg rounded-4 overflow-hidden">
-              <div className="modal-header bg-light px-4 py-3 border-bottom">
-                <h5 className="modal-title fw-bold text-dark fs-6">
-                  <i className="bi bi-key-fill me-2 text-primary" />
-                  Şifre Sıfırlama
+            <div className="modal-content border-0 shadow-2xl rounded-4 overflow-hidden">
+              <div className="modal-header bg-light px-4 py-3 border-bottom d-flex justify-content-between align-items-center">
+                <h5 className="modal-title fw-bold text-dark fs-6 mb-0">
+                  <i className="bi bi-shield-lock-fill me-2 text-primary" />
+                  {forgotStep === 1 ? "Şifre Sıfırlama Talebi" : "Doğrulama Kodu & Yeni Şifre"}
                 </h5>
                 <button type="button" className="btn-close" onClick={() => setShowForgotModal(false)} />
               </div>
 
-              <form onSubmit={handleForgotSubmit}>
-                <div className="modal-body p-4 bg-white">
-                  {forgotSent ? (
-                    <div className="text-center py-3">
-                      <div className="text-success display-4 mb-2"><i className="bi bi-check-circle-fill" /></div>
-                      <h6 className="fw-bold text-dark mb-1">E-posta Gönderildi!</h6>
-                      <p className="text-secondary small mb-0">
-                        {forgotEmail} adresine şifre sıfırlama bağlantısı iletildi.
-                      </p>
+              {forgotStep === 1 ? (
+                <form onSubmit={handleForgotSubmit}>
+                  <div className="modal-body p-4 bg-white">
+                    <p className="text-secondary small mb-3">
+                      Hesabınıza kayıtlı e-posta adresinizi giriniz. Sistemimiz anında 6 haneli güvenlik doğrulama kodunuzu üretecektir.
+                    </p>
+                    <label className="form-label text-dark small fw-semibold">E-posta Adresi</label>
+                    <input
+                      type="email"
+                      className="form-control rounded-3 py-2"
+                      placeholder="ornek@technova.com"
+                      value={forgotEmail}
+                      onChange={(e) => setForgotEmail(e.target.value)}
+                      required
+                    />
+                  </div>
+
+                  <div className="modal-footer bg-light px-4 py-3 border-top">
+                    <button type="button" className="btn btn-outline-secondary rounded-pill px-4" onClick={() => setShowForgotModal(false)}>
+                      İptal
+                    </button>
+                    <button type="submit" className="btn btn-primary rounded-pill px-4 fw-semibold shadow-sm">
+                      Doğrulama Kodu Üret & Devam Et <i className="bi bi-arrow-right ms-1" />
+                    </button>
+                  </div>
+                </form>
+              ) : (
+                <form onSubmit={handleResetPasswordSubmit}>
+                  <div className="modal-body p-4 bg-white">
+                    {/* Live Generated PIN Banner */}
+                    <div className="p-3 bg-primary bg-opacity-10 border border-primary border-opacity-25 rounded-3 mb-3 text-center">
+                      <div className="small text-secondary mb-1">
+                        📧 <strong>{forgotEmail}</strong> için üretilen doğrulama kodu:
+                      </div>
+                      <div className="fs-3 fw-bold text-primary font-monospace letter-spacing-2">
+                        {generatedPin}
+                      </div>
+                      <button
+                        type="button"
+                        className="btn btn-link btn-sm text-decoration-none p-0 mt-1 small"
+                        onClick={() => setInputPin(generatedPin)}
+                      >
+                        ⚡ Kodu Kutuya Otomatik Doldur
+                      </button>
                     </div>
-                  ) : (
-                    <>
-                      <p className="text-secondary small mb-3">
-                        Kayıtlı e-posta adresinizi girin, size şifrenizi sıfırlayabileceğiniz bir bağlantı gönderelim.
-                      </p>
+
+                    <div className="mb-3">
+                      <label className="form-label text-dark small fw-semibold">6 Haneli Doğrulama Kodu</label>
                       <input
-                        type="email"
-                        className="form-control rounded-3"
-                        placeholder="ornek@technova.com"
-                        value={forgotEmail}
-                        onChange={(e) => setForgotEmail(e.target.value)}
+                        type="text"
+                        maxLength={6}
+                        className="form-control text-center fs-5 font-monospace fw-bold rounded-3"
+                        placeholder="••••••"
+                        value={inputPin}
+                        onChange={(e) => setInputPin(e.target.value)}
                         required
                       />
-                    </>
-                  )}
-                </div>
+                    </div>
 
-                <div className="modal-footer bg-light px-4 py-3 border-top">
-                  <button type="button" className="btn btn-outline-secondary rounded-pill px-4" onClick={() => setShowForgotModal(false)}>
-                    Kapat
-                  </button>
-                  {!forgotSent && (
-                    <button type="submit" className="btn btn-primary rounded-pill px-4 fw-semibold">
-                      Sıfırlama Bağlantısı Gönder
+                    <div className="mb-3">
+                      <label className="form-label text-dark small fw-semibold">Yeni Şifreniz</label>
+                      <input
+                        type="password"
+                        className="form-control rounded-3 py-2"
+                        placeholder="En az 6 karakterli yeni şifre"
+                        value={newResetPass}
+                        onChange={(e) => setNewResetPass(e.target.value)}
+                        required
+                      />
+                    </div>
+
+                    <div className="mb-2">
+                      <label className="form-label text-dark small fw-semibold">Yeni Şifre (Tekrar)</label>
+                      <input
+                        type="password"
+                        className="form-control rounded-3 py-2"
+                        placeholder="Yeni şifrenizi tekrar giriniz"
+                        value={newResetPassConfirm}
+                        onChange={(e) => setNewResetPassConfirm(e.target.value)}
+                        required
+                      />
+                    </div>
+                  </div>
+
+                  <div className="modal-footer bg-light px-4 py-3 border-top">
+                    <button type="button" className="btn btn-outline-secondary rounded-pill px-3" onClick={() => setForgotStep(1)}>
+                      Geri Dön
                     </button>
-                  )}
-                </div>
-              </form>
+                    <button type="submit" className="btn btn-success rounded-pill px-4 fw-semibold shadow-sm">
+                      <i className="bi bi-check-circle-fill me-1" /> Yeni Şifremi Kaydet & Giriş Yap
+                    </button>
+                  </div>
+                </form>
+              )}
             </div>
           </div>
         </div>
