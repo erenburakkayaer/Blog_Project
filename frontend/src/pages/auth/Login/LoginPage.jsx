@@ -33,6 +33,7 @@ function LoginPage() {
   const {
     register,
     handleSubmit,
+    setValue,
     watch,
   } = useForm({
     defaultValues: {
@@ -89,7 +90,7 @@ function LoginPage() {
   const onSubmit = async (formData) => {
     if (mode === "register") {
       if (emailCheckState.exists) {
-        toast.error("Bu e-posta adresi zaten kullanımda. Lütfen başka bir e-posta girin.");
+        toast.error("Bu e-posta adresi zaten kullanımda. Lütfen başka bir e-posta girin veya giriş yapın.");
         return;
       }
       if (!termsAccepted) {
@@ -108,6 +109,8 @@ function LoginPage() {
         toast.success("Giriş başarılı! Yönetim paneline yönlendiriliyorsunuz.");
         navigate(from, { replace: true });
       } else {
+        // Profesyonel Akış (Udemy / BTK Akademi):
+        // 1. Kayıt oluşturulur
         const roleMapping = {
           author: { label: "Yazar & İçerik Üreticisi", role: "author" },
           editor: { label: "Geliştirici", role: "editor" },
@@ -124,15 +127,23 @@ function LoginPage() {
           role: targetRole.role,
         });
 
-        toast.success(`🎉 Tebrikler! ${targetRole.label} olarak kaydınız tamamlandı ve giriş yapıldı!`);
-        navigate("/admin", { replace: true });
+        // 2. Kullanıcıya net bilgi verilir ve Giriş Yap sekmesine geçirilir
+        toast.success(
+          `🎉 Tebrikler! ${targetRole.label} hesabınız başarıyla oluşturuldu. Lütfen şifrenizle giriş yapınız.`,
+          { duration: 5000 }
+        );
+
+        // Giriş Yap sekmesine geçir, e-postayı hazır tut, şifreyi temizle
+        setValue("email", formData.email);
+        setValue("password", "");
+        setMode("login");
       }
     } catch (error) {
       toast.error(error.message || "İşlem başarısız. Lütfen bilgilerinizi kontrol edin.");
     }
   };
 
-  // Google SSO Giriş Simülasyonu
+  // Google SSO Giriş
   const handleGoogleLogin = async () => {
     toast.loading("Google ile kimlik doğrulanıyor...", { id: "google-auth" });
     setTimeout(async () => {
@@ -441,9 +452,36 @@ function LoginPage() {
             </>
           )}
         </button>
+
+        {/* UDEMY / BTK AKADEMİ TARZI TAB GEÇİŞ METNİ */}
+        <div className="text-center mt-4 pt-2 border-top border-secondary border-opacity-25">
+          {mode === "login" ? (
+            <p className="text-white-50 small mb-0">
+              Henüz bir hesabınız yok mu?{" "}
+              <button
+                type="button"
+                className="btn btn-link p-0 text-info fw-bold text-decoration-none"
+                onClick={() => setMode("register")}
+              >
+                Hemen Kayıt Ol
+              </button>
+            </p>
+          ) : (
+            <p className="text-white-50 small mb-0">
+              Zaten bir hesabınız var mı?{" "}
+              <button
+                type="button"
+                className="btn btn-link p-0 text-info fw-bold text-decoration-none"
+                onClick={() => setMode("login")}
+              >
+                Giriş Yap
+              </button>
+            </p>
+          )}
+        </div>
       </form>
 
-      <div className="text-center mt-4">
+      <div className="text-center mt-3">
         <Link className="text-white-50 small text-decoration-none hover-text-white" to="/">
           <i className="bi bi-arrow-left me-1" /> Ana Sayfaya Dön
         </Link>

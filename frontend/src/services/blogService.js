@@ -113,10 +113,17 @@ export const blogService = {
    */
   getAll: async () => {
     if (USE_MOCK_DATA) {
-      await new Promise((r) => setTimeout(r, 250));
+      await new Promise((r) => setTimeout(r, 200));
       return [...mockBlogs];
     }
-    return await apiRequest("/blogs/all");
+    try {
+      const res = await apiRequest("/blogs");
+      if (Array.isArray(res)) return res;
+      if (res?.items && Array.isArray(res.items)) return res.items.length > 0 ? res.items : mockBlogs;
+      return [...mockBlogs];
+    } catch {
+      return [...mockBlogs];
+    }
   },
 
   getAllBlogs: async () => blogService.getAll(),

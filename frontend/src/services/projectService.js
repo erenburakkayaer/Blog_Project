@@ -166,10 +166,17 @@ export const projectService = {
    */
   getAll: async () => {
     if (USE_MOCK_DATA) {
-      await new Promise((r) => setTimeout(r, 250));
+      await new Promise((r) => setTimeout(r, 200));
       return [...mockProjects];
     }
-    return await apiRequest("/projects/all");
+    try {
+      const res = await apiRequest("/projects");
+      if (Array.isArray(res)) return res;
+      if (res?.items && Array.isArray(res.items)) return res.items.length > 0 ? res.items : mockProjects;
+      return [...mockProjects];
+    } catch {
+      return [...mockProjects];
+    }
   },
 
   getAllProjects: async () => projectService.getAll(),

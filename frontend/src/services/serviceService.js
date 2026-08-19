@@ -100,9 +100,15 @@ export const serviceService = {
    */
   getAll: async () => {
     if (USE_MOCK_DATA) {
-      return [...mockServices];
+      return { data: [...mockServices] };
     }
-    return await apiRequest("/companyservices/all");
+    try {
+      const res = await apiRequest("/companyservices");
+      const list = Array.isArray(res) ? res : res?.items && Array.isArray(res.items) ? (res.items.length > 0 ? res.items : mockServices) : mockServices;
+      return { data: list };
+    } catch {
+      return { data: [...mockServices] };
+    }
   },
 
   /**
