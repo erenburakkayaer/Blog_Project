@@ -38,7 +38,7 @@ function AdminSidebar() {
       return [
         { to: "/admin", icon: "bi-grid-1x2-fill", label: "İK Özeti", end: true },
         { to: "/admin/kariyer", icon: "bi-briefcase-fill", label: "Kariyer & İlanlar", badge: "Aktif" },
-        { to: "/admin/mesajlar", icon: "bi-chat-dots-fill", label: "Gelen Başvurular" },
+        { to: "/admin/mesajlar", icon: "bi-chat-dots-fill", label: "Mesajlarım (DM)", badge: "Yeni" },
         { to: "/admin/profil", icon: "bi-person-badge-fill", label: "Profilim" },
       ];
     }
@@ -49,6 +49,7 @@ function AdminSidebar() {
         { to: "/admin", icon: "bi-grid-1x2-fill", label: "Yazar Paneli & Bakiye", end: true },
         { to: "/admin/blog", icon: "bi-journal-richtext", label: "Bloglarım & Yaz", badge: "₺1.450" },
         { to: "/admin/projeler", icon: "bi-laptop", label: "Projelerim" },
+        { to: "/admin/mesajlar", icon: "bi-chat-dots-fill", label: "Mesajlarım (DM)", badge: "Yeni" },
         { to: "/admin/profil", icon: "bi-person-badge-fill", label: "Profilim & Biyografi" },
       ];
     }
@@ -59,6 +60,7 @@ function AdminSidebar() {
         { to: "/admin", icon: "bi-grid-1x2-fill", label: "Geliştirici Paneli", end: true },
         { to: "/admin/projeler", icon: "bi-laptop", label: "Proje Vitrini", badge: "Yeni" },
         { to: "/admin/blog", icon: "bi-journal-richtext", label: "Blog Yazıları" },
+        { to: "/admin/mesajlar", icon: "bi-chat-dots-fill", label: "Mesajlarım (DM)", badge: "Yeni" },
         { to: "/admin/profil", icon: "bi-person-badge-fill", label: "Profilim" },
       ];
     }
@@ -66,6 +68,7 @@ function AdminSidebar() {
     // 5. NORMAL KULLANICI / ÖĞRENCİ
     return [
       { to: "/admin", icon: "bi-grid-1x2-fill", label: "Hesabım", end: true },
+      { to: "/admin/mesajlar", icon: "bi-chat-dots-fill", label: "Mesajlarım (DM)", badge: "Yeni" },
       { to: "/admin/profil", icon: "bi-person-badge-fill", label: "Profilim & Biyografi" },
     ];
   };
