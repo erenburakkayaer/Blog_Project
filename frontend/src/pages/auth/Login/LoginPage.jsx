@@ -161,7 +161,7 @@ function LoginPage() {
         await login({
           email: "user@gmail.com",
           username: "google_user",
-          password: "GoogleUser123!",
+          password: "********",
           fullName: "Google Kullanıcısı",
           role: "author",
           provider: "Google",
@@ -173,7 +173,7 @@ function LoginPage() {
         await authRegister({
           email: "user@gmail.com",
           username: "google_user",
-          password: "GoogleUser123!",
+          password: "********",
           fullName: "Google Kullanıcısı",
           role: "author",
           provider: "Google",
@@ -181,7 +181,7 @@ function LoginPage() {
         await login({
           email: "user@gmail.com",
           username: "google_user",
-          password: "GoogleUser123!",
+          password: "********",
           fullName: "Google Kullanıcısı",
           role: "author",
         });
@@ -199,7 +199,7 @@ function LoginPage() {
         await login({
           email: "dev@github.com",
           username: "github_developer",
-          password: "GithubDev123!",
+          password: "********",
           fullName: "GitHub Geliştiricisi",
           role: "editor",
           provider: "GitHub",
@@ -210,7 +210,7 @@ function LoginPage() {
         await authRegister({
           email: "dev@github.com",
           username: "github_developer",
-          password: "GithubDev123!",
+          password: "********",
           fullName: "GitHub Geliştiricisi",
           role: "editor",
           provider: "GitHub",
@@ -218,7 +218,7 @@ function LoginPage() {
         await login({
           email: "dev@github.com",
           username: "github_developer",
-          password: "GithubDev123!",
+          password: "********",
           fullName: "GitHub Geliştiricisi",
           role: "editor",
         });
@@ -249,7 +249,7 @@ function LoginPage() {
         await login({
           email: `tc_${eDevletTc}@turkiye.gov.tr`,
           username: `tc_${eDevletTc}`,
-          password: "EDevletAuth123!",
+          password: "********",
           fullName: `Vatandaş (${eDevletTc.slice(0, 3)}***${eDevletTc.slice(-2)})`,
           role: "author",
           isEDevletVerified: true,
@@ -261,7 +261,7 @@ function LoginPage() {
         await authRegister({
           email: `tc_${eDevletTc}@turkiye.gov.tr`,
           username: `tc_${eDevletTc}`,
-          password: "EDevletAuth123!",
+          password: "********",
           fullName: `Vatandaş (${eDevletTc.slice(0, 3)}***${eDevletTc.slice(-2)})`,
           role: "author",
           isEDevletVerified: true,
@@ -270,7 +270,7 @@ function LoginPage() {
         await login({
           email: `tc_${eDevletTc}@turkiye.gov.tr`,
           username: `tc_${eDevletTc}`,
-          password: "EDevletAuth123!",
+          password: "********",
           fullName: `Vatandaş (${eDevletTc.slice(0, 3)}***${eDevletTc.slice(-2)})`,
           role: "author",
         });
