@@ -1,9 +1,12 @@
 import { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
 import blogService from "../../../services/blogService";
+import useAuth from "../../../hooks/useAuth";
 
 function BlogPage() {
+  const navigate = useNavigate();
+  const { isAuthenticated, user } = useAuth();
   const [blogList, setBlogList] = useState([
     { id: 1, title: "React 19'un Getirdikleri: Concurrent Mode ve Beyond", category: "Web", readTime: "6 dk", date: "12 Ağu 2026", icon: "bi-code-slash", color: "#6366f1", monetization: "₺350 Kazandırdı", author: "Samet Başkale", excerpt: "React 19 ile gelen yeni özellikler, Server Components ve performans iyileştirmeleri hakkında kapsamlı rehber." },
     { id: 2, title: "GPT-4o ile Kurumsal Chatbot Nasıl Kurulur?", category: "Yapay Zekâ", readTime: "9 dk", date: "5 Ağu 2026", icon: "bi-cpu", color: "#34d399", monetization: "₺620 Kazandırdı", author: "Mustafa Aydın", excerpt: "Adım adım OpenAI API entegrasyonu ve kurumsal kullanım senaryoları." },
@@ -68,9 +71,16 @@ function BlogPage() {
           <div className="d-flex justify-content-center gap-3 mt-4 animate-fade-up animate-delay-2">
             <button
               type="button"
-              className="btn btn-primary fw-bold px-4 py-3"
+              className="btn btn-primary fw-bold px-4 py-3 shadow-lg"
               style={{ borderRadius: 12 }}
-              onClick={() => setShowCreateModal(true)}
+              onClick={() => {
+                if (!isAuthenticated) {
+                  toast("📝 Makale yayınlamak için lütfen önce giriş yapınız veya kayıt olunuz.", { icon: "🔒" });
+                  navigate("/giris");
+                  return;
+                }
+                setShowCreateModal(true);
+              }}
             >
               <i className="bi bi-pencil-square me-2" /> İlk Makaleni Yaz & Yayınla
             </button>

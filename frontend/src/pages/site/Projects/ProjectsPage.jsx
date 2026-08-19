@@ -1,12 +1,15 @@
 import { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
 import projectService from "../../../services/projectService";
 import uploadService from "../../../services/uploadService";
+import useAuth from "../../../hooks/useAuth";
 
 const categories = ["Tümü", "Web", "Mobil", "Yapay Zekâ", "Siber Güvenlik"];
 
 function ProjectsPage() {
+  const navigate = useNavigate();
+  const { isAuthenticated, user } = useAuth();
   const [active, setActive] = useState("Tümü");
   const [visibilityFilter, setVisibilityFilter] = useState("Hepsi");
 
@@ -129,15 +132,34 @@ function ProjectsPage() {
           <div className="d-flex justify-content-center gap-3 mt-4 animate-fade-up animate-delay-2">
             <button
               type="button"
-              className="btn btn-primary fw-bold px-4 py-3"
+              className="btn btn-primary fw-bold px-4 py-3 shadow-lg"
               style={{ borderRadius: 12 }}
-              onClick={() => setShowAddModal(true)}
+              onClick={() => {
+                if (!isAuthenticated) {
+                  toast("🚀 Proje yayınlamak için lütfen önce giriş yapınız veya kayıt olunuz.", { icon: "🔒" });
+                  navigate("/giris");
+                  return;
+                }
+                setShowAddModal(true);
+              }}
             >
               <i className="bi bi-cloud-arrow-up-fill me-2" /> Kendi Projeni Ekle / Yükle
             </button>
-            <Link to="/kazanc-programi" className="btn btn-outline-light fw-bold px-4 py-3" style={{ borderRadius: 12 }}>
+            <button
+              type="button"
+              className="btn btn-outline-light fw-bold px-4 py-3"
+              style={{ borderRadius: 12 }}
+              onClick={() => {
+                if (!isAuthenticated) {
+                  toast("⚡ Projenizi öne çıkarmak için lütfen önce giriş yapınız.", { icon: "🔒" });
+                  navigate("/giris");
+                  return;
+                }
+                navigate("/kazanc-programi");
+              }}
+            >
               <i className="bi bi-rocket-takeoff me-2" /> Projeni Öne Çıkar (Boost)
-            </Link>
+            </button>
           </div>
         </div>
       </section>
