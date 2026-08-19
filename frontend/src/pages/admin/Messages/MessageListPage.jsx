@@ -35,9 +35,10 @@ export default function MessageListPage() {
         if (convList.length > 0) setSelectedConv(convList[0]);
 
         const res = await messageService.getAll();
-        setMessages(res.data);
-      } catch {
-        toast.error("Mesajlar yüklenirken bir hata oluştu.");
+        const list = Array.isArray(res) ? res : res?.data && Array.isArray(res.data) ? res.data : [];
+        setMessages(list);
+      } catch (e) {
+        console.warn("Mesajlar yüklenemedi:", e);
       } finally {
         setLoading(false);
       }

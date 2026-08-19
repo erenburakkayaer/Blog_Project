@@ -1,4 +1,3 @@
-// src/pages/admin/Users/UserModal.jsx
 import { useState, useEffect } from "react";
 import PropTypes from "prop-types";
 import { USER_ROLES } from "../../../services/userService";
@@ -6,7 +5,9 @@ import { USER_ROLES } from "../../../services/userService";
 export default function UserModal({ isOpen, user, onClose, onSave }) {
   const [formData, setFormData] = useState({
     name: "",
+    username: "",
     email: "",
+    password: "",
     jobTitle: "",
     role: "author",
     status: "active",
@@ -17,7 +18,9 @@ export default function UserModal({ isOpen, user, onClose, onSave }) {
     if (user) {
       setFormData({
         name: user.name || user.fullName || "",
+        username: user.username || user.userName || user.email?.split("@")[0] || "",
         email: user.email || "",
+        password: "",
         jobTitle: user.jobTitle || "",
         role: user.role || "author",
         status: user.status || "active",
@@ -25,7 +28,9 @@ export default function UserModal({ isOpen, user, onClose, onSave }) {
     } else {
       setFormData({
         name: "",
+        username: "",
         email: "",
+        password: "",
         jobTitle: "",
         role: "author",
         status: "active",
@@ -83,17 +88,51 @@ export default function UserModal({ isOpen, user, onClose, onSave }) {
                 />
               </div>
 
+              <div className="row g-2 mb-3">
+                <div className="col-md-6">
+                  <label className="form-label fw-semibold small text-secondary">
+                    Kullanıcı Adı
+                  </label>
+                  <div className="input-group">
+                    <span className="input-group-text bg-light text-secondary">@</span>
+                    <input
+                      type="text"
+                      className="form-control rounded-end-3"
+                      placeholder="ahmety"
+                      value={formData.username}
+                      onChange={(e) => setFormData({ ...formData, username: e.target.value })}
+                      required
+                    />
+                  </div>
+                </div>
+
+                <div className="col-md-6">
+                  <label className="form-label fw-semibold small text-secondary">
+                    E-Posta Adresi
+                  </label>
+                  <input
+                    type="email"
+                    className="form-control rounded-3"
+                    placeholder="ahmet@technova.com"
+                    value={formData.email}
+                    onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                    required
+                  />
+                </div>
+              </div>
+
+              {/* Password Field */}
               <div className="mb-3">
                 <label className="form-label fw-semibold small text-secondary">
-                  E-Posta Adresi
+                  {user ? "Yeni Şifre (Boş bırakılırsa değişmez)" : "Giriş Şifresi"}
                 </label>
                 <input
-                  type="email"
+                  type="password"
                   className="form-control rounded-3"
-                  placeholder="ahmet@technova.com"
-                  value={formData.email}
-                  onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                  required
+                  placeholder={user ? "••••••••" : "En az 6 karakterli şifre"}
+                  value={formData.password}
+                  onChange={(e) => setFormData({ ...formData, password: e.target.value })}
+                  required={!user}
                 />
               </div>
 
@@ -160,7 +199,7 @@ export default function UserModal({ isOpen, user, onClose, onSave }) {
                       onChange={(e) => setFormData({ ...formData, status: e.target.value })}
                     />
                     <label className="form-check-label small" htmlFor="statusPassive">
-                      🔴 Pasif / Askıda
+                      ⚪ Pasif
                     </label>
                   </div>
                 </div>
@@ -174,14 +213,14 @@ export default function UserModal({ isOpen, user, onClose, onSave }) {
                 onClick={onClose}
                 disabled={loading}
               >
-                Vazgeç
+                İptal
               </button>
               <button
                 type="submit"
-                className="btn btn-primary rounded-pill px-4 fw-semibold"
+                className="btn btn-primary rounded-pill px-4 fw-semibold shadow-sm"
                 disabled={loading}
               >
-                {loading ? "Kaydediliyor..." : user ? "Rolü ve Bilgileri Kaydet" : "Kullanıcıyı Oluştur"}
+                {loading ? "Kaydediliyor..." : user ? "Güncelle" : "Kullanıcıyı Kaydet"}
               </button>
             </div>
           </form>

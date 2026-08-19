@@ -205,21 +205,26 @@ function HomePage() {
               { icon: "bi-shield-check", title: "Siber Güvenlik", color: "#f59e0b", desc: "Penetrasyon testleri, güvenlik denetimleri ve SOC hizmetleri ile dijital varlıklarınızı koruyoruz.", points: ["Sızma Testleri", "Güvenlik Denetimleri", "SOC & SIEM Hizmetleri"] },
             ].map((s, i) => (
               <div key={s.title} className="col-md-6 col-xl-3 animate-fade-up" style={{ animationDelay: `${i * 0.1}s` }}>
-                <div className="service-card">
-                  <div className="service-card__icon" style={{ color: s.color, background: `${s.color}15` }}>
-                    <i className={`bi ${s.icon}`} />
+                <Link to="/hizmetler" className="text-decoration-none d-block h-100">
+                  <div className="service-card h-100 transition-all shadow-sm hover-shadow-md">
+                    <div className="service-card__icon" style={{ color: s.color, background: `${s.color}15` }}>
+                      <i className={`bi ${s.icon}`} />
+                    </div>
+                    <h3 className="h5 fw-bold mb-2 text-dark">{s.title}</h3>
+                    <p className="text-secondary mb-3" style={{ fontSize: "0.9rem" }}>{s.desc}</p>
+                    <ul className="list-unstyled m-0">
+                      {s.points.map((p) => (
+                        <li key={p} className="d-flex align-items-center gap-2 mb-1" style={{ fontSize: "0.85rem", color: "#6b7280" }}>
+                          <i className="bi bi-check2-circle" style={{ color: s.color, flexShrink: 0 }} />
+                          {p}
+                        </li>
+                      ))}
+                    </ul>
+                    <div className="mt-3 pt-2 text-primary fw-semibold small d-flex align-items-center gap-1">
+                      Detaylı İncele <i className="bi bi-arrow-right" />
+                    </div>
                   </div>
-                  <h3 className="h5 fw-bold mb-2">{s.title}</h3>
-                  <p className="text-secondary mb-3" style={{ fontSize: "0.9rem" }}>{s.desc}</p>
-                  <ul className="list-unstyled m-0">
-                    {s.points.map((p) => (
-                      <li key={p} className="d-flex align-items-center gap-2 mb-1" style={{ fontSize: "0.85rem", color: "#6b7280" }}>
-                        <i className="bi bi-check2-circle" style={{ color: s.color, flexShrink: 0 }} />
-                        {p}
-                      </li>
-                    ))}
-                  </ul>
-                </div>
+                </Link>
               </div>
             ))}
           </div>
