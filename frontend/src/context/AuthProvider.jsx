@@ -1,16 +1,13 @@
 import { useCallback, useMemo, useState } from "react";
 import PropTypes from "prop-types";
-
-import apiClient, { TOKEN_STORAGE_KEY } from "../api/apiClient";
 import AuthContext from "./authContext";
+import { authService } from "../services/authService";
 
 const AUTH_STORAGE_KEY = "technova_auth_user";
-const REFRESH_STORAGE_KEY = "technova_refresh_token";
 
 const getStoredUser = () => {
   try {
-    const storedUser = localStorage.getItem(AUTH_STORAGE_KEY);
-
+    const storedUser = localStorage.getItem(AUTH_STORAGE_KEY) || localStorage.getItem("technova_user");
     return storedUser ? JSON.parse(storedUser) : null;
   } catch {
     localStorage.removeItem(AUTH_STORAGE_KEY);
@@ -20,75 +17,65 @@ const getStoredUser = () => {
 
 const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(getStoredUser);
-  const [isLoading, setIsLoading] = useState(false);
 
-  const login = useCallback(async ({ username, password }) => {
-    setIsLoading(true);
-
+  const login = useCallback(async ({ email, password, userName }) => {
     try {
-      const response = await apiClient.post("/api/auth/login", {
-        username: username.trim(),
-        password,
-      });
-
-      const { accessToken, refreshToken, user: authenticatedUser } = response.data;
-
-      localStorage.setItem(TOKEN_STORAGE_KEY, accessToken);
-      localStorage.setItem(REFRESH_STORAGE_KEY, refreshToken);
-      localStorage.setItem(AUTH_STORAGE_KEY, JSON.stringify(authenticatedUser));
-
-      setUser(authenticatedUser);
-
-      return { success: true, user: authenticatedUser };
-    } catch (error) {
-      const message =
-        error.response?.data?.message || "Kullanıcı adı veya parola hatalı.";
-      throw new Error(message, { cause: error });
-    } finally {
-      setIsLoading(false);
+      const response = await authService.login({ email, password, userName });
+      if (response && response.user) {
+        const authUser = {
+          ...response.user,
+          role: response.user.role || (response.user.roles?.[0]?.toLowerCase() === "superadmin" || response.user.roles?.[0]?.toLowerCase() === "admin" ? "admin" : "editor"),
+        };
+        localStorage.setItem(AUTH_STORAGE_KEY, JSON.stringify(authUser));
+        localStorage.setItem("technova_user", JSON.stringify(authUser));
+        setUser(authUser);
+        return { success: true, user: authUser };
+      }
+      return { success: false, message: "Giriş başarısız." };
+    } catch (err) {
+      return { success: false, message: err.message || "Giriş yapılamadı." };
     }
   }, []);
 
-  const logout = useCallback(() => {
-    const refreshToken = localStorage.getItem(REFRESH_STORAGE_KEY);
-
-    if (refreshToken) {
-      apiClient.post("/api/auth/logout", { refreshToken }).catch(() => {});
-    }
-
+  const logout = useCallback(async () => {
+    await authService.logout();
     localStorage.removeItem(AUTH_STORAGE_KEY);
-    localStorage.removeItem(TOKEN_STORAGE_KEY);
-    localStorage.removeItem(REFRESH_STORAGE_KEY);
+    localStorage.removeItem("technova_user");
+    localStorage.removeItem("technova_token");
     setUser(null);
   }, []);
 
   const hasRole = useCallback(
     (allowedRoles) => {
-      if (!user) {
-        return false;
-      }
+      if (!user) return false;
+      if (!allowedRoles || allowedRoles.length === 0) return true;
 
-      if (!allowedRoles) {
-        return true;
-      }
+      const userRoles = [
+        user.role?.toLowerCase(),
+        ...(Array.isArray(user.roles) ? user.roles.map((r) => r.toLowerCase()) : []),
+      ].filter(Boolean);
 
-      const roles = Array.isArray(allowedRoles) ? allowedRoles : [allowedRoles];
+      const targetRoles = (Array.isArray(allowedRoles) ? allowedRoles : [allowedRoles]).map((r) =>
+        r.toLowerCase()
+      );
 
-      return roles.includes(user.role);
+      // SuperAdmin veya Admin her zaman tam erişime sahiptir
+      if (userRoles.includes("admin") || userRoles.includes("superadmin")) return true;
+
+      return targetRoles.some((target) => userRoles.includes(target));
     },
-    [user],
+    [user]
   );
 
   const contextValue = useMemo(
     () => ({
       user,
       isAuthenticated: Boolean(user),
-      isLoading,
       login,
       logout,
       hasRole,
     }),
-    [user, isLoading, login, logout, hasRole],
+    [user, login, logout, hasRole]
   );
 
   return (

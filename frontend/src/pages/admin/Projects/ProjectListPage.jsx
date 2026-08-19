@@ -8,20 +8,32 @@ import ProjectFilters from "../../../components/admin/project/ProjectFilters";
 import ProjectTable from "../../../components/admin/project/ProjectTable";
 import projectService from "../../../services/projectService";
 
-const ITEMS_PER_PAGE = 4; // Blog sayfandaki gibi sayfa başına 4 öğe
+const ITEMS_PER_PAGE = 4;
 
 const ProjectListPage = () => {
   const [projects, setProjects] = useState([]);
-
-  useEffect(() => {
-    projectService.getAll().then(setProjects);
-  }, []);
+  const [isLoading, setIsLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState("");
   const [category, setCategory] = useState("all");
   const [status, setStatus] = useState("all");
   const [currentPage, setCurrentPage] = useState(1);
   const [selectedProject, setSelectedProject] = useState(null);
   const [isDeleting, setIsDeleting] = useState(false);
+
+  useEffect(() => {
+    const load = async () => {
+      try {
+        setIsLoading(true);
+        const data = await projectService.getAll();
+        setProjects(Array.isArray(data) ? data : []);
+      } catch (err) {
+        toast.error(err.message || "Projeler yüklenemedi.");
+      } finally {
+        setIsLoading(false);
+      }
+    };
+    load();
+  }, []);
 
   const filteredProjects = useMemo(() => {
     const normalizedSearch = searchTerm.toLocaleLowerCase("tr-TR").trim();
@@ -115,9 +127,14 @@ const ProjectListPage = () => {
     setIsDeleting(true);
 
     try {
-      await projectService.remove(selectedProject.id);
+      const deleted = projectService.remove(selectedProject.id);
 
-      setProjects(await projectService.getAll());
+      if (!deleted) {
+        toast.error("Silinecek proje bulunamadı.");
+        return;
+      }
+
+      setProjects(projectService.getAll());
       setSelectedProject(null);
       toast.success("Proje başarıyla silindi.");
     } catch {

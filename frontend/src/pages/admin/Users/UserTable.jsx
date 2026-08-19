@@ -1,6 +1,7 @@
 // src/pages/admin/Users/UserTable.jsx
 import PropTypes from "prop-types";
 import StatusBadge from "../../../components/ui/StatusBadge";
+import { USER_ROLES } from "../../../services/userService";
 
 export default function UserTable({ users, onEdit, onDelete }) {
   if (!users || users.length === 0) {
@@ -12,10 +13,16 @@ export default function UserTable({ users, onEdit, onDelete }) {
     );
   }
 
-  const roleLabels = {
-    admin: { label: "Yönetici", class: "text-bg-danger" },
-    editor: { label: "Editör", class: "text-bg-primary" },
-    author: { label: "Yazar", class: "text-bg-secondary" },
+  const getRoleBadge = (roleKey) => {
+    const found = USER_ROLES.find((r) => r.key === roleKey);
+    if (found) {
+      return (
+        <span className={`badge bg-${found.color} bg-opacity-10 text-${found.color} border border-${found.color} border-opacity-25 px-2 py-1`}>
+          {found.badge}
+        </span>
+      );
+    }
+    return <span className="badge text-bg-secondary">{roleKey}</span>;
   };
 
   return (
@@ -23,68 +30,57 @@ export default function UserTable({ users, onEdit, onDelete }) {
       <table className="table table-hover align-middle mb-0">
         <thead className="table-light">
           <tr>
-            <th scope="col" className="ps-4">
-              Kullanıcı
-            </th>
+            <th scope="col" className="ps-4">Kullanıcı & Profil</th>
             <th scope="col">E-posta</th>
-            <th scope="col">Rol</th>
+            <th scope="col">Pozisyon</th>
+            <th scope="col">Atanan Rol</th>
             <th scope="col">Durum</th>
-            <th scope="col" className="text-end pe-4">
-              İşlemler
-            </th>
+            <th scope="col" className="text-end pe-4">Rol & Düzenleme</th>
           </tr>
         </thead>
         <tbody>
-          {users.map((user) => {
-            const roleInfo = roleLabels[user.role] || {
-              label: user.role,
-              class: "text-bg-secondary",
-            };
-            return (
-              <tr key={user.id}>
-                <td className="ps-4 fw-semibold text-dark">
-                  <div className="d-flex align-items-center gap-2">
-                    <span
-                      className="rounded-circle bg-light border p-2 text-primary d-flex align-items-center justify-content-center"
-                      style={{ width: "38px", height: "38px" }}
-                    >
-                      <i className="bi bi-person" />
-                    </span>
-                    <span>{user.name}</span>
+          {users.map((user) => (
+            <tr key={user.id}>
+              <td className="ps-4 fw-semibold text-dark">
+                <div className="d-flex align-items-center gap-2">
+                  <div
+                    className="rounded-circle bg-primary bg-opacity-10 text-primary d-flex align-items-center justify-content-center fw-bold fs-6"
+                    style={{ width: "38px", height: "38px" }}
+                  >
+                    {(user.name || user.fullName || "U").charAt(0).toUpperCase()}
                   </div>
-                </td>
-                <td className="text-secondary">{user.email}</td>
-                <td>
-                  <span className={`badge ${roleInfo.class}`}>
-                    {roleInfo.label}
-                  </span>
-                </td>
-                <td>
-                  <StatusBadge status={user.status} />
-                </td>
-                <td className="text-end pe-4">
-                  <div className="d-flex justify-content-end gap-2">
-                    <button
-                      type="button"
-                      className="btn btn-sm btn-outline-primary"
-                      onClick={() => onEdit(user)}
-                      title="Düzenle"
-                    >
-                      <i className="bi bi-pencil" />
-                    </button>
-                    <button
-                      type="button"
-                      className="btn btn-sm btn-outline-danger"
-                      onClick={() => onDelete(user.id)}
-                      title="Sil"
-                    >
-                      <i className="bi bi-trash" />
-                    </button>
+                  <div>
+                    <div className="text-dark fw-bold">{user.name || user.fullName}</div>
+                    <small className="text-muted" style={{ fontSize: "11px" }}>@{user.userName || "kullanici"}</small>
                   </div>
-                </td>
-              </tr>
-            );
-          })}
+                </div>
+              </td>
+              <td className="text-secondary">{user.email}</td>
+              <td className="text-dark small fw-medium">{user.jobTitle || "TechNova Üyesi"}</td>
+              <td>{getRoleBadge(user.role)}</td>
+              <td>
+                <StatusBadge status={user.status} />
+              </td>
+              <td className="text-end pe-4">
+                <div className="btn-group">
+                  <button
+                    className="btn btn-outline-primary btn-sm rounded-pill px-3 me-2"
+                    onClick={() => onEdit(user)}
+                    title="Rolü ve Bilgileri Düzenle"
+                  >
+                    <i className="bi bi-shield-check me-1" /> Rolü Değiştir
+                  </button>
+                  <button
+                    className="btn btn-outline-danger btn-sm rounded-pill px-2"
+                    onClick={() => onDelete(user.id)}
+                    title="Kullanıcıyı Sil"
+                  >
+                    <i className="bi bi-trash" />
+                  </button>
+                </div>
+              </td>
+            </tr>
+          ))}
         </tbody>
       </table>
     </div>

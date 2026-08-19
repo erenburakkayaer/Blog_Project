@@ -1,5 +1,6 @@
 // src/pages/admin/Services/ServiceListPage.jsx
-import { useEffect, useMemo, useState } from "react";
+import { useMemo, useState } from "react";
+import { Link } from "react-router-dom";
 import toast from "react-hot-toast";
 
 import { serviceService } from "../../../services/serviceService";
@@ -11,28 +12,64 @@ import LoadingState from "../../../components/ui/LoadingState";
 
 const ITEMS_PER_PAGE = 4;
 
+const INITIAL_SERVICES = [
+  {
+    id: "1",
+    title: "Web Geliştirme",
+    description:
+      "Modern, hızlı ve SEO uyumlu kurumsal web siteleri ve web tabanlı yazılımlar.",
+    icon: "bi-code-slash",
+    status: "active",
+  },
+  {
+    id: "2",
+    title: "Mobil Uygulama",
+    description:
+      "iOS ve Android platformları için yüksek performanslı native ve cross-platform uygulamalar.",
+    icon: "bi-phone",
+    status: "active",
+  },
+  {
+    id: "3",
+    title: "Siber Güvenlik Danışmanlığı",
+    description:
+      "Zafiyet analizleri, sızma testleri ve kurumsal altyapı güvenlik sertifikasyonları.",
+    icon: "bi-shield-lock",
+    status: "active",
+  },
+  {
+    id: "4",
+    title: "Yapay Zekâ ve Makine Öğrenmesi",
+    description:
+      "İş süreçlerinizi optimize etmek için özel yapay zekâ modelleri, doğal dil işleme sistemleri.",
+    icon: "bi-cpu",
+    status: "active",
+  },
+  {
+    id: "5",
+    title: "Bulut Altyapı Yönetimi",
+    description:
+      "AWS, Google Cloud ve Azure platformlarında güvenli, ölçeklenebilir bulut mimarileri.",
+    icon: "bi-cloud-check",
+    status: "passive",
+  },
+];
+
 export default function ServiceListPage() {
-  const [services, setServices] = useState([]);
+  const [services, setServices] = useState(() => {
+    try {
+      const res = serviceService.getAll();
+      const data = Array.isArray(res?.data) ? res.data : res;
+      return Array.isArray(data) && data.length > 0 ? data : INITIAL_SERVICES;
+    } catch {
+      return INITIAL_SERVICES;
+    }
+  });
+
   const [searchTerm, setSearchTerm] = useState("");
   const [statusFilter, setStatusFilter] = useState("all");
   const [currentPage, setCurrentPage] = useState(1);
-  const [loading, setLoading] = useState(true);
-
-  const fetchServices = async () => {
-    try {
-      setLoading(true);
-      const response = await serviceService.getAll();
-      setServices(response.data);
-    } catch {
-      toast.error("Hizmetler yüklenirken bir hata oluştu.");
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  useEffect(() => {
-    fetchServices();
-  }, []);
+  const [loading, setLoading] = useState(false);
 
   // Modal State'leri
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -93,39 +130,38 @@ export default function ServiceListPage() {
     setIsModalOpen(true);
   };
 
-  const handleSave = async (e) => {
+  const handleSave = (e) => {
     e.preventDefault();
     if (!formData.title.trim()) {
       toast.error("Hizmet adı boş olamaz.");
       return;
     }
 
-    try {
-      if (selectedService) {
-        await serviceService.update(selectedService.id, formData);
-        toast.success("Hizmet başarıyla güncellendi.");
-      } else {
-        await serviceService.create(formData);
-        toast.success("Yeni hizmet başarıyla eklendi.");
-      }
-
-      setIsModalOpen(false);
-      fetchServices();
-    } catch {
-      toast.error("İşlem başarısız oldu.");
+    if (selectedService) {
+      // Güncelleme
+      setServices((prev) =>
+        prev.map((s) =>
+          s.id === selectedService.id ? { ...s, ...formData } : s,
+        ),
+      );
+      toast.success("Hizmet başarıyla güncellendi.");
+    } else {
+      // Yeni Ekleme
+      const newService = {
+        id: Date.now().toString(),
+        ...formData,
+      };
+      setServices((prev) => [newService, ...prev]);
+      toast.success("Yeni hizmet başarıyla eklendi.");
     }
+
+    setIsModalOpen(false);
   };
 
-  const handleDelete = async (id) => {
+  const handleDelete = (id) => {
     if (!window.confirm("Bu hizmeti silmek istediğinize emin misiniz?")) return;
-
-    try {
-      await serviceService.delete(id);
-      toast.success("Hizmet başarıyla silindi.");
-      fetchServices();
-    } catch {
-      toast.error("Silme işlemi başarısız oldu.");
-    }
+    setServices((prev) => prev.filter((s) => s.id !== id));
+    toast.success("Hizmet başarıyla silindi.");
   };
 
   return (

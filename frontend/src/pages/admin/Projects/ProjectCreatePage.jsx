@@ -9,7 +9,7 @@ const ProjectCreatePage = () => {
 
   const handleCreateProject = async (projectData) => {
     try {
-      await projectService.create(projectData);
+      await projectService.createProject(projectData);
 
       toast.success("Proje başarıyla oluşturuldu.");
       navigate("/admin/projeler");

@@ -71,14 +71,12 @@ export default function MessageListPage() {
 
   // Önemli yıldızı toggle
   const handleToggleImportant = async (id) => {
-    const msg = messages.find((m) => m.id === id);
-    if (!msg) return;
-
-    const nextValue = !msg.isImportant;
     try {
-      await messageService.toggleImportant(id, nextValue);
+      await messageService.toggleImportant(id);
       setMessages((prev) =>
-        prev.map((m) => (m.id === id ? { ...m, isImportant: nextValue } : m)),
+        prev.map((m) =>
+          m.id === id ? { ...m, isImportant: !m.isImportant } : m,
+        ),
       );
     } catch {
       toast.error("İşlem başarısız oldu.");

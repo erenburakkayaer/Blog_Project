@@ -1,6 +1,7 @@
 import { Outlet } from "react-router-dom";
 import Footer from "../components/site/Footer";
 import Navbar from "../components/site/Navbar";
+import AIChatbot from "../components/site/AIChatbot";
 
 function SiteLayout() {
   return (
@@ -12,6 +13,7 @@ function SiteLayout() {
       </main>
 
       <Footer />
+      <AIChatbot />
     </div>
   );
 }

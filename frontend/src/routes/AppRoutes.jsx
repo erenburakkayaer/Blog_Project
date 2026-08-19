@@ -24,23 +24,24 @@ import ServiceListPage from "../pages/admin/Services/ServiceListPage";
 import ServiceEditPage from "../pages/admin/Services/ServiceEditPage";
 import UserListPage from "../pages/admin/Users/UserListPage";
 import SettingsPage from "../pages/admin/Settings/SettingsPage";
+import ProfilePage from "../pages/admin/Profile/ProfilePage";
+import CareerListPage from "../pages/admin/Careers/CareerListPage";
 
 import LoginPage from "../pages/auth/Login/LoginPage";
 import UnauthorizedPage from "../pages/auth/UnauthorizedPage";
 
-import AboutPage from "../pages/site/About/AboutPage";
+// ── Site pages ──────────────────────────────────────────────
 import HomePage from "../pages/site/Home/HomePage";
+import AboutPage from "../pages/site/About/AboutPage";
 import ServicesPage from "../pages/site/Services/ServicesPage";
-import ServiceDetailPage from "../pages/site/Services/ServiceDetailPage";
 import ProjectsPage from "../pages/site/Projects/ProjectsPage";
-import ProjectDetailPage from "../pages/site/Projects/ProjectDetailPage";
 import BlogPage from "../pages/site/Blog/BlogPage";
-import BlogDetailPage from "../pages/site/Blog/BlogDetailPage";
-import CareerPage from "../pages/site/Career/CareerPage";
 import ContactPage from "../pages/site/Contact/ContactPage";
-import OfferPage from "../pages/site/Offer/OfferPage";
-import ReferencesPage from "../pages/site/References/ReferencesPage";
+import CareerPage from "../pages/site/Career/CareerPage";
 import FAQPage from "../pages/site/FAQ/FAQPage";
+import ReferencesPage from "../pages/site/References/ReferencesPage";
+import OfferPage from "../pages/site/Offer/OfferPage";
+import MonetizationPage from "../pages/site/Monetization/MonetizationPage";
 
 const router = createBrowserRouter([
   {
@@ -50,14 +51,15 @@ const router = createBrowserRouter([
         path: "/giris",
         element: <LoginPage />,
       },
+      {
+        path: "/yetkisiz",
+        element: <UnauthorizedPage />,
+      },
     ],
   },
   {
-    path: "/yetkisiz",
-    element: <UnauthorizedPage />,
-  },
-  {
-    element: <ProtectedRoute allowedRoles={["admin", "editor"]} />,
+    // Tüm giriş yapmış roller (Admin, HR, Author, Editor, User) portala erişebilir
+    element: <ProtectedRoute />,
     children: [
       {
         path: "/admin",
@@ -100,16 +102,24 @@ const router = createBrowserRouter([
             element: <ServiceEditPage />,
           },
           {
-            path: "kullanicilar",
-            element: <UserListPage />,
-          },
-          {
             path: "mesajlar",
             element: <MessageListPage />,
           },
           {
-            element: <ProtectedRoute allowedRoles={["admin"]} />,
+            path: "kariyer",
+            element: <CareerListPage />,
+          },
+          {
+            path: "profil",
+            element: <ProfilePage />,
+          },
+          {
+            element: <ProtectedRoute allowedRoles={["admin", "superadmin"]} />,
             children: [
+              {
+                path: "kullanicilar",
+                element: <UserListPage />,
+              },
               {
                 path: "ayarlar",
                 element: <SettingsPage />,
@@ -147,28 +157,16 @@ const router = createBrowserRouter([
         element: <ServicesPage />,
       },
       {
-        path: "hizmetler/:id",
-        element: <ServiceDetailPage />,
-      },
-      {
         path: "projeler",
         element: <ProjectsPage />,
-      },
-      {
-        path: "projeler/:id",
-        element: <ProjectDetailPage />,
-      },
-      {
-        path: "referanslar",
-        element: <ReferencesPage />,
       },
       {
         path: "blog",
         element: <BlogPage />,
       },
       {
-        path: "blog/:id",
-        element: <BlogDetailPage />,
+        path: "iletisim",
+        element: <ContactPage />,
       },
       {
         path: "kariyer",
@@ -179,12 +177,16 @@ const router = createBrowserRouter([
         element: <FAQPage />,
       },
       {
-        path: "iletisim",
-        element: <ContactPage />,
+        path: "referanslar",
+        element: <ReferencesPage />,
       },
       {
         path: "teklif-al",
         element: <OfferPage />,
+      },
+      {
+        path: "kazanc-programi",
+        element: <MonetizationPage />,
       },
       {
         path: "*",

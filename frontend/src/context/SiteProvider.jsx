@@ -2,14 +2,14 @@ import { useCallback, useMemo, useState, useEffect } from "react";
 import PropTypes from "prop-types";
 import SiteContext from "./siteContext";
 
-const SITE_SETTINGS_STORAGE_KEY = "technova_site_settings";
+const SITE_SETTINGS_STORAGE_KEY = "uslukilic_site_settings";
 
 const defaultSettings = {
-  siteName: "TechNova",
-  slogan: "Geleceğin Teknolojileri ve Yazılım Çözümleri",
-  email: "iletisim@technova.com",
-  phone: "+90 (555) 000 00 00",
-  copyright: "© 2026 TechNova. Tüm hakları saklıdır.",
+  siteName: "Uslukılıç Yazılım",
+  slogan: "Bozok Teknopark Merkezli Yazılım & Teknoloji Çözümleri",
+  email: "info@uslukilicyazilim.com",
+  phone: "+90 (354) 000 00 00",
+  copyright: "© 2026 Uslukılıç Yazılım. Tüm hakları saklıdır.",
 };
 
 const getStoredSettings = () => {

@@ -63,13 +63,29 @@ const ProjectTable = ({ projects, onDelete }) => {
               <tr key={project.id}>
                 <td style={{ minWidth: "260px" }}>
                   <div className="d-flex align-items-center gap-3">
-                    <img
-                      src={project.coverImage}
-                      alt={project.title}
-                      className="rounded object-fit-cover"
-                      width="72"
-                      height="52"
-                    />
+                    {project.coverImage ? (
+                      <img
+                        src={project.coverImage}
+                        alt={project.title}
+                        className="rounded object-fit-cover"
+                        width="56"
+                        height="44"
+                        onError={(e) => { e.currentTarget.style.display = "none"; e.currentTarget.nextSibling.style.display = "flex"; }}
+                      />
+                    ) : null}
+                    <div
+                      className="rounded d-flex align-items-center justify-content-center flex-shrink-0"
+                      style={{
+                        width: 56,
+                        height: 44,
+                        background: project.color ? `linear-gradient(135deg, ${project.color}, #1e293b)` : "linear-gradient(135deg, #6366f1, #38bdf8)",
+                        color: "#fff",
+                        display: project.coverImage ? "none" : "flex",
+                        fontSize: "1.2rem",
+                      }}
+                    >
+                      <i className={`bi ${project.icon || "bi-folder2-open"}`} />
+                    </div>
 
                     <div>
                       <div className="d-flex align-items-center gap-2">

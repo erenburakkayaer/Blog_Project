@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useMemo } from "react";
 import { Link, Navigate, useNavigate, useParams } from "react-router-dom";
 import toast from "react-hot-toast";
 
@@ -8,19 +8,17 @@ import projectService from "../../../services/projectService";
 const ProjectEditPage = () => {
   const { projectId } = useParams();
   const navigate = useNavigate();
-  const [project, setProject] = useState(null);
-  const [notFound, setNotFound] = useState(false);
 
-  useEffect(() => {
-    projectService
-      .getById(projectId)
-      .then(setProject)
-      .catch(() => setNotFound(true));
-  }, [projectId]);
+  const project = useMemo(() => projectService.getById(projectId), [projectId]);
 
   const handleUpdateProject = async (projectData) => {
     try {
-      await projectService.update(projectId, projectData);
+      const updatedProject = projectService.update(projectId, projectData);
+
+      if (!updatedProject) {
+        toast.error("Güncellenecek proje bulunamadı.");
+        return;
+      }
 
       toast.success("Proje başarıyla güncellendi.");
       navigate("/admin/projeler");
@@ -29,12 +27,8 @@ const ProjectEditPage = () => {
     }
   };
 
-  if (notFound) {
-    return <Navigate to="/admin/projeler" replace />;
-  }
-
   if (!project) {
-    return null;
+    return <Navigate to="/admin/projeler" replace />;
   }
 
   return (

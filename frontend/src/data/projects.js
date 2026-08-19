@@ -25,7 +25,7 @@ const projects = [
     title: "Yapay Zekâ Destekli Müşteri Asistanı",
     slug: "yapay-zeka-destekli-musteri-asistani",
     category: "Yapay Zekâ",
-    client: "TechNova",
+    client: "Uslukılıç Yazılım",
     status: "published",
     featured: true,
     coverImage: "https://images.unsplash.com/photo-1677442136019-21780ecad995",
