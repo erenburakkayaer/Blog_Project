@@ -1,4 +1,6 @@
-﻿namespace Staj_proje.Entities
+using Staj_proje.Interfaces;
+
+namespace Staj_proje.Entities
 {
     public class Career
     {

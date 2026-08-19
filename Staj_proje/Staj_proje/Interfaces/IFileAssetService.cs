@@ -1,6 +1,6 @@
 using Staj_proje.DTO.FileAsset;
 
-namespace Staj_proje.Services.Interfaces
+namespace Staj_proje.Interfaces
 {
     public interface IFileAssetService
     {

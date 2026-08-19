@@ -1,4 +1,6 @@
-﻿namespace Staj_proje.Entities
+using Staj_proje.Interfaces;
+
+namespace Staj_proje.Entities
 {
     public class Company
     {
@@ -15,6 +17,8 @@
         public string Email { get; set; } = string.Empty; // Kurumsal E-posta
         public string Phone { get; set; } = string.Empty;
         public string Location { get; set; } = string.Empty;
+
+        public bool IsDeleted { get; set; } = false;
 
         public ICollection<GalleryItem> GalleryItems { get; set; } = new HashSet<GalleryItem>();
         public ICollection<User> Employees { get; set; } = new HashSet<User>(); // Şirket Çalışanları / Yöneticileri

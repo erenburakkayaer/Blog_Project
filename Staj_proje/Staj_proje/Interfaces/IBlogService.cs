@@ -1,6 +1,6 @@
 using Staj_proje.DTO.Blog;
 
-namespace Staj_proje.Services.Interfaces
+namespace Staj_proje.Interfaces
 {
     public interface IBlogService
     {

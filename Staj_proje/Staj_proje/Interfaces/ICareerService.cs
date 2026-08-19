@@ -1,7 +1,7 @@
 using Staj_proje.DTO.Career;
 using Staj_proje.Entities;
 
-namespace Staj_proje.Services.Interfaces
+namespace Staj_proje.Interfaces
 {
     public interface ICareerService
     {

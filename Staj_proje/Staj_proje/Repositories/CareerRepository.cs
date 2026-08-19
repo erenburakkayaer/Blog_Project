@@ -1,4 +1,4 @@
-﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
 using Staj_proje.Data;
 using Staj_proje.Entities;
 using Staj_proje.Interfaces;
@@ -8,6 +8,16 @@ namespace Staj_proje.Repositories
     public class CareerRepository : GenericRepository<Career>, ICareerRepository
     {
         public CareerRepository(AppDbContext context) : base(context) { }
+
+        public async Task<List<Career>> GetAllCareersWithDetailsAsync()
+        {
+            return await _context.Careers
+                .Where(c => !c.IsDeleted)
+                .Include(c => c.Company)
+                .Include(c => c.Category)
+                .OrderByDescending(c => c.CreatedAt)
+                .ToListAsync();
+        }
 
         public async Task<List<Career>> GetActiveCareersWithDetailsAsync()
         {
@@ -33,6 +43,17 @@ namespace Staj_proje.Repositories
         {
             return await _context.Careers
                 .Where(c => c.CompanyId == companyId && !c.IsDeleted)
+                .Include(c => c.Company)
+                .Include(c => c.Category)
+                .OrderByDescending(c => c.CreatedAt)
+                .ToListAsync();
+        }
+
+        public async Task<List<Career>> GetCareersByCategoryIdAsync(int categoryId)
+        {
+            return await _context.Careers
+                .Where(c => c.CategoryId == categoryId && !c.IsDeleted)
+                .Include(c => c.Company)
                 .Include(c => c.Category)
                 .OrderByDescending(c => c.CreatedAt)
                 .ToListAsync();
@@ -42,6 +63,16 @@ namespace Staj_proje.Repositories
         {
             return await _context.Careers
                 .Where(c => c.EmploymentType == employmentType && c.IsActive && !c.IsDeleted)
+                .Include(c => c.Company)
+                .Include(c => c.Category)
+                .OrderByDescending(c => c.CreatedAt)
+                .ToListAsync();
+        }
+
+        public async Task<List<Career>> GetExpiredCareersWithDetailsAsync()
+        {
+            return await _context.Careers
+                .Where(c => !c.IsDeleted && c.ExpirationDate != null && c.ExpirationDate <= DateTime.UtcNow)
                 .Include(c => c.Company)
                 .Include(c => c.Category)
                 .OrderByDescending(c => c.CreatedAt)

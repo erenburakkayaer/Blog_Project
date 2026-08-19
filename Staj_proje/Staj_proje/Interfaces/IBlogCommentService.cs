@@ -1,6 +1,6 @@
 using Staj_proje.DTO.BlogComment;
 
-namespace Staj_proje.Services.Interfaces
+namespace SStaj_proje.Interfaces
 {
     public interface IBlogCommentService
     {

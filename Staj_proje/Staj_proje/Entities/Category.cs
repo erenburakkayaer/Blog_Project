@@ -1,6 +1,8 @@
-﻿namespace Staj_proje.Entities
+using Staj_proje.Interfaces;
+
+namespace Staj_proje.Entities
 {
-    public class Category
+    public class Category 
     {
         public int Id { get; set; }
 

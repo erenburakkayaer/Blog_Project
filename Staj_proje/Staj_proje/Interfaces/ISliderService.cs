@@ -1,6 +1,6 @@
 using Staj_proje.DTO.Slider;
 
-namespace Staj_proje.Services.Interfaces
+namespace Staj_proje.Interfaces
 {
     public interface ISliderService
     {

@@ -1,36 +1,50 @@
-using Microsoft.EntityFrameworkCore;
-using Staj_proje.Data;
+using Mapster;
 using Staj_proje.DTO.Application;
 using Staj_proje.Entities;
 using Staj_proje.Interfaces;
-using Mapster;
 
 namespace Staj_proje.Services
 {
     public class ApplicationService : IApplicationService
     {
         private readonly IApplicationRepository _applicationRepository;
-        private readonly AppDbContext _dbContext;
+        private readonly IGenericRepository<Career> _careerRepository;
+        private readonly IGenericRepository<User> _userRepository;
+        private readonly IUnitOfWork _unitOfWork;
 
-        public ApplicationService(IApplicationRepository applicationRepository, AppDbContext dbContext)
+        public ApplicationService(
+            IApplicationRepository applicationRepository,
+            IGenericRepository<Career> careerRepository,
+            IGenericRepository<User> userRepository,
+            IUnitOfWork unitOfWork)
         {
             _applicationRepository = applicationRepository;
-            _dbContext = dbContext;
+            _careerRepository = careerRepository;
+            _userRepository = userRepository;
+            _unitOfWork = unitOfWork;
         }
 
+        #region CREATE
+
+        /// <summary>
+        /// Yeni bir başvuru oluşturur
+        /// </summary>
         public async Task<ApplicationResponseDto> CreateAsync(ApplicationCreateDto dto, int? userId)
         {
-            if (string.IsNullOrWhiteSpace(dto.ResumeFilePath))
-                throw new BusinessException("Özgeçmiş dosya yolu zorunludur.");
+            // İlan kontrolü
+            var career = await _careerRepository.GetByIdAsync(dto.CareerId);
+            if (career == null)
+                throw new InvalidOperationException($"İlan (Career) ID: {dto.CareerId} bulunamadı.");
 
-            // Basit business kontrollü: aynı kullanıcı aynı ilana tekrar başvurmasın (isteğe göre kaldırılabilir)
+            // Kullanıcı kontrolü (varsa)
             if (userId.HasValue)
             {
-                var existing = await _applicationRepository.FindAsync(a => a.CareerId == dto.CareerId && a.UserId == userId.Value && !a.IsDeleted);
-                if (existing.Any())
-                    throw new BusinessException("Bu kullanıcı aynı ilana zaten başvurmuş.");
+                var user = await _userRepository.GetByIdAsync(userId.Value);
+                if (user == null)
+                    throw new InvalidOperationException($"Kullanıcı ID: {userId} bulunamadı.");
             }
 
+            // Yeni Application nesnesi oluştur
             var application = new Application
             {
                 CareerId = dto.CareerId,
@@ -43,126 +57,196 @@ namespace Staj_proje.Services
                 Status = ApplicationStatus.Pending,
                 CreatedAt = DateTime.UtcNow
             };
-            await _applicationRepository.AddAsync(application); await _dbContext.SaveChangesAsync(); // navigation prop'lar gerekli olduğu için detaylı kaydı tekrar al
-            var created = await _applicationRepository.GetApplicationWithDetailsByIdAsync(application.Id); 
-            return created!.Adapt<ApplicationResponseDto>();
+
+            await _applicationRepository.AddAsync(application);
+            await _unitOfWork.CommitAsync();
+
+            // Detaylarıyla birlikte DTO'ya dönüştür
+            var createdApplication = await _applicationRepository.GetApplicationWithDetailsByIdAsync(application.Id);
+            return (createdApplication ?? application).Adapt<ApplicationResponseDto>();
         }
 
+        #endregion
+
+        #region READ
+
+        /// <summary>
+        /// ID'ye göre başvuruyu tüm detaylarıyla getirir
+        /// </summary>
         public async Task<ApplicationResponseDto?> GetByIdAsync(int id)
         {
-            var app = await _applicationRepository.GetApplicationWithDetailsByIdAsync(id);
-            if (app == null) return null;
-            return app.Adapt<ApplicationResponseDto>();
+            var application = await _applicationRepository.GetApplicationWithDetailsByIdAsync(id);
+
+            if (application == null)
+                return null;
+
+            var result = application.Adapt<ApplicationResponseDto>();
+            return result;
         }
 
+        /// <summary>
+        /// Beklemede/İncelenmede olan tüm başvuruları getirir
+        /// </summary>
         public async Task<List<ApplicationResponseDto>> GetPendingApplicationsAsync()
         {
-            var list = await _applicationRepository.GetPendingApplicationsWithDetailsAsync();
-            return list.Select(a => a.Adapt<ApplicationResponseDto>()).ToList();
+            var applications = await _applicationRepository.GetPendingApplicationsWithDetailsAsync();
+            var result = applications.Adapt<List<ApplicationResponseDto>>();
+            return result;
         }
 
+        /// <summary>
+        /// Belirli bir iş ilanına yapılan başvuruları getirir
+        /// </summary>
         public async Task<List<ApplicationResponseDto>> GetByCareerIdAsync(int careerId)
         {
-            var list = await _applicationRepository.GetApplicationsByCareerIdAsync(careerId);
-            return list.Select(MapToResponse).ToList();
+            // İlan kontrolü
+            var career = await _careerRepository.GetByIdAsync(careerId);
+            if (career == null)
+                throw new InvalidOperationException($"İlan (Career) ID: {careerId} bulunamadı.");
+
+            var applications = await _applicationRepository.GetApplicationsByCareerIdAsync(careerId);
+            var result = applications.Adapt<List<ApplicationResponseDto>>();
+            return result;
         }
 
+        /// <summary>
+        /// Belirli bir kullanıcının başvurularını getirir
+        /// </summary>
         public async Task<List<ApplicationResponseDto>> GetByUserIdAsync(int userId)
         {
-            var list = await _applicationRepository.GetApplicationsByUserIdAsync(userId);
-            return list.Select(MapToResponse).ToList();
+            // Kullanıcı kontrolü
+            var user = await _userRepository.GetByIdAsync(userId);
+            if (user == null)
+                throw new InvalidOperationException($"Kullanıcı ID: {userId} bulunamadı.");
+
+            var applications = await _applicationRepository.GetApplicationsByUserIdAsync(userId);
+            var result = applications.Adapt<List<ApplicationResponseDto>>();
+            return result;
         }
 
+        /// <summary>
+        /// Başvuru durumuna göre (Pending, InReview, Shortlisted, Rejected, Hired) başvuruları listeler
+        /// </summary>
+        public async Task<List<ApplicationResponseDto>> GetByStatusAsync(ApplicationStatus status)
+        {
+            var applications = await _applicationRepository.GetApplicationsByStatusAsync(status);
+            var result = applications.Adapt<List<ApplicationResponseDto>>();
+            return result;
+        }
+
+        #endregion
+
+        #region UPDATE
+
+        /// <summary>
+        /// Başvuru bilgilerini günceller
+        /// </summary>
         public async Task UpdateAsync(int id, ApplicationUpdateDto dto, int? userId)
         {
-            var app = await _applicationRepository.GetByIdAsync(id);
-            if (app == null) throw new KeyNotFoundException("Başvuru bulunamadı.");
+            var application = await _applicationRepository.GetByIdAsync(id);
 
-            // Sadece başvuran kendi başvurusunu güncelleyebilir (admin yetkisi yoksa)
-            if (app.UserId.HasValue && userId.HasValue && app.UserId != userId)
+            if (application == null)
+                throw new InvalidOperationException($"Başvuru ID: {id} bulunamadı.");
+
+            // Güvenlik kontrolü: Sadece başvuran kendisi veya admin güncelleyebilir
+            if (userId.HasValue && application.UserId != userId && !await IsUserAdminAsync(userId.Value))
                 throw new UnauthorizedAccessException("Bu başvuruyu güncelleme yetkiniz yok.");
 
-            // İş kuralı: sadece Pending veya InReview aşamasındayken güncelleme yapılabilir.
-            if (app.Status != ApplicationStatus.Pending && app.Status != ApplicationStatus.InReview)
-                throw new BusinessException("Sadece Beklemede veya İnceleniyor durumundaki başvurular güncellenebilir.");
+            // Mapster ile güncelle (null değerler göz ardı edilir)
+            dto.Adapt(application);
 
-            if (dto.LinkedInUrl != null) app.LinkedInUrl = dto.LinkedInUrl;
-            if (dto.GitHubUrl != null) app.GitHubUrl = dto.GitHubUrl;
-            if (dto.PortfolioUrl != null) app.PortfolioUrl = dto.PortfolioUrl;
-            if (dto.CoverLetter != null) app.CoverLetter = dto.CoverLetter;
-            if (dto.ResumeFilePath != null) app.ResumeFilePath = dto.ResumeFilePath;
-
-            _applicationRepository.Update(app);
-            await _dbContext.SaveChangesAsync();
+            _applicationRepository.Update(application);
+            await _unitOfWork.CommitAsync();
         }
 
+        /// <summary>
+        /// Başvuru durumunu değiştirir
+        /// </summary>
         public async Task ChangeStatusAsync(int id, ApplicationStatus newStatus, int reviewerId, string? adminNotes = null)
         {
-            var app = await _applicationRepository.GetByIdAsync(id);
-            if (app == null) throw new KeyNotFoundException("Başvuru bulunamadı.");
+            var application = await _applicationRepository.GetByIdAsync(id);
 
-            // Basit durum geçiş kontrolleri
-            if (newStatus == ApplicationStatus.Approved || newStatus == ApplicationStatus.Hired)
-            {
-                // örnek: sadece InReview veya Pending'den approve/hire edilebilir
-                if (app.Status != ApplicationStatus.Pending && app.Status != ApplicationStatus.InReview)
-                    throw new BusinessException("Bu işlemi gerçekleştirmek için başvuru uygun durumda değil.");
-            }
+            if (application == null)
+                throw new InvalidOperationException($"Başvuru ID: {id} bulunamadı.");
 
-            if (newStatus == ApplicationStatus.Rejected)
-            {
-                if (app.Status != ApplicationStatus.Pending && app.Status != ApplicationStatus.InReview)
-                    throw new BusinessException("Reddedilebilmesi için başvuru uygun durumda olmalıdır.");
-            }
+            // İnceleme yapan kullanıcıyı kontrol et
+            var reviewer = await _userRepository.GetByIdAsync(reviewerId);
+            if (reviewer == null)
+                throw new InvalidOperationException($"İnceleme yapan kullanıcı ID: {reviewerId} bulunamadı.");
 
-            app.Status = newStatus;
-            app.ReviewedByUserId = reviewerId;
-            app.ReviewedAt = DateTime.UtcNow;
+            // Aynı statüye geçişi engelle
+            if (application.Status == newStatus)
+                throw new InvalidOperationException($"Başvuru zaten {newStatus} durumunda.");
+
+            // Başvuru durumunu güncelle
+            application.Status = newStatus;
+            application.ReviewedByUserId = reviewerId;
+            application.ReviewedAt = DateTime.UtcNow;
+
             if (!string.IsNullOrWhiteSpace(adminNotes))
-                app.AdminNotes = adminNotes;
+                application.AdminNotes = adminNotes;
 
-            _applicationRepository.Update(app);
-            await _dbContext.SaveChangesAsync();
+            _applicationRepository.Update(application);
+            await _unitOfWork.CommitAsync();
         }
 
+        #endregion
+
+        #region DELETE
+
+        /// <summary>
+        /// Başvuruyu siler (Soft Delete)
+        /// </summary>
         public async Task DeleteAsync(int id)
         {
-            var app = await _applicationRepository.GetByIdAsync(id);
-            if (app == null) throw new KeyNotFoundException("Başvuru bulunamadı.");
+            var application = await _applicationRepository.GetByIdAsync(id);
 
-            // Soft delete uygula (GenericRepository.Remove soft delete yapıyorsa)
-            _applicationRepository.Remove(app);
-            await _dbContext.SaveChangesAsync();
+            if (application == null)
+                throw new InvalidOperationException($"Başvuru ID: {id} bulunamadı.");
+
+            if (application.IsDeleted)
+                throw new InvalidOperationException("Bu başvuru zaten silinmiş durumda.");
+
+            _applicationRepository.Remove(application); // Soft Delete
+            await _unitOfWork.CommitAsync();
         }
 
+        /// <summary>
+        /// Silinen başvuruyu geri yükler
+        /// </summary>
         public async Task RestoreAsync(int id)
         {
-            var app = await _applicationRepository.GetByIdAsync(id);
-            if (app == null) throw new KeyNotFoundException("Başvuru bulunamadı.");
+            var application = await _applicationRepository.GetByIdAsync(id);
 
-            _applicationRepository.Restore(app);
-            await _dbContext.SaveChangesAsync();
+            if (application == null)
+                throw new InvalidOperationException($"Başvuru ID: {id} bulunamadı.");
+
+            if (!application.IsDeleted)
+                throw new InvalidOperationException("Bu başvuru silinmemiş durumda.");
+
+            _applicationRepository.Restore(application);
+            await _unitOfWork.CommitAsync();
         }
 
-        #region Helpers
-        private ApplicationResponseDto MapToResponse(Application app)
+        #endregion
+
+        #region HELPER METHODS
+
+        /// <summary>
+        /// Kullanıcının admin olup olmadığını kontrol eder
+        /// </summary>
+        private async Task<bool> IsUserAdminAsync(int userId)
         {
-            return new ApplicationResponseDto
-            {
-                Id = app.Id,
-                CareerId = app.CareerId,
-                CareerTitle = app.Career?.Title ?? string.Empty,
-                UserId = app.UserId,
-                ApplicantName = app.User != null ? (app.User.FullName ?? app.User.UserName) : null,
-                LinkedInUrl = string.IsNullOrWhiteSpace(app.LinkedInUrl) ? null : app.LinkedInUrl,
-                GitHubUrl = string.IsNullOrWhiteSpace(app.GitHubUrl) ? null : app.GitHubUrl,
-                PortfolioUrl = string.IsNullOrWhiteSpace(app.PortfolioUrl) ? null : app.PortfolioUrl,
-                CoverLetter = string.IsNullOrWhiteSpace(app.CoverLetter) ? null : app.CoverLetter,
-                ResumeFilePath = app.ResumeFilePath,
-                Status = app.Status.ToString(),
-                CreatedAt = app.CreatedAt
-            };
+            var user = await _userRepository.GetByIdAsync(userId);
+
+            if (user == null)
+                return false;
+
+            // TODO: Role tablosuna göre kontrol yapılacak
+            // Şimdilik örnek olarak false dönüyoruz
+            return false;
         }
+
         #endregion
     }
 }

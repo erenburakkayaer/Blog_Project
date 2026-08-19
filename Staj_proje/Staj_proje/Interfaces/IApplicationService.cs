@@ -1,7 +1,7 @@
 using Staj_proje.DTO.Application;
 using Staj_proje.Entities;
 
-namespace Staj_proje.Services
+namespace Staj_proje.Interfaces
 {
     public interface IApplicationService
     {
@@ -10,6 +10,7 @@ namespace Staj_proje.Services
         Task<List<ApplicationResponseDto>> GetPendingApplicationsAsync();
         Task<List<ApplicationResponseDto>> GetByCareerIdAsync(int careerId);
         Task<List<ApplicationResponseDto>> GetByUserIdAsync(int userId);
+        Task<List<ApplicationResponseDto>> GetByStatusAsync(ApplicationStatus status);
         Task UpdateAsync(int id, ApplicationUpdateDto dto, int? userId);
         Task ChangeStatusAsync(int id, ApplicationStatus newStatus, int reviewerId, string? adminNotes = null);
         Task DeleteAsync(int id);

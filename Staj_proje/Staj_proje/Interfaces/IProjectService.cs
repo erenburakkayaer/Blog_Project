@@ -1,26 +1,27 @@
-using Staj_proje.DTO.Project;
+using Staj_proje.Entities;
 
-namespace Staj_proje.Services.Interfaces
+namespace Staj_proje.Interfaces
 {
     public interface IProjectService
     {
         // Create
-        Task<int> CreateProjectAsync(ProjectCreateDto createProjectDto);
+        Task<int> CreateProjectAsync(Project project);
         
         // Read
-        Task<ProjectDetailDto> GetProjectByIdAsync(int id);
-        Task<ProjectDetailDto> GetProjectBySlugAsync(string slug);
-        Task<List<ProjectListDto>> GetAllProjectsAsync(int pageNumber = 1, int pageSize = 20);
-        Task<List<ProjectListDto>> GetActiveProjectsAsync(int pageNumber = 1, int pageSize = 20);
-        Task<List<ProjectListDto>> GetFeaturedProjectsAsync(int pageNumber = 1, int pageSize = 20);
-        Task<List<ProjectListDto>> GetProjectsByCategoryAsync(int categoryId, int pageNumber = 1, int pageSize = 20);
-        Task<List<ProjectListDto>> GetProjectsByTechnologyAsync(string technology, int pageNumber = 1, int pageSize = 20);
-        Task<List<ProjectListDto>> GetProjectsByClientNameAsync(string clientName, int pageNumber = 1, int pageSize = 20);
-        Task<List<ProjectListDto>> GetProjectsByCompletionDateRangeAsync(DateTime startDate, DateTime endDate, 
+        Task<Project> GetProjectByIdAsync(int id);
+        Task<Project> GetProjectBySlugAsync(string slug);
+        Task<List<Project>> GetAllProjectsAsync(int pageNumber = 1, int pageSize = 20);
+        Task<List<Project>> GetActiveProjectsAsync(int pageNumber = 1, int pageSize = 20);
+        Task<List<Project>> GetFeaturedProjectsAsync(int pageNumber = 1, int pageSize = 20);
+        Task<List<Project>> GetProjectsByCategoryAsync(int categoryId, int pageNumber = 1, int pageSize = 20);
+        Task<List<Project>> GetActiveProjectsByCategoryAsync(int categoryId, int pageNumber = 1, int pageSize = 20);
+        Task<List<Project>> GetProjectsByTechnologyAsync(string technology, int pageNumber = 1, int pageSize = 20);
+        Task<List<Project>> GetProjectsByClientNameAsync(string clientName, int pageNumber = 1, int pageSize = 20);
+        Task<List<Project>> GetProjectsByCompletionDateRangeAsync(DateTime startDate, DateTime endDate, 
             int pageNumber = 1, int pageSize = 20);
         
         // Update
-        Task<bool> UpdateProjectAsync(int id, ProjectUpdateDto updateProjectDto);
+        Task<bool> UpdateProjectAsync(int id, Project project);
         Task<bool> ActivateProjectAsync(int id);
         Task<bool> DeactivateProjectAsync(int id);
         Task<bool> FeatureProjectAsync(int id);
@@ -34,8 +35,8 @@ namespace Staj_proje.Services.Interfaces
         Task<bool> PermanentlyDeleteProjectAsync(int id);
         
         // Search & Filter
-        Task<List<ProjectListDto>> SearchProjectsByTitleAsync(string title, int pageNumber = 1, int pageSize = 20);
-        Task<List<ProjectListDto>> SearchProjectsByDescriptionAsync(string keyword, int pageNumber = 1, int pageSize = 20);
+        Task<List<Project>> SearchProjectsByTitleAsync(string title, int pageNumber = 1, int pageSize = 20);
+        Task<List<Project>> SearchProjectsByDescriptionAsync(string keyword, int pageNumber = 1, int pageSize = 20);
         
         // Statistics
         Task<int> GetTotalProjectCountAsync();
