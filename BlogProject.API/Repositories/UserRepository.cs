@@ -9,11 +9,11 @@ namespace BlogProject.API.Repositories
     {
         public UserRepository(AppDbContext context) : base(context) { }
 
-        public async Task<User?> GetByUsernameAsync(string username) =>
-            await _dbSet.FirstOrDefaultAsync(u => u.Username == username);
+        public async Task<User?> GetByUsernameAsync(string identifier) =>
+            await _dbSet.FirstOrDefaultAsync(u => u.Username == identifier || u.Email == identifier);
 
-        public async Task<User?> GetByUsernameWithRoleAsync(string username) =>
-            await _dbSet.Include(u => u.Role).FirstOrDefaultAsync(u => u.Username == username);
+        public async Task<User?> GetByUsernameWithRoleAsync(string identifier) =>
+            await _dbSet.Include(u => u.Role).FirstOrDefaultAsync(u => u.Username == identifier || u.Email == identifier);
 
         public async Task<User?> GetByIdWithRoleAsync(int id) =>
             await _dbSet.Include(u => u.Role).FirstOrDefaultAsync(u => u.Id == id);

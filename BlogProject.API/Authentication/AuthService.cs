@@ -6,7 +6,6 @@ using BlogProject.API.Interfaces;
 
 namespace BlogProject.API.Authentication
 {
-    // Giriş / token yenileme iş kuralı burada: kullanıcı doğrulama, refresh token rotasyonu
     public class AuthService : IAuthService
     {
         private const int RefreshTokenExpiryDays = 7;
@@ -45,13 +44,53 @@ namespace BlogProject.API.Authentication
             return await IssueTokensAsync(user);
         }
 
+        public async Task<LoginResponseDto?> RegisterAsync(RegisterDto dto)
+        {
+            var existing = await _userRepository.GetByUsernameWithRoleAsync(dto.Email);
+            if (existing is not null)
+                return null;
+
+            var username = !string.IsNullOrWhiteSpace(dto.Username)
+                ? dto.Username.Trim().ToLowerInvariant()
+                : dto.Email.Split('@')[0].Trim().ToLowerInvariant();
+
+            var roleId = dto.Role?.ToLowerInvariant() switch
+            {
+                "admin" or "superadmin" => 2,
+                "hr" or "editor" => 3,
+                _ => 4 // Yazar / Normal üye
+            };
+
+            var newUser = new User
+            {
+                Username = username,
+                Email = dto.Email.Trim().ToLowerInvariant(),
+                PasswordHash = PasswordHasher.Hash(dto.Password),
+                RoleId = roleId,
+                IsActive = true,
+                CreatedAt = DateTime.UtcNow
+            };
+
+            await _userRepository.AddAsync(newUser);
+            await _userRepository.SaveChangesAsync();
+
+            var createdUser = await _userRepository.GetByIdWithRoleAsync(newUser.Id);
+            return await IssueTokensAsync(createdUser!);
+        }
+
+        public async Task<bool> UserExistsAsync(string identifier)
+        {
+            if (string.IsNullOrWhiteSpace(identifier)) return false;
+            var user = await _userRepository.GetByUsernameAsync(identifier.Trim().ToLowerInvariant());
+            return user is not null;
+        }
+
         public async Task<LoginResponseDto?> RefreshTokenAsync(string refreshToken)
         {
             var existing = await _refreshTokenRepository.GetActiveByTokenAsync(refreshToken);
             if (existing is null || existing.User is null || !existing.User.IsActive)
                 return null;
 
-            // Rotasyon: eski refresh token iptal edilir, yenisi verilir
             existing.RevokedAt = DateTime.UtcNow;
             _refreshTokenRepository.Update(existing);
             await _refreshTokenRepository.SaveChangesAsync();

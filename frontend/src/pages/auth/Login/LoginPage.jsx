@@ -1,8 +1,9 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import toast from "react-hot-toast";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import useAuth from "../../../hooks/useAuth";
+import { apiRequest } from "../../../services/api";
 
 function LoginPage() {
   const navigate = useNavigate();
@@ -21,6 +22,10 @@ function LoginPage() {
   const [eDevletPass, setEDevletPass] = useState("");
   const [eDevletLoading, setEDevletLoading] = useState(false);
 
+  // Instagram-style Realtime User Exists Check
+  const [emailCheckState, setEmailCheckState] = useState({ checking: false, exists: null });
+  const [passwordStrength, setPasswordStrength] = useState({ score: 0, label: "Zayıf", color: "#ef4444" });
+
   // Form states for Register
   const [regRole, setRegRole] = useState("author");
   const [termsAccepted, setTermsAccepted] = useState(true);
@@ -28,6 +33,7 @@ function LoginPage() {
   const {
     register,
     handleSubmit,
+    watch,
   } = useForm({
     defaultValues: {
       email: "",
@@ -37,12 +43,59 @@ function LoginPage() {
     },
   });
 
+  const watchEmail = watch("email");
+  const watchPassword = watch("password");
+
+  // Parola Güç Hesaplama (Security Meter)
+  useEffect(() => {
+    if (!watchPassword) {
+      setPasswordStrength({ score: 0, label: "Boş", color: "#64748b" });
+      return;
+    }
+    let score = 0;
+    if (watchPassword.length >= 6) score += 1;
+    if (watchPassword.length >= 8) score += 1;
+    if (/[A-Z]/.test(watchPassword) && /[a-z]/.test(watchPassword)) score += 1;
+    if (/\d/.test(watchPassword)) score += 1;
+    if (/[^A-Za-z0-9]/.test(watchPassword)) score += 1;
+
+    if (score <= 2) setPasswordStrength({ score, label: "Zayıf", color: "#ef4444" });
+    else if (score <= 3) setPasswordStrength({ score, label: "Orta", color: "#f59e0b" });
+    else setPasswordStrength({ score, label: "Çok Güçlü", color: "#10b981" });
+  }, [watchPassword]);
+
+  // Instagram Style Kullanıcı/E-posta Kontrolü
+  useEffect(() => {
+    if (mode !== "register" || !watchEmail || !watchEmail.includes("@") || watchEmail.length < 5) {
+      setEmailCheckState({ checking: false, exists: null });
+      return;
+    }
+
+    const timer = setTimeout(async () => {
+      try {
+        setEmailCheckState({ checking: true, exists: null });
+        const res = await apiRequest(`/auth/check-user?identifier=${encodeURIComponent(watchEmail)}`);
+        setEmailCheckState({ checking: false, exists: res?.exists || false });
+      } catch {
+        setEmailCheckState({ checking: false, exists: false });
+      }
+    }, 600);
+
+    return () => clearTimeout(timer);
+  }, [watchEmail, mode]);
+
   const from = location.state?.from?.pathname || "/admin";
 
   const onSubmit = async (formData) => {
-    if (mode === "register" && !termsAccepted) {
-      toast.error("Lütfen Kullanıcı Sözleşmesi ve KVKK metnini onaylayınız.");
-      return;
+    if (mode === "register") {
+      if (emailCheckState.exists) {
+        toast.error("Bu e-posta adresi zaten kullanımda. Lütfen başka bir e-posta girin.");
+        return;
+      }
+      if (!termsAccepted) {
+        toast.error("Lütfen Kullanıcı Sözleşmesi ve KVKK metnini onaylayınız.");
+        return;
+      }
     }
 
     try {
@@ -75,7 +128,7 @@ function LoginPage() {
         navigate("/admin", { replace: true });
       }
     } catch (error) {
-      toast.error(error.message || "Giriş işlemi başarısız. Lütfen bilgilerinizi kontrol edin.");
+      toast.error(error.message || "İşlem başarısız. Lütfen bilgilerinizi kontrol edin.");
     }
   };
 
@@ -85,6 +138,7 @@ function LoginPage() {
     setTimeout(async () => {
       await login({
         email: "user@gmail.com",
+        username: "google_user",
         password: "GoogleUser123!",
         fullName: "Google Kullanıcısı",
         role: "author",
@@ -113,6 +167,7 @@ function LoginPage() {
 
       await login({
         email: `tc_${eDevletTc}@turkiye.gov.tr`,
+        username: `tc_${eDevletTc}`,
         password: "EDevletAuth123!",
         fullName: "Samet Başkale (e-Devlet Onaylı)",
         role: "author",
@@ -135,7 +190,7 @@ function LoginPage() {
   };
 
   return (
-    <div style={{ background: "rgba(15, 23, 42, 0.75)", backdropFilter: "blur(16px)", border: "1px solid rgba(255,255,255,0.12)", borderRadius: 24, padding: "2.5rem", boxShadow: "0 25px 50px -12px rgba(0, 0, 0, 0.5)" }}>
+    <div style={{ background: "rgba(15, 23, 42, 0.85)", backdropFilter: "blur(20px)", border: "1px solid rgba(255,255,255,0.12)", borderRadius: 24, padding: "2.5rem", boxShadow: "0 25px 50px -12px rgba(0, 0, 0, 0.6)" }}>
       {/* Mobile Brand */}
       <div className="d-lg-none mb-4 text-center">
         <Link className="d-inline-flex align-items-center gap-2 text-decoration-none" to="/">
@@ -172,7 +227,7 @@ function LoginPage() {
         </h1>
         <p className="text-white-50 small mb-0">
           {mode === "login"
-            ? "Projelerinizi yönetmek ve içeriklerinize erişmek için giriş yapın."
+            ? "Projelerinizi yönetmek ve içeriklerinize erişmek için güvenle giriş yapın."
             : "TechNova platformunda yazar, geliştirici veya şirket hesabı oluşturun."}
         </p>
       </div>
@@ -220,7 +275,7 @@ function LoginPage() {
       <div className="position-relative text-center mb-4">
         <hr className="border-secondary opacity-25" />
         <span className="position-absolute top-50 start-50 translate-middle px-3 text-white-50 small" style={{ background: "#0f172a" }}>
-          veya kurumsal e-posta ile
+          veya kurumsal hesap ile
         </span>
       </div>
 
@@ -242,16 +297,29 @@ function LoginPage() {
           </div>
         )}
 
-        {/* Email */}
+        {/* Email with Instagram-style realtime validation */}
         <div className="mb-3">
-          <label className="form-label fw-semibold small text-white-50">E-posta adresi *</label>
+          <div className="d-flex justify-content-between align-items-center mb-1">
+            <label className="form-label fw-semibold small text-white-50 mb-0">E-posta adresi veya Kullanıcı Adı *</label>
+            {mode === "register" && (
+              <span style={{ fontSize: "11px" }}>
+                {emailCheckState.checking && <span className="text-warning"><span className="spinner-border spinner-border-sm me-1" /> Kontrol ediliyor...</span>}
+                {!emailCheckState.checking && emailCheckState.exists === true && (
+                  <span className="text-danger fw-bold"><i className="bi bi-x-circle me-1" /> E-posta kullanımda</span>
+                )}
+                {!emailCheckState.checking && emailCheckState.exists === false && (
+                  <span className="text-success fw-bold"><i className="bi bi-check-circle me-1" /> Kullanılabilir</span>
+                )}
+              </span>
+            )}
+          </div>
           <div className="input-group">
             <span className="input-group-text bg-dark border-secondary border-opacity-50 text-white-50"><i className="bi bi-envelope" /></span>
             <input
-              type="email"
+              type="text"
               autoComplete="email"
-              placeholder="ornek@technova.com"
-              className="form-control bg-dark text-white border-secondary border-opacity-50"
+              placeholder="ornek@technova.com veya kullanıcı adı"
+              className={`form-control bg-dark text-white border-secondary border-opacity-50 ${mode === "register" && emailCheckState.exists === true ? "is-invalid" : ""}`}
               {...register("email")}
               required
             />
@@ -296,6 +364,27 @@ function LoginPage() {
               <i className={`bi ${showPassword ? "bi-eye-slash" : "bi-eye"}`} />
             </button>
           </div>
+
+          {/* Password Strength Meter */}
+          {mode === "register" && watchPassword && (
+            <div className="mt-2">
+              <div className="d-flex justify-content-between align-items-center mb-1" style={{ fontSize: "11px" }}>
+                <span className="text-white-50">Şifre Güvenliği:</span>
+                <span className="fw-bold" style={{ color: passwordStrength.color }}>{passwordStrength.label}</span>
+              </div>
+              <div className="progress" style={{ height: "4px", background: "rgba(255,255,255,0.1)" }}>
+                <div
+                  className="progress-bar"
+                  role="progressbar"
+                  style={{
+                    width: `${(passwordStrength.score / 5) * 100}%`,
+                    backgroundColor: passwordStrength.color,
+                    transition: "all 0.3s ease",
+                  }}
+                />
+              </div>
+            </div>
+          )}
         </div>
 
         {/* Checkbox / Forgot password */}
@@ -332,7 +421,7 @@ function LoginPage() {
         <button
           className="btn btn-primary btn-lg w-100 fw-bold py-3 shadow-lg"
           type="submit"
-          disabled={isLoading}
+          disabled={isLoading || (mode === "register" && emailCheckState.exists === true)}
           style={{ borderRadius: 12, background: "linear-gradient(135deg, #4f46e5 0%, #6366f1 100%)", border: "none" }}
         >
           {isLoading ? (
@@ -360,12 +449,11 @@ function LoginPage() {
         </Link>
       </div>
 
-      {/* 🇹🇷 E-DEVLET KAPIŞI DOĞRULAMA MODALI (BTK AKADEMİ STİLİ) */}
+      {/* 🇹🇷 E-DEVLET KAPISI DOĞRULAMA MODALI (BTK AKADEMİ STİLİ) */}
       {showEDevletModal && (
         <div className="modal show fade d-block" style={{ backgroundColor: "rgba(0,0,0,0.75)" }}>
           <div className="modal-dialog modal-dialog-centered">
             <div className="modal-content border-0 shadow-2xl rounded-4 overflow-hidden">
-              {/* Official e-Devlet Red Header */}
               <div className="px-4 py-3 text-white d-flex align-items-center justify-content-between" style={{ background: "linear-gradient(135deg, #e11d48 0%, #9f1239 100%)" }}>
                 <div className="d-flex align-items-center gap-2">
                   <span className="fs-4">🇹🇷</span>

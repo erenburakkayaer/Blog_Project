@@ -26,6 +26,24 @@ namespace BlogProject.API.Controllers
                 : Ok(result);
         }
 
+        [HttpPost("register")]
+        [AllowAnonymous]
+        public async Task<ActionResult<LoginResponseDto>> Register(RegisterDto dto)
+        {
+            var result = await _authService.RegisterAsync(dto);
+            return result is null
+                ? Conflict(new { message = "Bu e-posta adresi veya kullanıcı adı zaten kullanımda." })
+                : Ok(result);
+        }
+
+        [HttpGet("check-user")]
+        [AllowAnonymous]
+        public async Task<IActionResult> CheckUser([FromQuery] string identifier)
+        {
+            var exists = await _authService.UserExistsAsync(identifier);
+            return Ok(new { exists });
+        }
+
         [HttpPost("refresh")]
         [AllowAnonymous]
         public async Task<ActionResult<LoginResponseDto>> Refresh(RefreshRequestDto dto)
